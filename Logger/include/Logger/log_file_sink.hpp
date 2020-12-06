@@ -27,10 +27,38 @@
 
 #pragma once
 
-#include <extension/dll_api_macros.h>
+#include <fstream>
+#include <filesystem>
 
-#ifdef _Logger_EXPORTS_
-#	define Logger_API DLL_EXPORT
-#else
-#	define Logger_API DLL_IMPORT
-#endif // _Logger_EXPORTS_
+#include "log_sink.hpp"
+#include "Logger_api.h"
+
+
+namespace logger
+{
+///	\brief Created to do Logging to file
+class log_file_sink final: public log_sink
+{
+public:
+	Logger_API log_file_sink();
+	Logger_API ~log_file_sink();
+
+	///	\brief Logs data to file
+	///	\praram[in] - p_logData - Data that will be logged to the file
+	void output2stream(const log_data& p_logData) final;
+
+	///	\brief Initiates the logging to File stream,
+	///			Creates a file with the given file name
+	///	\param[in] - p_fileName - Name of the file that the message will be logged to
+	///	\return true on success, false otherwise
+	Logger_API bool init(const std::filesystem::path& p_fileName);
+
+	///	\brief Terminates the logging to File stream,
+	///			Closese the file which the message was logged to
+	Logger_API void end();
+
+private:
+	std::basic_ofstream<char8_t> m_output; //!< Output file
+};
+
+}	// namespace simLog

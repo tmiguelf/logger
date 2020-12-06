@@ -25,12 +25,24 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#pragma once
+#include "Logger/log_console_sink.hpp"
 
-#include <extension/dll_api_macros.h>
+#include <iostream>
 
-#ifdef _Logger_EXPORTS_
-#	define Logger_API DLL_EXPORT
-#else
-#	define Logger_API DLL_IMPORT
-#endif // _Logger_EXPORTS_
+namespace logger
+{
+
+log_console_sink::log_console_sink() = default;
+
+void log_console_sink::output2stream(const log_data& p_logData)
+{
+	if(p_logData.m_levelNumber != Level::Info)
+	{
+		std::cout.write(reinterpret_cast<const char*>(p_logData.m_level.data()), p_logData.m_level.size());
+	}
+
+	std::cout.write(reinterpret_cast<const char*>(p_logData.m_message.data()), p_logData.m_message.size());
+	std::cout.put('\n');
+}
+
+}

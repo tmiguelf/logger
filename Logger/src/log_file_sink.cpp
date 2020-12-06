@@ -25,12 +25,54 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#pragma once
+#include "Logger/log_file_sink.hpp"
+#include "Logger/log_streamer.hpp"
 
-#include <extension/dll_api_macros.h>
+namespace logger
+{
 
-#ifdef _Logger_EXPORTS_
-#	define Logger_API DLL_EXPORT
-#else
-#	define Logger_API DLL_IMPORT
-#endif // _Logger_EXPORTS_
+inline static void AuxWrite(std::basic_ostream<char8_t>& p_strm, std::u8string_view p_out)
+{
+	p_strm.write(p_out.data(), p_out.size());
+}
+
+log_file_sink::log_file_sink() = default;
+
+log_file_sink::~log_file_sink()
+{
+	end();
+}
+
+void log_file_sink::output2stream(const log_data& p_logData)
+{
+	_p::u8string_stream ts;
+
+	ts	<< p_logData.m_dateTimeThread
+		<< p_logData.m_file
+		<< u8'('
+		<< p_logData.m_line
+		<< u8") "
+		<< p_logData.m_level
+		<< p_logData.m_message
+		<< '\n';
+
+	//AuxWrite(m_output, ts.view());
+	AuxWrite(m_output, ts.str());
+
+}
+
+bool log_file_sink::init(const std::filesystem::path& p_fileName)
+{
+	end();
+	std::filesystem::create_directories(p_fileName.parent_path());
+	m_output.open(p_fileName, std::ios_base::binary | std::ios_base::out);
+	return m_output.is_open();
+}
+
+void log_file_sink::end()
+{
+	m_output << std::flush;
+	m_output.close();
+}
+
+} //namespace simLog
