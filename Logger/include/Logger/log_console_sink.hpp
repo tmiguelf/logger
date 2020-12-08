@@ -27,10 +27,23 @@
 
 #pragma once
 
-#include <extension/dll_api_macros.h>
+#include "log_sink.hpp"
+#include "Logger_api.h"
 
-#ifdef _Logger_EXPORTS_
-#	define Logger_API DLL_EXPORT
-#else
-#	define Logger_API DLL_IMPORT
-#endif // _Logger_EXPORTS_
+namespace logger
+{
+
+///	\brief Created to do Logging to console
+//
+class log_console_sink final: public log_sink
+{
+public:
+	Logger_API log_console_sink();
+
+	///	\brief Logs the data to console
+	///	\param[in] - p_logData - Data that will be logged to Console
+	//
+	void output2stream(const log_data& p_logData) final;
+};
+
+} // namespace simLog
