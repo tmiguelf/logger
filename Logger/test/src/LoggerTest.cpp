@@ -175,7 +175,7 @@ TEST(Logger, Logger_interface)
 		logger::Log_add_sink(tsink);
 		LOG_CUSTOM("Random Name", 42, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
 		logger::Log_remove_sink(tsink);
-		ASSERT_EQ(tsink.m_log_cache.size(), 1);
+		ASSERT_EQ(tsink.m_log_cache.size(), 1_uip);
 
 		log_cache& cache = tsink.m_log_cache[0];
 

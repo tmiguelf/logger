@@ -221,55 +221,6 @@ void LoggerHelper::log(Level p_level, std::u8string_view p_file, uint32_t p_line
 #endif
 }
 
-void LoggerHelper::push(PreLogHelper& p_prelogs)
-{
-	log_data log_data;
-
-	//date/time/thread
-	std::array<char8_t, g_DateTimeThreadMessageSize> dateTimeThread;
-	uintptr_t dateTimeThread_size = FormatDateThread(log_data.m_time, log_data.m_threadId, dateTimeThread);
-
-	//line
-	std::array<char8_t, 10> line;
-	uintptr_t line_size;
-
-	//category
-	std::array<char8_t, 9> level;
-	uintptr_t level_size;
-
-	PreLogHelper safeContainer;
-	safeContainer.swap(p_prelogs);
-
-	for(PreLogUnit& logUnit : safeContainer)
-	{
-
-		//date/time/thread size
-		dateTimeThread_size	= FormatDateThread(logUnit.time, logUnit.threadId, dateTimeThread);
-
-		//line size
-		line_size = core::to_chars(logUnit.line, std::span<char8_t, 10>{line});
-
-		//category size
-		level_size = FormatLogLevel(logUnit.level, level);
-
-		log_data.m_level			= std::u8string_view(level.data(), level_size);
-		log_data.m_dateTimeThread	= std::u8string_view(dateTimeThread.data(), dateTimeThread_size);
-		log_data.m_file				= logUnit.file;
-		log_data.m_line				= std::u8string_view(line.data(), line_size);
-		log_data.m_message			= logUnit.message;
-
-		log_data.m_levelNumber	= logUnit.level;
-		log_data.m_lineNumber	= logUnit.line;
-		log_data.m_threadId		= logUnit.threadId;
-		log_data.m_time			= logUnit.time;
-
-		for(log_sink* sink: m_sinks)
-		{
-			sink->output2stream(log_data);
-		}
-	}
-}
-
 void LoggerHelper::add_sink(log_sink& p_sink)
 {
 	m_sinks.push_back(&p_sink);
@@ -303,6 +254,11 @@ Logger_API void Log_remove_sink(log_sink& p_stream)
 	g_logger.remove_sink(p_stream);
 }
 
+Logger_API void Log_remove_all()
+{
+	logger::g_logger.clear();
+}
+
 }// namespace simLog
 
 
@@ -314,69 +270,6 @@ extern "C"
 Logger_API void Log_Message(logger::Level p_level, const char8_t* p_file, uintptr_t p_fileNameSize, uint32_t p_line, const char8_t* p_message, uintptr_t p_messageSize)
 {
 	logger::g_logger.log(p_level, std::u8string_view{p_file, p_fileNameSize}, p_line, std::u8string_view{p_message, p_messageSize});
-}
-
-Logger_API void Log_Shutdown()
-{
-	logger::g_logger.clear();
-}
-
-[[nodiscard]] Logger_API PreLogHandle Log_CreatePreLogHandle()
-{
-	return static_cast<PreLogHandle>(new logger::PreLogHelper);
-}
-
-Logger_API void Log_DestroyPreLogHandle(PreLogHandle p_handle)
-{
-	if(p_handle)
-	{
-		delete static_cast<logger::PreLogHelper*>(p_handle);
-	}
-}
-
-Logger_API void Log_PushPreLog(PreLogHandle p_handle)
-{
-	if(p_handle)
-	{
-		logger::g_logger.push(*static_cast<logger::PreLogHelper*>(p_handle));
-	}
-}
-
-Logger_API void Log_2PreLog(PreLogHandle p_handle, logger::Level p_level, const char8_t* p_file, uintptr_t p_fileNameSize, uint32_t p_line, const char8_t* p_message, uintptr_t p_messageSize)
-{
-	std::u8string_view tfile	(p_file, p_fileNameSize);
-	std::u8string_view tmessage	(p_message, p_messageSize);
-
-	core::DateTime t_time = core::date_time_UTC();
-	core::thread_id_t threadId = logger::getCurrentThreadId();
-
-	if(p_handle)
-	{
-		logger::PreLogHelper* preLogs = static_cast<logger::PreLogHelper*>(p_handle);
-		preLogs->emplace_back(logger::PreLogUnit{t_time, threadId, p_level, p_line, tfile, tmessage});
-	}
-
-#ifdef __LOG_HAS_DEBUGGER
-	//date/time/thread
-	std::array<char8_t, g_DateTimeThreadMessageSize> dateTimeThread;
-	uintptr_t dateTimeThread_size = logger::FormatDateThread(t_time, threadId, dateTimeThread);
-
-	//line
-	std::array<char8_t, 10> line;
-	uintptr_t line_size = core::to_chars(p_line, std::span<char8_t, 10>{line});
-
-	//category
-	std::array<char8_t, 9> level;
-	uintptr_t level_size = FormatLogLevel(p_level, level);
-
-
-	logger::output2debugger(
-		tfile,
-		std::u8string_view(line.data(), line_size),
-		std::u8string_view(dateTimeThread.data(), dateTimeThread_size),
-		std::u8string_view(level.data(), level_size),
-		tmessage);
-#endif
 }
 
 } //extern "C"

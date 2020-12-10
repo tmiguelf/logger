@@ -43,27 +43,6 @@
 /// \n
 namespace logger
 {
-struct PreLogUnit
-{
-	const core::DateTime	time;
-	const core::thread_id_t	threadId;
-	const Level				level;
-	const uint32_t			line;
-	const std::u8string		file;
-	const std::u8string		message;
-
-	PreLogUnit(core::DateTime& p_time, core::thread_id_t p_threaId, Level p_level, uint32_t p_line, std::u8string_view p_file, std::u8string_view p_message)
-		: time		(p_time)
-		, threadId	(p_threaId)
-		, level		(p_level)
-		, line		(p_line)
-		, file		(p_file)
-		, message	(p_message)
-	{
-	}
-};
-
-using PreLogHelper = std::deque<PreLogUnit>;
 
 /// \brief Log helper class that holds Logger streamers such as Logging to File and Logging to Console
 class LoggerHelper
@@ -80,27 +59,15 @@ public:
 	///	\param[in] p_message - Null terminated message to Log
 	void log(Level p_level, std::u8string_view p_file, uint32_t p_line, std::u8string_view p_message);
 
-	///	\brief
-	///			Directly dumps content to the log stream
-	///			Usefull for systems that require pre-log schemes,
-	///			where data needs to be logged before the log system itself is ready,
-	///			thus these are stored on intermediate temporary streams controlled by the application.
-	///
-	///	\param[in] p_prelogs - containing the Pre-Log data
-	void push(PreLogHelper& p_prelogs);
-
 	///	\brief add the current log stream to the streams container
 	///	param[in] p_stream - Log stream containg the log data
-	//
 	void add_sink(log_sink& p_sink);
 
 	///	\brief remove the current log stream from the streams container
 	///	param[in] p_stream Log stream containing the log data
-	//
 	void remove_sink(log_sink& p_sink);
 
 	///	\breif clear streams container
-	//
 	void clear();
 };
 
