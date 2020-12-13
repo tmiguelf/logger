@@ -27,50 +27,16 @@
 
 #pragma once
 
-#include "Logger/Logger.hpp"
-#include "Logger/log_sink.hpp"
+#include <cstdint>
 
-#include <deque>
-#include <string>
-#include <string_view>
-
-#include <CoreLib/Core_Thread.hpp>
-#include <CoreLib/Core_Time.hpp>
-
-#include <vector>
-
-
-/// \n
 namespace logger
 {
-
-/// \brief Log helper class that holds Logger streamers such as Logging to File and Logging to Console
-class LoggerHelper
+/// \brief Log categories
+enum class Level: uint8_t
 {
-	/// create list of references to Logger streamers
-	std::vector<log_sink*> m_sinks;
-
-public:
-
-	///	\brief Send the log to the Log sink
-	///	\param[in] p_category - \ref logger::Level
-	///	\param[in] p_file - Name of source file generating the log.
-	///	\param[in] p_line - Source file line number where the Log was generated.
-	///	\param[in] p_message - Null terminated message to Log
-	void log(Level p_level, core::os_string_view p_file, uint32_t p_line, std::u8string_view p_message);
-
-	///	\brief add the current log stream to the streams container
-	///	param[in] p_stream - Log stream containg the log data
-	void add_sink(log_sink& p_sink);
-
-	///	\brief remove the current log stream from the streams container
-	///	param[in] p_stream Log stream containing the log data
-	void remove_sink(log_sink& p_sink);
-
-	///	\breif clear streams container
-	void clear();
+	Info	= 0x00,	//!< Info level
+	Warning	= 0x01,	//!< Warning level
+	Error	= 0x02,	//!< Error level
+	Debug	= 0xFF	//!< Debug only, will not be available on realease build
 };
-
-}	// namespace simLog
-
-/// \endcond
+} //namespace logger

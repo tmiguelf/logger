@@ -159,22 +159,24 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 
 #ifdef __LOG_HAS_DEBUGGER
 static void output2debugger(
-	std::u8string_view p_file,
+	core::os_string_view p_file,
 	std::u8string_view p_line,
 	std::u8string_view p_dateTimeThread,
 	std::u8string_view p_category,
 	std::u8string_view p_message)
 {
-	_p::u8string_stream t_stream;
-	t_stream << p_file << '(' << p_line << "): " << p_dateTimeThread << ' ' << p_category << p_message << '\n';
-	OutputDebugStringA(reinterpret_cast<const char*>(t_stream.str().c_str()));
+	std::basic_stringstream<char16_t> t_stream;
+	t_stream << p_file << u'(' << core::ANSI_to_UTF16(p_line) << u"): "
+		<< core::ANSI_to_UTF16(p_dateTimeThread) << u' ' << core::ANSI_to_UTF16(p_category)
+		<< core::ANSI_to_UTF16(p_message) << u'\n';
+	OutputDebugStringW(reinterpret_cast<const wchar_t*>(t_stream.str().c_str()));
 }
 #endif
 
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
 
-void LoggerHelper::log(Level p_level, std::u8string_view p_file, uint32_t p_line, std::u8string_view p_message)
+void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_line, std::u8string_view p_message)
 {
 #ifndef _DEBUG
 	if(p_level == Level::Debug) return;
@@ -259,17 +261,9 @@ Logger_API void Log_remove_all()
 	logger::g_logger.clear();
 }
 
-}// namespace simLog
-
-
- //======== ======== ======== ======== Exported functions ======== ======== ======== ========
-
-extern "C"
+Logger_API void Log_Message(Level p_level, core::os_string_view p_file, uint32_t p_line, std::u8string_view p_message)
 {
-
-Logger_API void Log_Message(logger::Level p_level, const char8_t* p_file, uintptr_t p_fileNameSize, uint32_t p_line, const char8_t* p_message, uintptr_t p_messageSize)
-{
-	logger::g_logger.log(p_level, std::u8string_view{p_file, p_fileNameSize}, p_line, std::u8string_view{p_message, p_messageSize});
+	logger::g_logger.log(p_level, p_file, p_line, p_message);
 }
 
-} //extern "C"
+}// namespace simLog

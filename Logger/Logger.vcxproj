@@ -64,6 +64,7 @@
     <ClInclude Include="include\Logger\Logger_service.hpp" />
     <ClInclude Include="include\Logger\log_console_sink.hpp" />
     <ClInclude Include="include\Logger\log_file_sink.hpp" />
+    <ClInclude Include="include\Logger\log_level.hpp" />
     <ClInclude Include="include\Logger\log_sink.hpp" />
     <ClInclude Include="include\Logger\log_streamer.hpp" />
     <ClInclude Include="resources\versionSpecific.h" />

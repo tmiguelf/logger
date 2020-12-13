@@ -43,7 +43,11 @@ using namespace core::literals;
 
 struct log_cache
 {
+#ifdef _WIN32
+	std::u16string file;
+#else
 	std::u8string file;
+#endif
 	std::u8string lineStr;
 	std::u8string dateTimeThread;
 	std::u8string levelStr;
@@ -96,7 +100,14 @@ TEST(Logger, Logger_interface)
 		logger::Log_add_sink(tsink);
 
 		TestStr test;
-		std::string_view fileName{__FILE__};
+#ifdef _WIN32
+		std::wstring_view help{__FILEW__};
+
+		core::os_string_view fileName = core::rvalue_reinterpret_cast<core::os_string_view>(std::wstring_view{__FILEW__});
+#else
+		core::os_string_view fileName = core::rvalue_reinterpret_cast<core::os_string_view>(std::string_view{__FILE__});
+#endif
+
 		std::vector<uint32_t> logLines;
 		core::thread_id_t threadId = core::current_thread_id();
 
@@ -126,7 +137,7 @@ TEST(Logger, Logger_interface)
 
 			ASSERT_EQ(cache.line, logLines[i]) << "Case " << i;
 			ASSERT_EQ(cache.lineStr, lineStr) << "Case " << i;
-			ASSERT_EQ(cache.file, reinterpret_cast<std::u8string_view&>(fileName)) << "Case " << i;
+			ASSERT_EQ(cache.file, fileName) << "Case " << i;
 			ASSERT_EQ(cache.threadId, threadId) << "Case " << i;
 			//TODO: nned improvement
 			ASSERT_FALSE(cache.dateTimeThread.empty()) << "Case " << i; //Note might need better test
@@ -173,7 +184,14 @@ TEST(Logger, Logger_interface)
 	{
 		test_sink tsink;
 		logger::Log_add_sink(tsink);
-		LOG_CUSTOM("Random Name", 42, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
+#ifdef _WIN32
+		const std::u16string fileName {u"Random Name"};
+#else
+		const std::u8string fileName {u8"Random Name"};
+#endif
+
+		LOG_CUSTOM(fileName, 42, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
+
 		logger::Log_remove_sink(tsink);
 		ASSERT_EQ(tsink.m_log_cache.size(), 1_uip);
 
@@ -183,7 +201,7 @@ TEST(Logger, Logger_interface)
 		ASSERT_EQ(cache.levelStr, std::u8string_view{u8"Lvl(12): "});
 		ASSERT_EQ(cache.line, 42_ui32);
 		ASSERT_EQ(cache.lineStr, std::u8string_view{u8"42"});
-		ASSERT_EQ(cache.file, std::u8string_view{u8"Random Name"});
+		ASSERT_EQ(cache.file, fileName);
 	}
 }
 

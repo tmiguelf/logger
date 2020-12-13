@@ -28,13 +28,13 @@
 #pragma once
 
 #include "Logger_api.h"
-#include "Logger.hpp"
-#include "log_sink.hpp"
 
 //======== ======== API ======== ========
 
 namespace logger
 {
+
+class log_sink;
 
 Logger_API void Log_add_sink(log_sink& p_stream);
 Logger_API void Log_remove_sink(log_sink& p_stream);

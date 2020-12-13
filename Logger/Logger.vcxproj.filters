@@ -53,6 +53,9 @@
     <ClInclude Include="src\Logger_p.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Logger\log_level.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Logger.cpp">

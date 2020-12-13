@@ -28,6 +28,8 @@
 #include "Logger/log_file_sink.hpp"
 #include "Logger/log_streamer.hpp"
 
+#include <CoreLib/string/core_string_encoding.hpp>
+
 namespace logger
 {
 
@@ -48,7 +50,11 @@ void log_file_sink::output2stream(const log_data& p_logData)
 	_p::u8string_stream ts;
 
 	ts	<< p_logData.m_dateTimeThread
+#ifdef _WIN32
+		<< core::UTF16_to_UTF8_faulty(p_logData.m_file, '?')
+#else
 		<< p_logData.m_file
+#endif
 		<< u8'('
 		<< p_logData.m_line
 		<< u8") "
@@ -58,7 +64,6 @@ void log_file_sink::output2stream(const log_data& p_logData)
 
 	//AuxWrite(m_output, ts.view());
 	AuxWrite(m_output, ts.str());
-
 }
 
 bool log_file_sink::init(const std::filesystem::path& p_fileName)

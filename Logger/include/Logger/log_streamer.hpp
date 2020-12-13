@@ -56,49 +56,49 @@ namespace logger::_p
 	class LogStreamer
 	{
 	public:
-		[[nodiscard]] inline LogStreamer& operator << (std::string_view p_message)
+		inline LogStreamer& operator << (std::string_view p_message)
 		{
 			m_stream.write(reinterpret_cast<const char8_t*>(p_message.data()), p_message.size());
 			return *this;
 		}
 
-		[[nodiscard]] inline LogStreamer& operator << (std::u8string_view p_message)
+		inline LogStreamer& operator << (std::u8string_view p_message)
 		{
 			m_stream.write(p_message.data(), p_message.size());
 			return *this;
 		}
 
-		[[nodiscard]] inline LogStreamer& operator << (char p_data)
+		inline LogStreamer& operator << (char p_data)
 		{
 			m_stream.put(reinterpret_cast<char8_t&>(p_data));
 			return *this;
 		}
 
-		[[nodiscard]] inline LogStreamer& operator << (char8_t p_data)
+		inline LogStreamer& operator << (char8_t p_data)
 		{
 			m_stream.put(p_data);
 			return *this;
 		}
 
-		[[nodiscard]] inline LogStreamer& operator << (const char* p_data)
+		inline LogStreamer& operator << (const char* p_data)
 		{
 			return operator << (std::string_view{p_data});
 		}
 
-		[[nodiscard]] inline LogStreamer& operator << (const char8_t* p_data)
+		inline LogStreamer& operator << (const char8_t* p_data)
 		{
 			return operator << (std::u8string_view{p_data});
 		}
 
 		template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
-		[[nodiscard]] inline LogStreamer& operator << (T p_data)
+		inline LogStreamer& operator << (T p_data)
 		{
 			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << core::toStream(p_data);
 			return *this;
 		}
 
 		template<typename T, std::enable_if_t<std::is_pointer_v<T>, int> = 0>
-		[[nodiscard]] inline LogStreamer& operator << (T p_data)
+		inline LogStreamer& operator << (T p_data)
 		{
 			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << core::toStream<void*>(p_data);
 			return *this;
@@ -109,7 +109,7 @@ namespace logger::_p
 			!std::is_pointer_v<T> &&
 			has_stream_operator<char8_t, T>
 			, int> = 0>
-		[[nodiscard]] inline LogStreamer& operator << (const T& p_data)
+		inline LogStreamer& operator << (const T& p_data)
 		{
 			m_stream << p_data;
 			return *this;
@@ -121,7 +121,7 @@ namespace logger::_p
 			!has_stream_operator<char8_t, T> &&
 			has_stream_operator<char, T>
 			, int> = 0>
-		[[nodiscard]] inline LogStreamer& operator << (const T& p_data)
+		inline LogStreamer& operator << (const T& p_data)
 		{
 			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << p_data;
 			return *this;
