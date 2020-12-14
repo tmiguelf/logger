@@ -43,11 +43,8 @@ using namespace core::literals;
 
 struct log_cache
 {
-#ifdef _WIN32
-	std::u16string file;
-#else
-	std::u8string file;
-#endif
+	core::os_string file;
+
 	std::u8string lineStr;
 	std::u8string dateTimeThread;
 	std::u8string levelStr;
@@ -184,11 +181,8 @@ TEST(Logger, Logger_interface)
 	{
 		test_sink tsink;
 		logger::Log_add_sink(tsink);
-#ifdef _WIN32
-		const std::u16string fileName {u"Random Name"};
-#else
-		const std::u8string fileName {u8"Random Name"};
-#endif
+
+		const core::os_string fileName {U"Random Name"};
 
 		LOG_CUSTOM(fileName, 42, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
 

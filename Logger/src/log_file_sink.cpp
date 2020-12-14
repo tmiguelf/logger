@@ -51,7 +51,7 @@ void log_file_sink::output2stream(const log_data& p_logData)
 
 	ts	<< p_logData.m_dateTimeThread
 #ifdef _WIN32
-		<< core::UTF16_to_UTF8_faulty(p_logData.m_file, '?')
+		<< p_logData.m_file.toUTF8('?')
 #else
 		<< p_logData.m_file
 #endif
