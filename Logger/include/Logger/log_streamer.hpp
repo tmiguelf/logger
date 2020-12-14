@@ -47,7 +47,7 @@ namespace logger::_p
 
 	template <typename charT, typename opT>
 	struct is_stream_op_available<charT, opT,
-		std::void_t<decltype(operator << (std::declval<std::basic_stringstream<charT>>(), 
+		std::void_t<decltype(operator << (std::declval<std::basic_stringstream<charT>&>(), 
 			std::declval<const opT&>())) >> : std::true_type {};
 
 	template<typename charT, typename OpT>

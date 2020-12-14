@@ -53,7 +53,7 @@ void log_file_sink::output2stream(const log_data& p_logData)
 #ifdef _WIN32
 		<< p_logData.m_file.toUTF8('?')
 #else
-		<< p_logData.m_file
+		<< reinterpret_cast<const std::u8string_view&>(p_logData.m_file)
 #endif
 		<< u8'('
 		<< p_logData.m_line

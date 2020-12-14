@@ -32,6 +32,7 @@
 #include <span>
 #include <array>
 
+#include <CoreLib/string/core_os_string.hpp>
 #include <CoreLib/Core_String.hpp>
 #include <CoreLib/Core_Thread.hpp>
 
@@ -166,7 +167,7 @@ static void output2debugger(
 	std::u8string_view p_message)
 {
 	std::basic_stringstream<char16_t> t_stream;
-	t_stream << p_file << u'(' << core::ANSI_to_UTF16(p_line) << u"): "
+	t_stream << reinterpret_cast<std::u16string_view&>(p_file) << u'(' << core::ANSI_to_UTF16(p_line) << u"): "
 		<< core::ANSI_to_UTF16(p_dateTimeThread) << u' ' << core::ANSI_to_UTF16(p_category)
 		<< core::ANSI_to_UTF16(p_message) << u'\n';
 	OutputDebugStringW(reinterpret_cast<const wchar_t*>(t_stream.str().c_str()));
