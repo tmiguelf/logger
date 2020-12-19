@@ -45,7 +45,7 @@ log_file_sink::~log_file_sink()
 	end();
 }
 
-void log_file_sink::output2stream(const log_data& p_logData)
+void log_file_sink::output(const log_data& p_logData)
 {
 	_p::u8string_stream ts;
 

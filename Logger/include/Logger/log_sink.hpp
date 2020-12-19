@@ -58,7 +58,7 @@ struct log_data
 class log_sink
 {
 public:
-	virtual void output2stream(const log_data& p_logData) = 0;
+	virtual void output(const log_data& p_logData) = 0;
 };
 
 }	// namespace simLog

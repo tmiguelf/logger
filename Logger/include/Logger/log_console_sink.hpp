@@ -43,7 +43,7 @@ public:
 	///	\brief Logs the data to console
 	///	\param[in] - p_logData - Data that will be logged to Console
 	//
-	void output2stream(const log_data& p_logData) final;
+	void output(const log_data& p_logData) final;
 };
 
 } // namespace simLog

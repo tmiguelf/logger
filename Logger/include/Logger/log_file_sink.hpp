@@ -45,7 +45,7 @@ public:
 
 	///	\brief Logs data to file
 	///	\praram[in] - p_logData - Data that will be logged to the file
-	void output2stream(const log_data& p_logData) final;
+	void output(const log_data& p_logData) final;
 
 	///	\brief Initiates the logging to File stream,
 	///			Creates a file with the given file name

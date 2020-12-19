@@ -58,7 +58,7 @@ struct log_cache
 
 class test_sink: public logger::log_sink
 {
-	void output2stream(const logger::log_data& p_logData)
+	void output(const logger::log_data& p_logData)
 	{
 		log_cache& cache = m_log_cache.emplace_back();
 

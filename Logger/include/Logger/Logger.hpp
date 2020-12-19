@@ -92,13 +92,13 @@ public:
 #endif
 
 /// \brief Helper Macro for info logs
-#define LOG_INFO		LOG_MESSAGE(logger::Level::Info)
+#define LOG_INFO	LOG_MESSAGE(logger::Level::Info)
 
 /// \brief Helper Macro for warning logs
 #define LOG_WARNING	LOG_MESSAGE(logger::Level::Warning)
 
 /// \brief Helper Macro for error logs
-#define LOG_ERROR		LOG_MESSAGE(logger::Level::Error)
+#define LOG_ERROR	LOG_MESSAGE(logger::Level::Error)
 
 #ifdef _DEBUG
 /// \brief Helper Macro for debug logs. If built in debug mode, message will be logged, if built in release the Macro will automatically eliminate the lines of code.

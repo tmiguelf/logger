@@ -34,7 +34,7 @@ namespace logger
 
 log_console_sink::log_console_sink() = default;
 
-void log_console_sink::output2stream(const log_data& p_logData)
+void log_console_sink::output(const log_data& p_logData)
 {
 	if(p_logData.m_levelNumber != Level::Info)
 	{

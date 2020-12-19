@@ -211,7 +211,7 @@ void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_li
 
 	for(log_sink* sink: m_sinks)
 	{
-		sink->output2stream(log_data);
+		sink->output(log_data);
 	}
 
 #ifdef __LOG_HAS_DEBUGGER
