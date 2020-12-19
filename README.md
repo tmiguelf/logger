@@ -27,10 +27,10 @@ The following datapoints can be captured by the logger:
 
 ## User interface
 There are 4 main macros that define the basic user interface:
-	* `LOG_INFO` - Uses `Info` log category. Intended for low criticality logging, a state in your program may have changed but nothing is unusual.
-	* `LOG_WARNING` - Uses `Warning` log category. Intend for medium criticality logging, there's an abnormal condition but the application can confidently recover and continue the task.
-	* `LOG_ERROR` - Uses `Error` log category. Intended for high criticality logging, indicates a serious abnormal condition that the application cannot recover, and has no option but to abort the task (either fully or partially).
-	* `LOG_DEBUG` - Uses `Debug` log category. Intended for debugging purposes only. In debug builds the message will be logged, in release builds noting will be logged out.
+ * `LOG_INFO` - Uses `Info` log category. Intended for low criticality logging, a state in your program may have changed but nothing is unusual.
+ * `LOG_WARNING` - Uses `Warning` log category. Intend for medium criticality logging, there's an abnormal condition but the application can confidently recover and continue the task.
+ * `LOG_ERROR` - Uses `Error` log category. Intended for high criticality logging, indicates a serious abnormal condition that the application cannot recover, and has no option but to abort the task (either fully or partially).
+ * `LOG_DEBUG` - Uses `Debug` log category. Intended for debugging purposes only. In debug builds the message will be logged, in release builds noting will be logged out.
 
 All these 4 macros will automatically capture the file and the line (and the category) in the source code that generated the log.\
 The user just needs to use the operator `<<` to stream the message in a similar manner as they would to a `std::ostream` (or `std::cout`).\
