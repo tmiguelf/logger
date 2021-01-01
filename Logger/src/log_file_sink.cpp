@@ -69,7 +69,19 @@ void log_file_sink::output(const log_data& p_logData)
 bool log_file_sink::init(const std::filesystem::path& p_fileName)
 {
 	end();
-	std::filesystem::create_directories(p_fileName.parent_path());
+	bool input_absolute = p_fileName.is_absolute();
+	std::error_code ec;
+	const std::filesystem::path& fileName =
+		input_absolute ?
+		p_fileName.parent_path() :
+		std::filesystem::absolute(p_fileName, ec);
+
+	if(!input_absolute && ec != std::error_code{})
+	{
+		return false;
+	}
+
+	std::filesystem::create_directories(fileName.parent_path());
 	m_output.open(p_fileName, std::ios_base::binary | std::ios_base::out);
 	return m_output.is_open();
 }
