@@ -25,20 +25,31 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#pragma once
+#include "Logger/log_debugger_sink.hpp"
 
-#include "log_sink.hpp"
-#include "Logger_api.h"
+#if _WIN32
+
+#include <Windows.h>
+#include <WinBase.h>
+
+#include <sstream>
+#include <string_view>
 
 namespace logger
 {
 
-///	\brief Created to do Logging to console
-class log_console_sink final: public log_sink
-{
-public:
-	Logger_API log_console_sink();
-	void output(const log_data& p_logData) final;
-};
+log_debugger_sink::log_debugger_sink() = default;
 
-} // namespace logger
+void log_debugger_sink::output(const log_data& p_logData)
+{
+	std::basic_stringstream<char16_t> t_stream;
+	t_stream << reinterpret_cast<const std::u16string_view&>(p_logData.m_file) << u'('
+		<< core::ANSI_to_UTF16(p_logData.m_line) << u"): "
+		<< core::ANSI_to_UTF16(p_logData.m_dateTimeThread)
+		<< u' ' << core::ANSI_to_UTF16(p_logData.m_level)
+		<< core::ANSI_to_UTF16(p_logData.m_message) << u'\n';
+	OutputDebugStringW(reinterpret_cast<const wchar_t*>(t_stream.str().c_str()));
+}
+
+} //namespace logger
+#endif // _WIN32

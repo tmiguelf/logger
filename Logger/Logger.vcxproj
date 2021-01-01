@@ -56,6 +56,7 @@
   <ItemGroup>
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\log_console_sink.cpp" />
+    <ClCompile Include="src\log_debugger_sink.cpp" />
     <ClCompile Include="src\log_file_sink.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +64,7 @@
     <ClInclude Include="include\Logger\Logger_api.h" />
     <ClInclude Include="include\Logger\Logger_service.hpp" />
     <ClInclude Include="include\Logger\log_console_sink.hpp" />
+    <ClInclude Include="include\Logger\log_debugger_sink.hpp" />
     <ClInclude Include="include\Logger\log_file_sink.hpp" />
     <ClInclude Include="include\Logger\log_level.hpp" />
     <ClInclude Include="include\Logger\log_sink.hpp" />

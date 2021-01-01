@@ -96,8 +96,8 @@ The following sinks are provided with this library:
 
 The user can create their own custom sink by inheriting from `logger::log_sink` defined in header `log_sink.hpp`. Note that by convention, the user need not specify a new line at the end of a message (implicit), and thus one will not exist at the end of the message. The implementer of the sink should honor this agreement by adding any extra new line at the end of the stream (if applicable).
 
-### Windows Debug build only
-On a windows debug build, this library will by default also send the logs to the debugger console (for example Visual Studio console) without the need to register a special sink.
+### Windows only
+On a windows only, this library provides a sink that can send the logs to the debugger console (for example Visual Studio console).
 In Visual Studio, this supports the functionality to be able to jump to the referenced file and line when double clicking on the logged message.
 
 ## Thread safety
