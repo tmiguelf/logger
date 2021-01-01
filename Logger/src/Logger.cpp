@@ -36,14 +36,6 @@
 #include <CoreLib/Core_String.hpp>
 #include <CoreLib/Core_Thread.hpp>
 
-#if defined(_DEBUG) && defined(_WIN32)
-#	include <Windows.h>
-#	include <WinBase.h>
-#	define __LOG_HAS_DEBUGGER
-#endif	// _WIN32
-
-
-
 //Right now we are enforcing validity by having buffer larger than what we would theorethically need
 static constexpr uintptr_t g_DateTimeThreadMessageSize = sizeof("[00000/000/000-000:000:000.00000|0000000000]") - 1;
 static inline bool formatDateTimeThreadValid(const core::DateTime&)
@@ -158,21 +150,6 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 	return 9;
 }
 
-#ifdef __LOG_HAS_DEBUGGER
-static void output2debugger(
-	core::os_string_view p_file,
-	std::u8string_view p_line,
-	std::u8string_view p_dateTimeThread,
-	std::u8string_view p_category,
-	std::u8string_view p_message)
-{
-	std::basic_stringstream<char16_t> t_stream;
-	t_stream << reinterpret_cast<std::u16string_view&>(p_file) << u'(' << core::ANSI_to_UTF16(p_line) << u"): "
-		<< core::ANSI_to_UTF16(p_dateTimeThread) << u' ' << core::ANSI_to_UTF16(p_category)
-		<< core::ANSI_to_UTF16(p_message) << u'\n';
-	OutputDebugStringW(reinterpret_cast<const wchar_t*>(t_stream.str().c_str()));
-}
-#endif
 
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
@@ -213,15 +190,6 @@ void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_li
 	{
 		sink->output(log_data);
 	}
-
-#ifdef __LOG_HAS_DEBUGGER
-	output2debugger(
-		p_file,
-		std::u8string_view(line.data(), line_size),
-		std::u8string_view(dateTimeThread.data(), dateTimeThread_size),
-		std::u8string_view(level.data(), level_size),
-		p_message);
-#endif
 }
 
 void LoggerHelper::add_sink(log_sink& p_sink)

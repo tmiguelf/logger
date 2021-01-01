@@ -33,7 +33,6 @@
 #include "log_sink.hpp"
 #include "Logger_api.h"
 
-
 namespace logger
 {
 ///	\brief Created to do Logging to file
@@ -61,4 +60,4 @@ private:
 	std::basic_ofstream<char8_t> m_output; //!< Output file
 };
 
-}	// namespace simLog
+}	// namespace logger
