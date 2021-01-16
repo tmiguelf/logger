@@ -44,6 +44,7 @@ struct log_data
 {
 	core::os_string_view	m_file;
 	std::u8string_view		m_line;
+	std::u8string_view		m_column;
 	std::u8string_view		m_dateTimeThread;
 	std::u8string_view		m_level;
 	std::u8string_view		m_message;
@@ -51,6 +52,7 @@ struct log_data
 	core::DateTime			m_time;
 	core::thread_id_t		m_threadId;
 	uint32_t				m_lineNumber;
+	uint32_t				m_columnNumber;
 	Level					m_levelNumber;
 };
 

@@ -56,8 +56,14 @@ void log_file_sink::output(const log_data& p_logData)
 		<< reinterpret_cast<const std::u8string_view&>(p_logData.m_file)
 #endif
 		<< u8'('
-		<< p_logData.m_line
-		<< u8") "
+		<< p_logData.m_line;
+
+	if(p_logData.m_columnNumber)
+	{
+		ts << u8',' << p_logData.m_column;
+	}
+
+	ts	<< u8") "
 		<< p_logData.m_level
 		<< p_logData.m_message
 		<< '\n';

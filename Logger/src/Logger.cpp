@@ -154,7 +154,7 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
 
-void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_line, std::u8string_view p_message)
+void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
 {
 #ifndef _DEBUG
 	if(p_level == Level::Debug) return;
@@ -173,6 +173,10 @@ void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_li
 	std::array<char8_t, 10> line;
 	uintptr_t line_size = core::to_chars(p_line, std::span<char8_t, 10>{line});
 
+	//column
+	std::array<char8_t, 10> column;
+	uintptr_t column_size = core::to_chars(p_column, std::span<char8_t, 10>{column});
+
 	//category
 	std::array<char8_t, 9> level;
 	uintptr_t level_size = FormatLogLevel(p_level, level);
@@ -181,10 +185,12 @@ void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_li
 	log_data.m_dateTimeThread	= std::u8string_view(dateTimeThread.data(), dateTimeThread_size);
 	log_data.m_file				= p_file;
 	log_data.m_line				= std::u8string_view(line.data(), line_size);
+	log_data.m_column			= std::u8string_view(column.data(), column_size);
 	log_data.m_message			= p_message;
 
 	log_data.m_levelNumber	= p_level;
 	log_data.m_lineNumber	= p_line;
+	log_data.m_columnNumber	= p_column;
 
 	for(log_sink* sink: m_sinks)
 	{
@@ -230,9 +236,9 @@ Logger_API void Log_remove_all()
 	logger::g_logger.clear();
 }
 
-Logger_API void Log_Message(Level p_level, core::os_string_view p_file, uint32_t p_line, std::u8string_view p_message)
+Logger_API void Log_Message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
 {
-	logger::g_logger.log(p_level, p_file, p_line, p_message);
+	logger::g_logger.log(p_level, p_file, p_line, p_column, p_message);
 }
 
 }// namespace simLog

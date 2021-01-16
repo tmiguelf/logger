@@ -44,7 +44,14 @@ void log_debugger_sink::output(const log_data& p_logData)
 {
 	std::basic_stringstream<char16_t> t_stream;
 	t_stream << reinterpret_cast<const std::u16string_view&>(p_logData.m_file) << u'('
-		<< core::ANSI_to_UTF16(p_logData.m_line) << u"): "
+		<< core::ANSI_to_UTF16(p_logData.m_line);
+
+	if(p_logData.m_columnNumber)
+	{
+		t_stream << u',' << core::ANSI_to_UTF16(p_logData.m_column);
+	}
+
+	t_stream << u"): "
 		<< core::ANSI_to_UTF16(p_logData.m_dateTimeThread)
 		<< u' ' << core::ANSI_to_UTF16(p_logData.m_level)
 		<< core::ANSI_to_UTF16(p_logData.m_message) << u'\n';
