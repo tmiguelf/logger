@@ -46,6 +46,7 @@ struct log_cache
 	core::os_string file;
 
 	std::u8string lineStr;
+	std::u8string columnStr;
 	std::u8string dateTimeThread;
 	std::u8string levelStr;
 	std::u8string message;
@@ -53,6 +54,7 @@ struct log_cache
 	core::DateTime		time;
 	core::thread_id_t	threadId;
 	uint32_t			line;
+	uint32_t			column;
 	logger::Level		level;
 };
 
@@ -64,12 +66,14 @@ class test_sink: public logger::log_sink
 
 		cache.file				= p_logData.m_file;
 		cache.lineStr			= p_logData.m_line;
+		cache.columnStr			= p_logData.m_column;
 		cache.dateTimeThread	= p_logData.m_dateTimeThread;
 		cache.levelStr			= p_logData.m_level;
 		cache.message			= p_logData.m_message;
 		cache.time				= p_logData.m_time;
 		cache.threadId			= p_logData.m_threadId;
 		cache.line				= p_logData.m_lineNumber;
+		cache.column			= p_logData.m_columnNumber;
 		cache.level				= p_logData.m_levelNumber;
 	}
 public:
@@ -134,6 +138,8 @@ TEST(Logger, Logger_interface)
 
 			ASSERT_EQ(cache.line, logLines[i]) << "Case " << i;
 			ASSERT_EQ(cache.lineStr, lineStr) << "Case " << i;
+			ASSERT_EQ(cache.column, 0_ui32) << "Case " << i;
+			ASSERT_EQ(cache.columnStr, u8"0") << "Case " << i;
 			ASSERT_EQ(cache.file, fileName) << "Case " << i;
 			ASSERT_EQ(cache.threadId, threadId) << "Case " << i;
 			//TODO: nned improvement
@@ -184,7 +190,7 @@ TEST(Logger, Logger_interface)
 
 		const core::os_string fileName {U"Random Name"};
 
-		LOG_CUSTOM(fileName, 42, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
+		LOG_CUSTOM(fileName, 42, 7, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
 
 		logger::Log_remove_sink(tsink);
 		ASSERT_EQ(tsink.m_log_cache.size(), 1_uip);
@@ -195,6 +201,8 @@ TEST(Logger, Logger_interface)
 		ASSERT_EQ(cache.levelStr, std::u8string_view{u8"Lvl(12): "});
 		ASSERT_EQ(cache.line, 42_ui32);
 		ASSERT_EQ(cache.lineStr, std::u8string_view{u8"42"});
+		ASSERT_EQ(cache.column, 7_ui32);
+		ASSERT_EQ(cache.columnStr, std::u8string_view{u8"7"});
 		ASSERT_EQ(cache.file, fileName);
 	}
 }
