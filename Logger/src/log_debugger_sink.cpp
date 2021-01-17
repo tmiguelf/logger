@@ -27,7 +27,7 @@
 
 #include "Logger/log_debugger_sink.hpp"
 
-#if _WIN32
+#ifdef _WIN32
 
 #include <Windows.h>
 #include <WinBase.h>

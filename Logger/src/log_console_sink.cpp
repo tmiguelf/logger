@@ -26,7 +26,7 @@
 //======== ======== ======== ======== ======== ======== ======== ========
 
 #include "Logger/log_console_sink.hpp"
-
+#include <CoreLib/Core_Console.hpp>
 #include <iostream>
 
 namespace logger
@@ -38,11 +38,10 @@ void log_console_sink::output(const log_data& p_logData)
 {
 	if(p_logData.m_levelNumber != Level::Info)
 	{
-		std::cout.write(reinterpret_cast<const char*>(p_logData.m_level.data()), p_logData.m_level.size());
+		core::cout.write(p_logData.m_level);
 	}
-
-	std::cout.write(reinterpret_cast<const char*>(p_logData.m_message.data()), p_logData.m_message.size());
-	std::cout.put('\n');
+	core::cout.write(p_logData.m_message);
+	core::cout.put('\n');
 }
 
 }
