@@ -51,7 +51,7 @@ void log_file_sink::output(const log_data& p_logData)
 
 	ts	<< p_logData.m_dateTimeThread
 #ifdef _WIN32
-		<< p_logData.m_file.to_print_UTF8('?')
+		<< core::UTF16_to_UTF8_faulty(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?')
 #else
 		<< reinterpret_cast<const std::u8string_view&>(p_logData.m_file)
 #endif

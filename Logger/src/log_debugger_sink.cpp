@@ -35,6 +35,8 @@
 #include <sstream>
 #include <string_view>
 
+#include <CoreLib/string/core_string_encoding.hpp>
+
 namespace logger
 {
 

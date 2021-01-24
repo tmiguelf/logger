@@ -104,9 +104,9 @@ TEST(Logger, Logger_interface)
 #ifdef _WIN32
 		std::wstring_view help{__FILEW__};
 
-		core::os_string_view fileName = core::rvalue_reinterpret_cast<core::os_string_view>(std::wstring_view{__FILEW__});
+		core::os_string_view fileName =std::wstring_view{__FILEW__};
 #else
-		core::os_string_view fileName = core::rvalue_reinterpret_cast<core::os_string_view>(std::string_view{__FILE__});
+		core::os_string_view fileName = std::string_view{__FILE__};
 #endif
 
 		std::vector<uint32_t> logLines;
@@ -188,7 +188,11 @@ TEST(Logger, Logger_interface)
 		test_sink tsink;
 		logger::Log_add_sink(tsink);
 
-		const core::os_string fileName {U"Random Name"};
+#ifdef _WIN32
+		const core::os_string fileName {L"Random Name"};
+#else
+		const core::os_string fileName {"Random Name"};
+#endif
 
 		LOG_CUSTOM(fileName, 42, 7, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
 

@@ -89,9 +89,9 @@ public:
 /// \param[in] Level - \ref logger::Level
 
 #ifdef _WIN32
-#define LOG_MESSAGE(Level) LOG_CUSTOM(core::rvalue_reinterpret_cast<core::os_string_view>(std::wstring_view{__FILEW__}), static_cast<uint32_t>(__LINE__), 0, Level)
+#define LOG_MESSAGE(Level) LOG_CUSTOM(std::wstring_view{__FILEW__}, static_cast<uint32_t>(__LINE__), 0, Level)
 #else
-#define LOG_MESSAGE(Level) LOG_CUSTOM(core::rvalue_reinterpret_cast<core::os_string_view>(std::string_view{__FILE__}), static_cast<uint32_t>(__LINE__), 0, Level)
+#define LOG_MESSAGE(Level) LOG_CUSTOM(std::string_view{__FILE__}, static_cast<uint32_t>(__LINE__), 0, Level)
 #endif
 
 /// \brief Helper Macro for info logs
