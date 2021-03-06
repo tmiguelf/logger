@@ -90,49 +90,46 @@ namespace logger::_p
 			return operator << (std::u8string_view{p_data});
 		}
 
-		template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
+		template<typename T> requires std::is_arithmetic_v<T>
 		inline LogStreamer& operator << (T p_data)
 		{
 			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << core::toStream(p_data);
 			return *this;
 		}
 
-		template<typename T, std::enable_if_t<std::is_pointer_v<T>, int> = 0>
+		template<typename T> requires std::is_pointer_v<T>
 		inline LogStreamer& operator << (T p_data)
 		{
 			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << core::toStream<void*>(p_data);
 			return *this;
 		}
 
-		template<typename T, std::enable_if_t<
-			!std::is_arithmetic_v<T> &&
-			!std::is_pointer_v<T> &&
+		template<typename T> requires
+			(!std::is_arithmetic_v<T>) &&
+			(!std::is_pointer_v<T>) &&
 			has_stream_operator<char8_t, T>
-			, int> = 0>
 		inline LogStreamer& operator << (const T& p_data)
 		{
 			m_stream << p_data;
 			return *this;
 		}
 
-		template<typename T, std::enable_if_t<
-			!std::is_arithmetic_v<T> &&
-			!std::is_pointer_v<T> &&
-			!has_stream_operator<char8_t, T> &&
+		template<typename T> requires 
+			(!std::is_arithmetic_v<T>) &&
+			(!std::is_pointer_v<T>) &&
+			(!has_stream_operator<char8_t, T>) &&
 			has_stream_operator<char, T>
-			, int> = 0>
 		inline LogStreamer& operator << (const T& p_data)
 		{
 			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << p_data;
 			return *this;
 		}
 
-		template<typename T, std::enable_if_t<
-			!std::is_arithmetic_v<T> &&
-			!std::is_pointer_v<T> &&
-			!has_stream_operator<char8_t, T> &&
-			!has_stream_operator<char, T>
-			, int> = 0>
+		template<typename T> requires
+			(!std::is_arithmetic_v<T>) &&
+			(!std::is_pointer_v<T>) &&
+			(!has_stream_operator<char8_t, T>) &&
+			(!has_stream_operator<char, T>)
 		inline void operator << (const T&)
 		{
 			static_assert(std::is_arithmetic_v<T> ||
@@ -160,13 +157,13 @@ namespace logger::_p
 	class DumpStream
 	{
 	public:
-		template<typename T, std::enable_if_t<stream_supports<T>::value, int> = 0>
+		template<typename T> requires stream_supports<T>::value
 		inline DumpStream& operator << (const T&)
 		{
 			return *this;
 		}
 
-		template<typename T, std::enable_if_t<!stream_supports<T>::value, int> = 0>
+		template<typename T> requires (!stream_supports<T>::value)
 		inline void operator << (const T&)
 		{
 			static_assert(stream_supports<T>::value, "No suitable stream operation defined");
