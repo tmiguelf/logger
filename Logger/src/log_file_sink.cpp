@@ -24,9 +24,13 @@
 //======== ======== ======== ======== ======== ======== ======== ========
 
 #include "Logger/log_file_sink.hpp"
-#include "Logger/log_streamer.hpp"
+
+#include <array>
 
 #include <CoreLib/string/core_string_encoding.hpp>
+
+#include "Logger/log_streamer.hpp"
+
 
 namespace logger
 {
@@ -87,7 +91,12 @@ bool log_file_sink::init(const std::filesystem::path& p_fileName)
 
 	std::filesystem::create_directories(fileName.parent_path());
 	m_output.open(p_fileName, std::ios_base::binary | std::ios_base::out);
-	return m_output.is_open();
+	if(!m_output.is_open()) return false;
+
+	constexpr std::array<char8_t, 3> UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
+	m_output.write(UTF8_BOM.data(), UTF8_BOM.size());
+
+	return true;
 }
 
 void log_file_sink::end()
