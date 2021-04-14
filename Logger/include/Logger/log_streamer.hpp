@@ -51,6 +51,27 @@ namespace logger::_p
 	template<typename charT, typename OpT>
 	constexpr bool has_stream_operator = is_stream_op_available<charT, OpT>::value;
 
+	template<size_t TSIZE, size_t TALIGNED, bool TSIGNED>
+	struct int_aliased_type;
+
+	template<> struct int_aliased_type<sizeof(uint8_t ), alignof(uint8_t ), false> { using type = uint8_t ; };
+	template<> struct int_aliased_type<sizeof(uint16_t), alignof(uint16_t), false> { using type = uint16_t; };
+	template<> struct int_aliased_type<sizeof(uint32_t), alignof(uint32_t), false> { using type = uint32_t; };
+	template<> struct int_aliased_type<sizeof(uint64_t), alignof(uint64_t), false> { using type = uint64_t; };
+	template<> struct int_aliased_type<sizeof(int8_t ), alignof(int8_t ), true> { using type = int8_t ; };
+	template<> struct int_aliased_type<sizeof(int16_t), alignof(int16_t), true> { using type = int16_t; };
+	template<> struct int_aliased_type<sizeof(int32_t), alignof(int32_t), true> { using type = int32_t; };
+	template<> struct int_aliased_type<sizeof(int64_t), alignof(int64_t), true> { using type = int64_t; };
+
+	template<typename T>
+	using int_aliased_type_t = int_aliased_type<sizeof(T), alignof(T), std::is_signed_v<T>>::type;
+
+	template<typename T>
+	constexpr inline bool no_requiredAlias()
+	{
+		return std::is_same_v<std::remove_cv_t<T>, int_aliased_type_t<T>>;
+	}
+
 	class LogStreamer
 	{
 	public:
@@ -89,14 +110,22 @@ namespace logger::_p
 		}
 
 		template<typename T> requires std::is_arithmetic_v<T>
-		inline LogStreamer& operator << (T p_data)
+		inline LogStreamer& operator << (const T p_data)
 		{
-			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << core::toStream(p_data);
+			if constexpr(!std::is_integral_v<T> || no_requiredAlias<T>())
+			{
+				reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << core::toStream(p_data);
+			}
+			else
+			{
+				reinterpret_cast<std::basic_stringstream<char>&>(m_stream)
+					<< core::toStream(static_cast<int_aliased_type_t<T>>(p_data));
+			}
 			return *this;
 		}
 
 		template<typename T> requires std::is_pointer_v<T>
-		inline LogStreamer& operator << (T p_data)
+		inline LogStreamer& operator << (const T p_data)
 		{
 			reinterpret_cast<std::basic_stringstream<char>&>(m_stream) << core::toStream<void*>(p_data);
 			return *this;
@@ -130,7 +159,8 @@ namespace logger::_p
 			(!has_stream_operator<char, T>)
 		inline void operator << (const T&)
 		{
-			static_assert(std::is_arithmetic_v<T> ||
+			static_assert(
+				std::is_arithmetic_v<T> ||
 				std::is_pointer_v<T> ||
 				has_stream_operator<char8_t, T> ||
 				has_stream_operator<char, T>
