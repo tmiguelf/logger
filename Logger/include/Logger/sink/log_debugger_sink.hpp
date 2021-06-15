@@ -25,18 +25,21 @@
 
 #pragma once
 
-#include "Logger_api.h"
+//Windows only
+#if _WIN32
 
-//======== ======== API ======== ========
+#include <Logger/Logger_api.h>
+#include "log_sink.hpp"
 
 namespace logger
 {
+///	\brief Created to do Logging to console
+class log_debugger_sink final: public log_sink
+{
+public:
+	Logger_API log_debugger_sink();
+	void output(const log_data& p_logData) final;
+};
+} //namespace logger
 
-class log_sink;
-
-Logger_API void log_add_sink(log_sink& p_stream);
-Logger_API void log_remove_sink(log_sink& p_stream);
-Logger_API void log_remove_all();
-
-
-}	// namespace simLog
+#endif // _WIN32

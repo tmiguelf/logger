@@ -25,18 +25,24 @@
 
 #pragma once
 
-#include "log_sink.hpp"
+#include <cstdint>
+#include <string_view>
+
+#include <CoreLib/string/core_os_string.hpp>
+
+#include "log_level.hpp"
 #include "Logger_api.h"
+
+//======== ======== API ======== ========
 
 namespace logger
 {
+///	\brief Public interface for logging
+///	\param[in] p_level - \ref logger::Level
+///	\param[in] p_file - Name of source file generating the log. Pleas use the Macro __FILE__
+///	\param[in] p_line - Source file line number where the Log was generated. Please use the Macro __LINE__
+///	\param[in] p_column - Source file column number. Use 0 to signify the whole line.
+///	\param[in] p_message - Message to Log
+Logger_API void log_message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message);
 
-///	\brief Created to do Logging to console
-class log_console_sink final: public log_sink
-{
-public:
-	Logger_API log_console_sink();
-	void output(const log_data& p_logData) final;
-};
-
-} // namespace logger
+} //namespace logger

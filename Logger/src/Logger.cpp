@@ -23,20 +23,23 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "Logger/Logger.hpp"
-#include "Logger/Logger_service.hpp"
 #include "Logger_p.hpp"
 
 #include <span>
 #include <array>
 
-#include <CoreLib/string/core_os_string.hpp>
-#include <CoreLib/Core_String.hpp>
+#include <CoreLib/Core_Time.hpp>
 #include <CoreLib/Core_Thread.hpp>
+#include <CoreLib/string/core_os_string.hpp>
+#include <CoreLib/string/core_string_numeric.hpp>
+
+#include <Logger/Logger_client.hpp>
+#include <Logger/Logger_service.hpp>
+#include <Logger/sink/log_file_sink.hpp>
 
 //Right now we are enforcing validity by having buffer larger than what we would theorethically need
 static constexpr uintptr_t g_DateTimeThreadMessageSize = sizeof("[00000/000/000-000:000:000.00000|0000000000]") - 1;
-static inline bool formatDateTimeThreadValid(const core::DateTime&)
+static inline constexpr bool formatDateTimeThreadValid(const core::DateTime&)
 {
 	//return !(	(p_time.date.month		>  12) ||
 	//			(p_time.date.day		>  31) || 
@@ -117,7 +120,7 @@ static size_t FormatDateThread(const core::DateTime& p_time, core::thread_id_t p
 
 	//thread
 	*pivot = '|'; ++pivot;
-	constexpr uintptr_t thread_max_digits = core::to_chars_max_digits_v<core::thread_id_t>;
+	constexpr uintptr_t thread_max_digits = core::to_chars_dec_max_digits_v<core::thread_id_t>;
 	pivot += core::to_chars(p_threadId, std::span<char8_t, thread_max_digits>{pivot, thread_max_digits});
 
 	*pivot = ']'; ++pivot;
@@ -144,7 +147,7 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 			break;
 	}
 	memcpy(p_out.data(), "Lvl(  ): ", 9);
-	core::to_hex_chars_fix(static_cast<uint8_t>(p_level), p_out.subspan<4, 2>());
+	core::to_chars_hex_fix(static_cast<uint8_t>(p_level), p_out.subspan<4, 2>());
 	return 9;
 }
 
@@ -219,22 +222,22 @@ void LoggerHelper::clear()
 	m_sinks.clear();
 }
 
-Logger_API void Log_add_sink(log_sink& p_stream)
+Logger_API void log_add_sink(log_sink& p_stream)
 {
 	g_logger.add_sink(p_stream);
 }
 
-Logger_API void Log_remove_sink(log_sink& p_stream)
+Logger_API void log_remove_sink(log_sink& p_stream)
 {
 	g_logger.remove_sink(p_stream);
 }
 
-Logger_API void Log_remove_all()
+Logger_API void log_remove_all()
 {
 	logger::g_logger.clear();
 }
 
-Logger_API void Log_Message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
+Logger_API void log_message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
 {
 	logger::g_logger.log(p_level, p_file, p_line, p_column, p_message);
 }

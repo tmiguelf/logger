@@ -23,22 +23,63 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "Logger/log_file_sink.hpp"
+#include <Logger/sink/log_file_sink.hpp>
 
 #include <array>
 
 #include <CoreLib/string/core_string_encoding.hpp>
-
-#include "Logger/log_streamer.hpp"
-
+#include <CoreLib/Core_Alloca.hpp>
 
 namespace logger
 {
 
-inline static void AuxWrite(std::basic_ostream<char8_t>& p_strm, std::u8string_view p_out)
+static inline void transfer(char8_t*& p_buff, std::u8string_view p_str)
 {
-	p_strm.write(p_out.data(), p_out.size());
+	memcpy(p_buff, p_str.data(), p_str.size());
+	p_buff += p_str.size();
 }
+
+#ifdef _WIN32
+#	define AUX_WRITE_DATA(STREAM, DATA, BUFFER, SIZE, FILE_SIZE) AuxWriteData(STREAM, DATA, BUFFER, SIZE, FILE_SIZE)
+#else
+#	define AUX_WRITE_DATA(STREAM, DATA, BUFFER, SIZE, FILE_SIZE) AuxWriteData(STREAM, DATA, BUFFER, SIZE)
+#endif
+
+static inline void
+	AUX_WRITE_DATA(std::basic_ostream<char8_t>& p_strm,
+		const log_data& p_logData,
+		char8_t* const p_buffer,
+		uintptr_t p_buffer_size,
+		uintptr_t p_fileName_size)
+{
+	char8_t* pivot = p_buffer;
+	transfer(pivot, p_logData.m_dateTimeThread);
+
+#ifdef _WIN32
+	core::_p::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?', pivot);
+	pivot += p_fileName_size;
+#else
+	memcpy(pivot, p_logData.m_file.data(), p_logData.m_file.size());
+	pivot += p_logData.m_file.size();
+#endif
+
+	*(pivot++) = u8'(';
+	transfer(pivot, p_logData.m_line);
+
+	if(p_logData.m_columnNumber)
+	{
+		*(pivot++) = u8',';
+		transfer(pivot, p_logData.m_column);
+	}
+	*(pivot++) = u8')';
+	*(pivot++) = u8' ';
+	transfer(pivot, p_logData.m_level);
+	transfer(pivot, p_logData.m_message);
+	*(pivot) = u8'\n';
+	p_strm.write(p_buffer, p_buffer_size);
+}
+
+
 
 log_file_sink::log_file_sink() = default;
 
@@ -47,31 +88,36 @@ log_file_sink::~log_file_sink()
 	end();
 }
 
+
 void log_file_sink::output(const log_data& p_logData)
 {
-	_p::u8string_stream ts;
-
-	ts	<< p_logData.m_dateTimeThread
 #ifdef _WIN32
-		<< core::UTF16_to_UTF8_faulty(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?')
+	const uintptr_t fileSize_estimate = core::_p::UTF16_to_UTF8_faulty_estimate(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?');
 #else
-		<< reinterpret_cast<const std::u8string_view&>(p_logData.m_file)
+	const uintptr_t fileSize_estimate = p_logData.m_file.size();
 #endif
-		<< u8'('
-		<< p_logData.m_line;
 
-	if(p_logData.m_columnNumber)
+	//[date]File(Line,Column) Message\n
+	const uintptr_t count = p_logData.m_dateTimeThread.size()
+		+ fileSize_estimate
+		+ p_logData.m_line.size()
+		+ (p_logData.m_columnNumber ? p_logData.m_column.size() + 1 : 0) //,
+		+ p_logData.m_level.size()
+		+ p_logData.m_message.size() + 4; //() \n
+
+	constexpr uintptr_t alloca_treshold = 0x10000;
+
+	if(count > alloca_treshold)
 	{
-		ts << u8',' << p_logData.m_column;
+		std::vector<char8_t> buff;
+		buff.resize(count);
+		AUX_WRITE_DATA(m_output, p_logData, buff.data(), count, fileSize_estimate);
 	}
-
-	ts	<< u8") "
-		<< p_logData.m_level
-		<< p_logData.m_message
-		<< '\n';
-
-	//AuxWrite(m_output, ts.view());
-	AuxWrite(m_output, ts.str());
+	else
+	{
+		char8_t* buff = reinterpret_cast<char8_t*>(core_alloca(count));
+		AUX_WRITE_DATA(m_output, p_logData, buff, count, fileSize_estimate);
+	}
 }
 
 bool log_file_sink::init(const std::filesystem::path& p_fileName)

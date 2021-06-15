@@ -16,6 +16,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\sink">
+      <UniqueIdentifier>{f7320da1-736b-4658-aa90-004afa004a89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\toLog">
+      <UniqueIdentifier>{a8cc95f2-8f38-4e42-b162-f74990ba1306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sink">
+      <UniqueIdentifier>{ce8ad971-8df5-42e4-9ab9-15a1299d301e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\toLog">
+      <UniqueIdentifier>{aadc7dbb-5317-40b6-8aaf-1d787a5bcfb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logger.include.props">
@@ -29,54 +41,75 @@
     <ClInclude Include="resources\versionSpecific.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Logger\Logger.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\Logger_api.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\Logger_service.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\log_console_sink.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\log_file_sink.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\log_sink.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\log_streamer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Logger_p.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Logger\log_level.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Logger\log_debugger_sink.hpp">
+    <ClInclude Include="include\Logger\Logger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\log_console_sink.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\log_file_sink.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\log_debugger_sink.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="include\Logger\Logger_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\Logger_client.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\Logger_service.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\sink\log_console_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\sink\log_debugger_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\sink\log_file_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\sink\log_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\toLog\log_streamer.hpp">
+      <Filter>Header Files\toLog</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\toLog\log_tuple.hpp">
+      <Filter>Header Files\toLog</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\toLog\toLog.hpp">
+      <Filter>Header Files\toLog</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\toLog\toLog_corelib_net.hpp">
+      <Filter>Header Files\toLog</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\toLog\toLog_encoders.hpp">
+      <Filter>Header Files\toLog</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Logger\toLog\toLog_filesystem.hpp">
+      <Filter>Header Files\toLog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\dllVersion.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\sink\log_file_sink.cpp">
+      <Filter>Source Files\sink</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sink\log_console_sink.cpp">
+      <Filter>Source Files\sink</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sink\log_debugger_sink.cpp">
+      <Filter>Source Files\sink</Filter>
+    </ClCompile>
+    <ClCompile Include="src\toLog\log_streamer.cpp">
+      <Filter>Source Files\toLog</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

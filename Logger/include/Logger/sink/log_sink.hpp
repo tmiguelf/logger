@@ -25,18 +25,40 @@
 
 #pragma once
 
-#include "Logger_api.h"
+#include <cstdint>
+#include <string_view>
 
-//======== ======== API ======== ========
+#include <CoreLib/Core_Time.hpp>
+#include <CoreLib/Core_Thread.hpp>
+#include <CoreLib/string/core_os_string.hpp>
+
+#include <Logger/log_level.hpp>
+
 
 namespace logger
 {
+///	\brief Holds the Logging data information
+struct log_data
+{
+	core::os_string_view	m_file;
+	std::u8string_view		m_line;
+	std::u8string_view		m_column;
+	std::u8string_view		m_dateTimeThread;
+	std::u8string_view		m_level;
+	std::u8string_view		m_message;
 
-class log_sink;
+	core::DateTime			m_time;
+	core::thread_id_t		m_threadId;
+	uint32_t				m_lineNumber;
+	uint32_t				m_columnNumber;
+	Level					m_levelNumber;
+};
 
-Logger_API void log_add_sink(log_sink& p_stream);
-Logger_API void log_remove_sink(log_sink& p_stream);
-Logger_API void log_remove_all();
-
+///	\brief Created to do Logging streams
+class log_sink
+{
+public:
+	virtual void output(const log_data& p_logData) = 0;
+};
 
 }	// namespace simLog

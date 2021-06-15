@@ -23,39 +23,47 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#pragma once
+#include <Logger/toLog/log_streamer.hpp>
 
-#include <fstream>
-#include <filesystem>
+#include <vector>
 
-#include "log_sink.hpp"
-#include "Logger_api.h"
+#include <CoreLib/Core_Alloca.hpp>
 
-namespace logger
+namespace logger::_p
 {
-///	\brief Created to do Logging to file
-class log_file_sink final: public log_sink
+
+void LogStreamer::push(std::span<const toLog_base*> p_data, char8_t* const p_buff, uintptr_t p_size) const
 {
-public:
-	Logger_API log_file_sink();
-	Logger_API ~log_file_sink();
+	char8_t* pivot = p_buff;
+	for(const toLog_base* t_obj : p_data)
+	{
+		const uintptr_t size = t_obj->size();
+		if(size)
+		{
+			t_obj->push(pivot);
+			pivot += size;
+		}
+	}
 
-	///	\brief Logs data to file
-	///	\praram[in] - p_logData - Data that will be logged to the file
-	void output(const log_data& p_logData) final;
+	log_message(m_level, m_file, m_line, m_column, std::u8string_view{p_buff, p_size});
+}
 
-	///	\brief Initiates the logging to File stream,
-	///			Creates a file with the given file name
-	///	\param[in] - p_fileName - Name of the file that the message will be logged to
-	///	\return true on success, false otherwise
-	Logger_API bool init(const std::filesystem::path& p_fileName);
 
-	///	\brief Terminates the logging to File stream,
-	///			Closese the file which the message was logged to
-	Logger_API void end();
+Logger_API void LogStreamer::push(uintptr_t p_char_count, std::span<const toLog_base*> p_data) const
+{
+	constexpr uintptr_t alloca_treshold = 0x10000;
 
-private:
-	std::basic_ofstream<char8_t> m_output; //!< Output file
-};
+	if(p_char_count > alloca_treshold)
+	{
+			std::vector<char8_t> buff;
+			buff.resize(p_char_count);
+			push(p_data, buff.data(), p_char_count);
+	}
+	else
+	{
+		char8_t* buff = reinterpret_cast<char8_t*>(core_alloca(p_char_count));
+		push(p_data, buff, p_char_count);
+	}
+}
 
-}	// namespace logger
+} //namespace logger::_p

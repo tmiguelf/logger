@@ -24,19 +24,19 @@
 //======== ======== ======== ======== ======== ======== ======== ========
 
 #pragma once
+#include "toLog_encoders.hpp"
+#include <filesystem>
 
-#include "Logger_api.h"
-
-//======== ======== API ======== ========
+#include <CoreLib/string/core_os_string.hpp>
 
 namespace logger
 {
 
-class log_sink;
+template<>
+class toLog<std::filesystem::path>: public toLog<std::basic_string_view<core::os_char>>
+{
+public:
+	toLog(const std::filesystem::path& p_data): toLog<std::basic_string_view<core::os_char>>(p_data.native()){}
+};
 
-Logger_API void log_add_sink(log_sink& p_stream);
-Logger_API void log_remove_sink(log_sink& p_stream);
-Logger_API void log_remove_all();
-
-
-}	// namespace simLog
+} //namespace logger

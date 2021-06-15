@@ -25,21 +25,52 @@
 
 #pragma once
 
-//Windows only
-#if _WIN32
-
-#include "log_sink.hpp"
-#include "Logger_api.h"
+#include <cstdint>
+#include <type_traits>
 
 namespace logger
 {
-///	\brief Created to do Logging to console
-class log_debugger_sink final: public log_sink
+
+class toLog_base
+{
+protected:
+	uintptr_t m_size = 0;
+
+public:
+	constexpr toLog_base() = default;
+	constexpr toLog_base(uintptr_t p_size): m_size{p_size}{}
+
+	inline constexpr uintptr_t size() const { return m_size; }
+	virtual void push(char8_t*) const = 0;
+};
+
+
+template <typename>
+class toLog;
+template <typename T> toLog(T) -> toLog<std::remove_cvref_t<T>>;
+
+template<typename T>
+class toLog_f: public toLog_base
 {
 public:
-	Logger_API log_debugger_sink();
-	void output(const log_data& p_logData) final;
-};
-} //namespace logger
+	using method_t = void (*)(const T&, char8_t*);
+	using sizer_f = uintptr_t (*)(const T&);
 
-#endif // _WIN32
+public:
+	inline constexpr toLog_f(const T& p_data, uintptr_t p_size, method_t p_method): toLog_base{p_size}, m_data{p_data}, m_method{p_method}{}
+	inline constexpr toLog_f(const T& p_data, sizer_f p_sizer, method_t p_method): toLog_f(p_data, p_sizer(p_data), p_method){}
+
+	void push(char8_t* p_out) const final
+	{
+		m_method(m_data, p_out);
+	}
+
+private:
+	method_t m_method;
+	const T& m_data;
+};
+
+template <typename T> toLog_f(T, uintptr_t, void(*)(const std::remove_cvref_t<T>&, char8_t*)) -> toLog_f<std::remove_cvref_t<T>>;
+template <typename T> toLog_f(T, uintptr_t (*)(const std::remove_cvref_t<T>&), void(*)(const std::remove_cvref_t<T>&, char8_t*)) -> toLog_f<std::remove_cvref_t<T>>;
+
+} //namespace logger

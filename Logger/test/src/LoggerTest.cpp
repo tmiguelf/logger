@@ -23,21 +23,24 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
+#include <iostream>
+#include <vector>
+#include <array>
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include <CoreLib/Core_Thread.hpp>
 #include <CoreLib/Core_Type.hpp>
 
+#include <TestUtils/string_streamers.hpp>
+
 #include <Logger/Logger.hpp>
 #include <Logger/Logger_service.hpp>
-#include <Logger/log_sink.hpp>
-
-#include <iostream>
-#include <vector>
-#include <array>
+#include <Logger/sink/log_sink.hpp>
 
 using namespace core::literals;
+using namespace std::literals;
 
 struct log_cache
 {
@@ -86,17 +89,29 @@ public:
 	uint64_t data = 0;
 };
 
-inline std::ostream& operator << (std::ostream& p_stream, const TestStr& p_data)
+template<>
+class logger::toLog<TestStr>: public toLog_base
 {
-	p_stream << "TestStr = " << core::toStream{p_data.data};
-	return p_stream;
-}
+public:
+	toLog(const TestStr&)
+	{
+		m_size = preamble.size();
+	}
+
+	void push(char8_t* p_out) const final
+	{
+		memcpy(p_out, preamble.data(), preamble.size());
+	}
+
+private:
+	static constexpr std::u8string_view preamble = u8"TestStr"sv;
+};
 
 TEST(Logger, Logger_interface)
 {
 	{
 		test_sink tsink;
-		logger::Log_add_sink(tsink);
+		logger::log_add_sink(tsink);
 
 		TestStr test;
 #ifdef _WIN32
@@ -110,20 +125,19 @@ TEST(Logger, Logger_interface)
 		std::vector<uint32_t> logLines;
 		core::thread_id_t threadId = core::current_thread_id();
 
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << test;
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_WARNING << 32;
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_ERROR << &test;
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << "char string";
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << u8"char8_t string";
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << std::string_view{"string_view"};
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << std::u8string_view{u8"u8string_view"};
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << 'A';
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << u8'A';
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << uint8_t{5};
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << int8_t{-5};
-		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO << "Combination " << 32 << ' ' << &test;
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO(test);
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_WARNING(32);
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_ERROR(&test);
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO("string_view"sv);
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO(u8"u8string_view"sv);
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO('A');
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO(u8'A');
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO(uint8_t{5});
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO(int8_t{-5});
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO();
+		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO("Combination "sv, 32, ' ', test);
 
-		logger::Log_remove_sink(tsink);
+		logger::log_remove_sink(tsink);
 
 		ASSERT_EQ(tsink.m_log_cache.size(), logLines.size());
 
@@ -140,7 +154,7 @@ TEST(Logger, Logger_interface)
 			ASSERT_EQ(cache.columnStr, u8"0") << "Case " << i;
 			ASSERT_EQ(cache.file, fileName) << "Case " << i;
 			ASSERT_EQ(cache.threadId, threadId) << "Case " << i;
-			//TODO: nned improvement
+			//TODO: need improvement
 			ASSERT_FALSE(cache.dateTimeThread.empty()) << "Case " << i; //Note might need better test
 			//cache.time
 		}
@@ -152,7 +166,7 @@ TEST(Logger, Logger_interface)
 		ASSERT_EQ(tsink.m_log_cache[2].level, logger::Level::Error);
 		ASSERT_EQ(tsink.m_log_cache[2].levelStr, std::u8string_view{u8"Error: "});
 
-		ASSERT_EQ(tsink.m_log_cache[0].message, std::u8string_view{u8"TestStr = 0"});
+		ASSERT_EQ(tsink.m_log_cache[0].message, std::u8string_view{u8"TestStr"});
 		ASSERT_EQ(tsink.m_log_cache[1].message, std::u8string_view{u8"32"});
 		{
 			std::u8string_view log_message_2 = tsink.m_log_cache[2].message;
@@ -160,21 +174,21 @@ TEST(Logger, Logger_interface)
 			ASSERT_EQ(log_message_2.substr(0, 2), std::u8string_view{u8"0x"});
 			ASSERT_TRUE(core::is_hex(log_message_2.substr(2)));
 		}
-		ASSERT_EQ(tsink.m_log_cache[3].message, std::u8string_view{u8"char string"});
-		ASSERT_EQ(tsink.m_log_cache[4].message, std::u8string_view{u8"char8_t string"});
-		ASSERT_EQ(tsink.m_log_cache[5].message, std::u8string_view{u8"string_view"});
-		ASSERT_EQ(tsink.m_log_cache[6].message, std::u8string_view{u8"u8string_view"});
-		ASSERT_EQ(tsink.m_log_cache[7].message, std::u8string_view{u8"A"});
-		ASSERT_EQ(tsink.m_log_cache[8].message, std::u8string_view{u8"A"});
-		ASSERT_EQ(tsink.m_log_cache[9].message, std::u8string_view{u8"5"});
-		ASSERT_EQ(tsink.m_log_cache[10].message, std::u8string_view{u8"-5"});
+		ASSERT_EQ(tsink.m_log_cache[3].message, std::u8string_view{u8"string_view"});
+		ASSERT_EQ(tsink.m_log_cache[4].message, std::u8string_view{u8"u8string_view"});
+		ASSERT_EQ(tsink.m_log_cache[5].message, std::u8string_view{u8"A"});
+		ASSERT_EQ(tsink.m_log_cache[6].message, std::u8string_view{u8"A"});
+		ASSERT_EQ(tsink.m_log_cache[7].message, std::u8string_view{u8"5"});
+		ASSERT_EQ(tsink.m_log_cache[8].message, std::u8string_view{u8"-5"});
+		ASSERT_EQ(tsink.m_log_cache[9].message, std::u8string_view{u8""});
+		ASSERT_EQ(tsink.m_log_cache[10].message, std::u8string_view{u8"Combination 32 TestStr"});
 	}
 
 	{
 		test_sink tsink;
-		logger::Log_add_sink(tsink);
-		LOG_DEBUG << "Debug Test " << 32 << ' ';
-		logger::Log_remove_sink(tsink);
+		logger::log_add_sink(tsink);
+		LOG_DEBUG("Debug Test "sv, 32, ' ');
+		logger::log_remove_sink(tsink);
 #ifdef _DEBUG
 		ASSERT_FALSE(tsink.m_log_cache.empty());
 #else
@@ -184,7 +198,7 @@ TEST(Logger, Logger_interface)
 
 	{
 		test_sink tsink;
-		logger::Log_add_sink(tsink);
+		logger::log_add_sink(tsink);
 
 #ifdef _WIN32
 		const core::os_string fileName {L"Random Name"};
@@ -192,9 +206,9 @@ TEST(Logger, Logger_interface)
 		const core::os_string fileName {"Random Name"};
 #endif
 
-		LOG_CUSTOM(fileName, 42, 7, logger::Level{0x12}) << "Custom Test " << 32 << ' ';
+		LOG_CUSTOM(fileName, 42, 7, logger::Level{0x12}, "Custom Test "sv, 32, ' ');
 
-		logger::Log_remove_sink(tsink);
+		logger::log_remove_sink(tsink);
 		ASSERT_EQ(tsink.m_log_cache.size(), 1_uip);
 
 		log_cache& cache = tsink.m_log_cache[0];

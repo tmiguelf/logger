@@ -23,42 +23,23 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#pragma once
-
-#include <cstdint>
-#include <string_view>
-
-#include <CoreLib/Core_Time.hpp>
-#include <CoreLib/Core_Thread.hpp>
-#include <CoreLib/string/core_os_string.hpp>
-
-#include "log_level.hpp"
-
+#include <Logger/sink/log_console_sink.hpp>
+#include <CoreLib/Core_Console.hpp>
+#include <iostream>
 
 namespace logger
 {
-///	\brief Holds the Logging data information
-struct log_data
+
+log_console_sink::log_console_sink() = default;
+
+void log_console_sink::output(const log_data& p_logData)
 {
-	core::os_string_view	m_file;
-	std::u8string_view		m_line;
-	std::u8string_view		m_column;
-	std::u8string_view		m_dateTimeThread;
-	std::u8string_view		m_level;
-	std::u8string_view		m_message;
+	if(p_logData.m_levelNumber != Level::Info)
+	{
+		core::cout.write(p_logData.m_level);
+	}
+	core::cout.write(p_logData.m_message);
+	core::cout.put('\n');
+}
 
-	core::DateTime			m_time;
-	core::thread_id_t		m_threadId;
-	uint32_t				m_lineNumber;
-	uint32_t				m_columnNumber;
-	Level					m_levelNumber;
-};
-
-///	\brief Created to do Logging streams
-class log_sink
-{
-public:
-	virtual void output(const log_data& p_logData) = 0;
-};
-
-}	// namespace simLog
+}

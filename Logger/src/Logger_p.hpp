@@ -25,22 +25,17 @@
 
 #pragma once
 
-#include "Logger/Logger.hpp"
-#include "Logger/log_sink.hpp"
-
-#include <deque>
-#include <string>
 #include <string_view>
-
-#include <CoreLib/Core_Thread.hpp>
-#include <CoreLib/Core_Time.hpp>
-
 #include <vector>
 
+#include <CoreLib/string/core_os_string.hpp>
 
-/// \n
+#include <Logger/log_level.hpp>
+
 namespace logger
 {
+
+class log_sink;
 
 /// \brief Log helper class that holds Logger streamers such as Logging to File and Logging to Console
 class LoggerHelper
@@ -70,5 +65,3 @@ public:
 };
 
 }	// namespace simLog
-
-/// \endcond

@@ -54,21 +54,21 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Logger.cpp" />
-    <ClCompile Include="src\log_console_sink.cpp" />
-    <ClCompile Include="src\log_debugger_sink.cpp" />
-    <ClCompile Include="src\log_file_sink.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\Logger\Logger.hpp" />
     <ClInclude Include="include\Logger\Logger_api.h" />
+    <ClInclude Include="include\Logger\Logger_client.hpp" />
     <ClInclude Include="include\Logger\Logger_service.hpp" />
-    <ClInclude Include="include\Logger\log_console_sink.hpp" />
-    <ClInclude Include="include\Logger\log_debugger_sink.hpp" />
-    <ClInclude Include="include\Logger\log_file_sink.hpp" />
     <ClInclude Include="include\Logger\log_level.hpp" />
-    <ClInclude Include="include\Logger\log_sink.hpp" />
-    <ClInclude Include="include\Logger\log_streamer.hpp" />
+    <ClInclude Include="include\Logger\sink\log_console_sink.hpp" />
+    <ClInclude Include="include\Logger\sink\log_debugger_sink.hpp" />
+    <ClInclude Include="include\Logger\sink\log_file_sink.hpp" />
+    <ClInclude Include="include\Logger\sink\log_sink.hpp" />
+    <ClInclude Include="include\Logger\toLog\log_streamer.hpp" />
+    <ClInclude Include="include\Logger\toLog\log_tuple.hpp" />
+    <ClInclude Include="include\Logger\toLog\toLog.hpp" />
+    <ClInclude Include="include\Logger\toLog\toLog_corelib_net.hpp" />
+    <ClInclude Include="include\Logger\toLog\toLog_encoders.hpp" />
+    <ClInclude Include="include\Logger\toLog\toLog_filesystem.hpp" />
     <ClInclude Include="resources\versionSpecific.h" />
     <ClInclude Include="src\Logger_p.hpp" />
   </ItemGroup>
@@ -80,6 +80,13 @@
   <ItemGroup>
     <None Include="Logger.import.props" />
     <None Include="Logger.include.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Logger.cpp" />
+    <ClCompile Include="src\sink\log_console_sink.cpp" />
+    <ClCompile Include="src\sink\log_debugger_sink.cpp" />
+    <ClCompile Include="src\sink\log_file_sink.cpp" />
+    <ClCompile Include="src\toLog\log_streamer.cpp" />
   </ItemGroup>
   <Import Project="$(quickMSBuildPath)default.cpp.targets" />
 </Project>
