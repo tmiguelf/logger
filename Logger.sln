@@ -13,8 +13,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "googletest", "submodules\go
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "googlemock", "submodules\googletest\googlemock\googlemock.vcxproj", "{D093761A-08DF-4A74-A0E3-F34DB77A2118}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LogBench", "LogBench\LogBench.vcxproj", "{DFB8E797-848E-4617-B4F5-CF87EAEB0187}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "submodules\benchmark\benchmark\benchmark.vcxproj", "{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestUtils", "submodules\utilities\TestUtils\TestUtils.vcxproj", "{D7501BDA-93C2-4903-A0DB-B23BEABA88A2}"
@@ -75,16 +73,6 @@ Global
 		{D093761A-08DF-4A74-A0E3-F34DB77A2118}.WSL_Release|x64.ActiveCfg = WSL_Release|x64
 		{D093761A-08DF-4A74-A0E3-F34DB77A2118}.WSL_Release|x64.Build.0 = WSL_Release|x64
 		{D093761A-08DF-4A74-A0E3-F34DB77A2118}.WSL_Release|x64.Deploy.0 = WSL_Release|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.Debug|x64.ActiveCfg = Debug|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.Debug|x64.Build.0 = Debug|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.Release|x64.ActiveCfg = Release|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.Release|x64.Build.0 = Release|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.WSL_Debug|x64.ActiveCfg = WSL_Debug|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.WSL_Debug|x64.Build.0 = WSL_Debug|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.WSL_Debug|x64.Deploy.0 = WSL_Debug|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.WSL_Release|x64.ActiveCfg = WSL_Release|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.WSL_Release|x64.Build.0 = WSL_Release|x64
-		{DFB8E797-848E-4617-B4F5-CF87EAEB0187}.WSL_Release|x64.Deploy.0 = WSL_Release|x64
 		{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}.Debug|x64.ActiveCfg = Debug|x64
 		{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}.Debug|x64.Build.0 = Debug|x64
 		{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}.Release|x64.ActiveCfg = Release|x64

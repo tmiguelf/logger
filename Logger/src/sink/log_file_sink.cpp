@@ -139,7 +139,7 @@ bool log_file_sink::init(const std::filesystem::path& p_fileName)
 	m_output.open(p_fileName, std::ios_base::binary | std::ios_base::out);
 	if(!m_output.is_open()) return false;
 
-	constexpr std::array<char8_t, 3> UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
+	constexpr std::array UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
 	m_output.write(UTF8_BOM.data(), UTF8_BOM.size());
 
 	return true;
