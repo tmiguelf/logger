@@ -18,3 +18,11 @@
 	path = vs_benchmarks/spdlog/spdlog
 	url = https://github.com/gabime/spdlog.git
 	ignore = dirty
+[submodule "vs_benchmarks/g3log/g3log"]
+	path = vs_benchmarks/g3log/g3log
+	url = https://github.com/KjellKod/g3log.git
+	ignore = dirty
+[submodule "vs_benchmarks/reckless/reckless"]
+	path = vs_benchmarks/reckless/reckless
+	url = https://github.com/mattiasflodin/reckless.git
+	ignore = dirty

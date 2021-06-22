@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<ProjectReference Include="$(MSBuildThisFileDirectory)g3log.vcxproj">
+			<Project>{aad1f143-61cf-4410-bc00-13432a9b9c44}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(MSBuildThisFileDirectory)g3log.include.props" />
+	</ImportGroup>
+</Project>
