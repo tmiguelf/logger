@@ -48,10 +48,11 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_SHARED_LIB;spdlog_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)spdlog/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling Condition="'$(TargetOS)'=='Windows'">Sync</ExceptionHandling>
       <ExceptionHandling Condition="'$(TargetOS)'=='Linux'">Enabled</ExceptionHandling>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

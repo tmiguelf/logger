@@ -48,7 +48,6 @@ namespace logger::_p
 	//template<typename T>
 	//concept c_toLog = is_toLog_v<T>;
 
-
 	template <c_tuple Tuple>
 	struct tuple_toLog
 	{
@@ -74,7 +73,6 @@ namespace logger::_p
 	public:
 		using type = sub<0>::type; //todo
 	};
-
 
 
 	template <c_tuple Tuple>
