@@ -26,6 +26,7 @@
 #include <Logger/sink/log_file_sink.hpp>
 
 #include <array>
+#include <vector>
 
 #include <CoreLib/string/core_string_encoding.hpp>
 #include <CoreLib/Core_Alloca.hpp>
