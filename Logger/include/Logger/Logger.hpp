@@ -33,7 +33,7 @@
 //======== ======== Macro Magic ======== ========
 
 #define LOG_CUSTOM(File, Line, Column, Level, ...) \
-	::logger::_p::LogStreamer{File, Line, Column, Level} \
+	::logger::_p::LogStreamer{Level, File, Line, Column} \
 		.log(::logger::_p::tuple_toLog<decltype(::std::make_tuple(__VA_ARGS__))>::type{__VA_ARGS__});
 
 /// \brief Helper Macro to assist on message formating and automatically filling of __FILE__ (__FILEW__ on windows) and __LINE__
