@@ -43,11 +43,13 @@ struct log_data
 	core::os_string_view	m_file;
 	std::u8string_view		m_line;
 	std::u8string_view		m_column;
-	std::u8string_view		m_dateTimeThread;
+	std::u8string_view		m_date;
+	std::u8string_view		m_time;
+	std::u8string_view		m_thread;
 	std::u8string_view		m_level;
 	std::u8string_view		m_message;
 
-	core::DateTime			m_time;
+	core::DateTime			m_timeStruct;
 	core::thread_id_t		m_threadId;
 	uint32_t				m_lineNumber;
 	uint32_t				m_columnNumber;

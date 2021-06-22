@@ -44,7 +44,8 @@ static inline void AuxWriteData(
 	const log_data& p_logData, char16_t* const p_buffer,
 	uintptr_t p_line_estimate,
 	uintptr_t p_col_estimate,
-	uintptr_t p_date_estimate,
+	uintptr_t p_time_estimate,
+	uintptr_t p_thread_estimate,
 	uintptr_t p_level_estimate,
 	uintptr_t p_message_estimate)
 {
@@ -67,10 +68,14 @@ static inline void AuxWriteData(
 	*(pivot++) = u')';
 	*(pivot++) = u':';
 	*(pivot++) = u' ';
+	*(pivot++) = u'[';
 
-	core::_p::ANSI_to_UCS2_unsafe(p_logData.m_dateTimeThread, pivot);
-	pivot += p_date_estimate;
-
+	core::_p::ANSI_to_UCS2_unsafe(p_logData.m_time, pivot);
+	pivot += p_time_estimate;
+	*(pivot++) = u'|';
+	core::_p::ANSI_to_UCS2_unsafe(p_logData.m_thread, pivot);
+	pivot += p_thread_estimate;
+	*(pivot++) = u']';
 	*(pivot++) = u' ';
 
 	core::_p::ANSI_to_UCS2_unsafe(p_logData.m_level, pivot);
@@ -96,7 +101,8 @@ void log_debugger_sink::output(const log_data& p_logData)
 {
 	const uintptr_t line_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_line);
 	const uintptr_t col_estimate = p_logData.m_columnNumber ? core::_p::ANSI_to_UCS2_estimate(p_logData.m_line) : 0;
-	const uintptr_t date_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_dateTimeThread);
+	const uintptr_t time_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_time);
+	const uintptr_t thread_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_thread);
 	const uintptr_t level_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_level);
 	const uintptr_t message_estimate = core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.m_message, '?');
 
@@ -104,10 +110,11 @@ void log_debugger_sink::output(const log_data& p_logData)
 	const uintptr_t count = p_logData.m_file.size()
 		+ line_estimate
 		+ (p_logData.m_columnNumber ? col_estimate + 1 : 0) //,
-		+ date_estimate
+		+ time_estimate
+		+ thread_estimate
 		+ level_estimate
 		+ message_estimate
-		+ 7; //():  \n\0
+		+ 10; //(): [|] \n\0
 
 
 	constexpr uintptr_t alloca_treshold = 0x8000;
@@ -117,13 +124,17 @@ void log_debugger_sink::output(const log_data& p_logData)
 		std::vector<char16_t> buff;
 		buff.resize(count);
 		AuxWriteData(p_logData, buff.data(),
-			line_estimate, col_estimate, date_estimate, level_estimate, message_estimate);
+			line_estimate, col_estimate,
+			time_estimate, thread_estimate,
+			level_estimate, message_estimate);
 	}
 	else
 	{
 		char16_t* buff = reinterpret_cast<char16_t*>(core_alloca(count * sizeof(char16_t)));
 		AuxWriteData(p_logData, buff,
-			line_estimate, col_estimate, date_estimate, level_estimate, message_estimate);
+			line_estimate, col_estimate,
+			time_estimate, thread_estimate,
+			level_estimate, message_estimate);
 	}
 
 }

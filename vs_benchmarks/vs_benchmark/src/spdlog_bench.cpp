@@ -21,6 +21,7 @@ static void spdlog_test_combo(benchmark::State& state)
 {
 	auto test_sink = std::make_shared<dumpSink_spdlog>();
 	spdlog::logger logger("multi_sink", {test_sink});
+
 	for (auto _ : state)
 	{
 		logger.info("{0}{1}{2}{3}{4}", test_string, test_signed_int, test_unsigned_int, test_fp, test_char);

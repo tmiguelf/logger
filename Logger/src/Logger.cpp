@@ -28,6 +28,8 @@
 #include <span>
 #include <array>
 
+#include <chrono>
+
 #include <CoreLib/Core_Time.hpp>
 #include <CoreLib/Core_Thread.hpp>
 #include <CoreLib/string/core_os_string.hpp>
@@ -38,18 +40,8 @@
 #include <Logger/sink/log_file_sink.hpp>
 
 //Right now we are enforcing validity by having buffer larger than what we would theorethically need
-static constexpr uintptr_t g_DateTimeThreadMessageSize = sizeof("[00000/000/000-000:000:000.00000|0000000000]") - 1;
-static inline constexpr bool formatDateTimeThreadValid(const core::DateTime&)
-{
-	//return !(	(p_time.date.month		>  12) ||
-	//			(p_time.date.day		>  31) || 
-	//			(p_time.time.hour		>  23) ||
-	//			(p_time.time.minute		>  59) || 
-	//			(p_time.time.second		>  59) || 
-	//			(p_time.time.msecond	> 999)
-	//		);
-	return true;
-}
+static constexpr uintptr_t g_DateMessageSize = sizeof("00000/000/000") - 1;
+static constexpr uintptr_t g_TimeMessageSize = sizeof("000:000.00000") - 1;
 
 /// \n
 namespace logger
@@ -67,64 +59,54 @@ static core::thread_id_t getCurrentThreadId()
 	return threadId;
 }
 
-[[maybe_unused]] static uintptr_t FormatDateThread(const core::DateTime& p_time, core::thread_id_t p_threadId, std::span<char8_t, g_DateTimeThreadMessageSize> p_dateTimeThread)
+static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_DateMessageSize> p_out)
 {
-	char8_t* pivot = p_dateTimeThread.data();
-//	if(formatDateTimeThreadValid(p_time))
-	{
-		//year
-		*(pivot++) = u8'[';
-		pivot += core::to_chars(p_time.date.year, std::span<char8_t, 5>{pivot, 5});
+	char8_t* pivot = p_out.data();
 
-		//month
-		*(pivot++) = u8'/';
-		if(p_time.date.month < 10) { *(pivot++) = u8'0'; }
-		pivot += core::to_chars(p_time.date.month, std::span<char8_t, 3>{pivot, 3});
+	//year
+	pivot += core::to_chars(p_time.date.year, std::span<char8_t, 5>{pivot, 5});
 
-		//day
-		*(pivot++) = u8'/';
-		if(p_time.date.day < 10) { *(pivot++) = u8'0'; }
-		pivot += core::to_chars(p_time.date.day, std::span<char8_t, 3>{pivot, 3});
+	//month
+	*(pivot++) = u8'/';
+	if(p_time.date.month < 10) { *(pivot++) = u8'0'; }
+	pivot += core::to_chars(p_time.date.month, std::span<char8_t, 3>{pivot, 3});
 
-		//hour
-		*(pivot++) = u8'-';
-		if(p_time.time.hour < 10) { *(pivot++) = u8'0'; }
-		pivot += core::to_chars(p_time.time.hour, std::span<char8_t, 3>{pivot, 3});
-
-		//minute
-		*(pivot++) = u8':';
-		if(p_time.time.minute < 10) { *(pivot++) = u8'0'; }
-		pivot += core::to_chars(p_time.time.minute, std::span<char8_t, 3>{pivot, 3});
-
-		//second
-		*(pivot++) = u8':';
-		if(p_time.time.second < 10) { *(pivot++) = u8'0'; }
-		pivot += core::to_chars(p_time.time.second, std::span<char8_t, 3>{pivot, 3});
-
-		//millisecond
-		*(pivot++) = u8'.';
-		if(p_time.time.msecond < 100)
-		{
-			*(pivot++) = u8'0';
-			if(p_time.time.msecond < 10) { *(pivot++) = u8'0'; }
-		}
-		pivot += core::to_chars(p_time.time.msecond, std::span<char8_t, 5>{pivot, 5});
-	}
-//	else
-//	{
-//		constexpr std::u8string_view invalidStr = u8"[N/A";
-//		memcpy(pivot, invalidStr.data(), invalidStr.size());
-//		pivot += invalidStr.size();
-//	}
-
-	//thread
-	*(pivot++) = u8'|';
-	constexpr uintptr_t thread_max_digits = core::to_chars_dec_max_digits_v<core::thread_id_t>;
-	pivot += core::to_chars(p_threadId, std::span<char8_t, thread_max_digits>{pivot, thread_max_digits});
-
-	*(pivot++) = u8']';
-	return pivot - p_dateTimeThread.data();
+	//day
+	*(pivot++) = u8'/';
+	if(p_time.date.day < 10) { *(pivot++) = u8'0'; }
+	pivot += core::to_chars(p_time.date.day, std::span<char8_t, 3>{pivot, 3});
+	return pivot - p_out.data();
 }
+
+static uintptr_t FormatTime(const core::DateTime& p_time, std::span<char8_t, g_TimeMessageSize> p_out)
+{
+	char8_t* pivot = p_out.data();
+
+	//hour
+	if(p_time.time.hour < 10) { *(pivot++) = u8'0'; }
+	pivot += core::to_chars(p_time.time.hour, std::span<char8_t, 3>{pivot, 3});
+
+	//minute
+	*(pivot++) = u8':';
+	if(p_time.time.minute < 10) { *(pivot++) = u8'0'; }
+	pivot += core::to_chars(p_time.time.minute, std::span<char8_t, 3>{pivot, 3});
+
+	//second
+	*(pivot++) = u8':';
+	if(p_time.time.second < 10) { *(pivot++) = u8'0'; }
+	pivot += core::to_chars(p_time.time.second, std::span<char8_t, 3>{pivot, 3});
+
+	//millisecond
+	*(pivot++) = u8'.';
+	if(p_time.time.msecond < 100)
+	{
+		*(pivot++) = u8'0';
+		if(p_time.time.msecond < 10) { *(pivot++) = u8'0'; }
+	}
+	pivot += core::to_chars(p_time.time.msecond, std::span<char8_t, 5>{pivot, 5});
+	return pivot - p_out.data();
+}
+
 
 static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 {
@@ -178,12 +160,24 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 
 	log_data log_data;
 
-	log_data.m_time		= core::date_time_UTC();
-	log_data.m_threadId	= getCurrentThreadId();
+	log_data.m_timeStruct	= core::date_time_UTC();
+	log_data.m_threadId		= getCurrentThreadId();
 
-	//date/time/thread
-	std::array<char8_t, g_DateTimeThreadMessageSize> dateTimeThread;
-	uintptr_t dateTimeThread_size = FormatDateThread(log_data.m_time, log_data.m_threadId, dateTimeThread);
+	//category
+	std::array<char8_t, 9> level;
+	uintptr_t level_size = FormatLogLevel(p_level, level);
+
+	//date
+	std::array<char8_t, g_DateMessageSize> date;
+	uintptr_t date_size = FormatDate(log_data.m_timeStruct, date);
+	
+	//time
+	std::array<char8_t, g_TimeMessageSize> time;
+	uintptr_t time_size = FormatTime(log_data.m_timeStruct, time);
+
+	//thread
+	std::array<char8_t, core::to_chars_dec_max_digits_v<core::thread_id_t>> thread;
+	uintptr_t thread_size = core::to_chars(p_line, thread);
 
 	//line
 	std::array<char8_t, 10> line;
@@ -193,16 +187,14 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 	std::array<char8_t, 10> column;
 	uintptr_t column_size = core::to_chars(p_column, column);
 
-	//category
-	std::array<char8_t, 9> level;
-	uintptr_t level_size = FormatLogLevel(p_level, level);
-
-	log_data.m_level			= std::u8string_view(level.data(), level_size);
-	log_data.m_dateTimeThread	= std::u8string_view(dateTimeThread.data(), dateTimeThread_size);
-	log_data.m_file				= p_file;
-	log_data.m_line				= std::u8string_view(line.data(), line_size);
-	log_data.m_column			= std::u8string_view(column.data(), column_size);
-	log_data.m_message			= p_message;
+	log_data.m_level	= std::u8string_view(level.data(), level_size);
+	log_data.m_date		= std::u8string_view(date.data(), date_size);
+	log_data.m_time		= std::u8string_view(time.data(), time_size);
+	log_data.m_thread	= std::u8string_view(thread.data(), thread_size);
+	log_data.m_file		= p_file;
+	log_data.m_line		= std::u8string_view(line.data(), line_size);
+	log_data.m_column	= std::u8string_view(column.data(), column_size);
+	log_data.m_message	= p_message;
 
 	log_data.m_levelNumber	= p_level;
 	log_data.m_lineNumber	= p_line;

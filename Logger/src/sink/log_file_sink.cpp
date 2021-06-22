@@ -54,7 +54,13 @@ static inline void
 		uintptr_t p_fileName_size)
 {
 	char8_t* pivot = p_buffer;
-	transfer(pivot, p_logData.m_dateTimeThread);
+	*(pivot++) = u8'[';
+	transfer(pivot, p_logData.m_date);
+	*(pivot++) = u8'-';
+	transfer(pivot, p_logData.m_time);
+	*(pivot++) = u8'|';
+	transfer(pivot, p_logData.m_thread);
+	*(pivot++) = u8']';
 
 #ifdef _WIN32
 	core::_p::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?', pivot);
@@ -99,12 +105,15 @@ void log_file_sink::output(const log_data& p_logData)
 #endif
 
 	//[date]File(Line,Column) Message\n
-	const uintptr_t count = p_logData.m_dateTimeThread.size()
+	const uintptr_t count =
+		p_logData.m_date.size()
+		+ p_logData.m_time.size()
+		+ p_logData.m_thread.size()
 		+ fileSize_estimate
 		+ p_logData.m_line.size()
 		+ (p_logData.m_columnNumber ? p_logData.m_column.size() + 1 : 0) //,
 		+ p_logData.m_level.size()
-		+ p_logData.m_message.size() + 4; //() \n
+		+ p_logData.m_message.size() + 8; //[-|]() \n
 
 	constexpr uintptr_t alloca_treshold = 0x10000;
 
