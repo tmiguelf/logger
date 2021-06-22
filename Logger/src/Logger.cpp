@@ -67,63 +67,62 @@ static core::thread_id_t getCurrentThreadId()
 	return threadId;
 }
 
-static size_t FormatDateThread(const core::DateTime& p_time, core::thread_id_t p_threadId, std::span<char8_t, g_DateTimeThreadMessageSize> p_dateTimeThread)
+[[maybe_unused]] static uintptr_t FormatDateThread(const core::DateTime& p_time, core::thread_id_t p_threadId, std::span<char8_t, g_DateTimeThreadMessageSize> p_dateTimeThread)
 {
 	char8_t* pivot = p_dateTimeThread.data();
-
-	if(formatDateTimeThreadValid(p_time))
+//	if(formatDateTimeThreadValid(p_time))
 	{
 		//year
-		*pivot = '['; ++pivot;
+		*(pivot++) = u8'[';
 		pivot += core::to_chars(p_time.date.year, std::span<char8_t, 5>{pivot, 5});
 
 		//month
-		*pivot = '/'; ++pivot;
-		if(p_time.date.month < 10) { *pivot = '0'; ++pivot; }
+		*(pivot++) = u8'/';
+		if(p_time.date.month < 10) { *(pivot++) = u8'0'; }
 		pivot += core::to_chars(p_time.date.month, std::span<char8_t, 3>{pivot, 3});
 
 		//day
-		*pivot = '/'; ++pivot;
-		if(p_time.date.day < 10) { *pivot = '0'; ++pivot; }
+		*(pivot++) = u8'/';
+		if(p_time.date.day < 10) { *(pivot++) = u8'0'; }
 		pivot += core::to_chars(p_time.date.day, std::span<char8_t, 3>{pivot, 3});
 
 		//hour
-		*pivot = '-'; ++pivot;
-		if(p_time.time.hour < 10) { *pivot = '0'; ++pivot; }
+		*(pivot++) = u8'-';
+		if(p_time.time.hour < 10) { *(pivot++) = u8'0'; }
 		pivot += core::to_chars(p_time.time.hour, std::span<char8_t, 3>{pivot, 3});
 
 		//minute
-		*pivot = ':'; ++pivot;
-		if(p_time.time.minute < 10) { *pivot = '0'; ++pivot; }
+		*(pivot++) = u8':';
+		if(p_time.time.minute < 10) { *(pivot++) = u8'0'; }
 		pivot += core::to_chars(p_time.time.minute, std::span<char8_t, 3>{pivot, 3});
 
 		//second
-		*pivot = ':'; ++pivot;
-		if(p_time.time.second < 10) { *pivot = '0'; ++pivot; }
+		*(pivot++) = u8':';
+		if(p_time.time.second < 10) { *(pivot++) = u8'0'; }
 		pivot += core::to_chars(p_time.time.second, std::span<char8_t, 3>{pivot, 3});
 
 		//millisecond
-		*pivot = '.'; ++pivot;
+		*(pivot++) = u8'.';
 		if(p_time.time.msecond < 100)
 		{
-			*pivot = u8'0'; ++pivot;
-			if(p_time.time.msecond < 10) { *pivot = u8'0'; ++pivot; }
+			*(pivot++) = u8'0';
+			if(p_time.time.msecond < 10) { *(pivot++) = u8'0'; }
 		}
 		pivot += core::to_chars(p_time.time.msecond, std::span<char8_t, 5>{pivot, 5});
 	}
-	else
-	{
-		constexpr std::u8string_view invalidStr = u8"[N/A";
-		memcpy(p_dateTimeThread.data(), invalidStr.data(), invalidStr.size());
-		pivot += invalidStr.size();
-	}
+//	else
+//	{
+//		constexpr std::u8string_view invalidStr = u8"[N/A";
+//		memcpy(pivot, invalidStr.data(), invalidStr.size());
+//		pivot += invalidStr.size();
+//	}
 
 	//thread
-	*pivot = '|'; ++pivot;
+	*(pivot++) = u8'|';
 	constexpr uintptr_t thread_max_digits = core::to_chars_dec_max_digits_v<core::thread_id_t>;
 	pivot += core::to_chars(p_threadId, std::span<char8_t, thread_max_digits>{pivot, thread_max_digits});
 
-	*pivot = ']'; ++pivot;
+	*(pivot++) = u8']';
 	return pivot - p_dateTimeThread.data();
 }
 
@@ -132,30 +131,46 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 	switch(p_level)
 	{
 		case Level::Info:
-			memcpy(p_out.data(), "Info: ", 6);
-			return 6;
+			{
+				constexpr std::u8string_view text = u8"Info: ";
+				memcpy(p_out.data(), text.data(), text.size());
+				return text.size();
+			}
 		case Level::Warning:
-			memcpy(p_out.data(), "Warning: ", 9);
-			return 9;
+			{
+				constexpr std::u8string_view text = u8"Warning: ";
+				memcpy(p_out.data(), text.data(), text.size());
+				return text.size();
+			}
 		case Level::Error:
-			memcpy(p_out.data(), "Error: ", 7);
-			return 7;
+			{
+				constexpr std::u8string_view text = u8"Error: ";
+				memcpy(p_out.data(), text.data(), text.size());
+				return text.size();
+			}
 		case Level::Debug:
-			memcpy(p_out.data(), "Debug: ", 7);
-			return 7;
+			{
+				constexpr std::u8string_view text = u8"Debug: ";
+				memcpy(p_out.data(), text.data(), text.size());
+				return text.size();
+			}
 		default:
 			break;
 	}
-	memcpy(p_out.data(), "Lvl(  ): ", 9);
-	core::to_chars_hex_fix(static_cast<uint8_t>(p_level), p_out.subspan<4, 2>());
-	return 9;
+
+	{
+		constexpr std::u8string_view text = u8"Lvl(  ): ";
+		memcpy(p_out.data(), text.data(), text.size());
+		core::to_chars_hex_fix(static_cast<uint8_t>(p_level), p_out.subspan<4, 2>());
+		return text.size();
+	}
 }
 
 
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
 
-void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
+void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os_string_view p_file, [[maybe_unused]] uint32_t p_line, [[maybe_unused]] uint32_t p_column, std::u8string_view p_message)
 {
 #ifndef _DEBUG
 	if(p_level == Level::Debug) return;
@@ -172,11 +187,11 @@ void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_li
 
 	//line
 	std::array<char8_t, 10> line;
-	uintptr_t line_size = core::to_chars(p_line, std::span<char8_t, 10>{line});
+	uintptr_t line_size = core::to_chars(p_line, line);
 
 	//column
 	std::array<char8_t, 10> column;
-	uintptr_t column_size = core::to_chars(p_column, std::span<char8_t, 10>{column});
+	uintptr_t column_size = core::to_chars(p_column, column);
 
 	//category
 	std::array<char8_t, 9> level;

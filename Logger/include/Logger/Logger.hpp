@@ -33,31 +33,31 @@
 //======== ======== Macro Magic ======== ========
 
 #define LOG_CUSTOM(File, Line, Column, Level, ...) \
-	logger::_p::LogStreamer{File, Line, Column, Level} \
-		.log(logger::_p::tuple_toLog<decltype(std::make_tuple(__VA_ARGS__))>::type{__VA_ARGS__});
+	::logger::_p::LogStreamer{Level, File, Line, Column} \
+		.log(::logger::_p::tuple_toLog<decltype(::std::make_tuple(__VA_ARGS__))>::type{__VA_ARGS__});
 
 /// \brief Helper Macro to assist on message formating and automatically filling of __FILE__ (__FILEW__ on windows) and __LINE__
 /// \param[in] Level - \ref logger::Level
 
 #ifdef _WIN32
-#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(std::wstring_view{__FILEW__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
+#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::std::wstring_view{__FILEW__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
 #else
-#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(std::string_view{__FILE__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
+#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::std::string_view{__FILE__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
 #endif
 
 /// \brief Helper Macro for info logs
-#define LOG_INFO(...)		LOG_MESSAGE(logger::Level::Info, __VA_ARGS__)
+#define LOG_INFO(...)		LOG_MESSAGE(::logger::Level::Info, __VA_ARGS__)
 
 /// \brief Helper Macro for warning logs
-#define LOG_WARNING(...)	LOG_MESSAGE(logger::Level::Warning, __VA_ARGS__)
+#define LOG_WARNING(...)	LOG_MESSAGE(::logger::Level::Warning, __VA_ARGS__)
 
 /// \brief Helper Macro for error logs
-#define LOG_ERROR(...)		LOG_MESSAGE(logger::Level::Error, __VA_ARGS__)
+#define LOG_ERROR(...)		LOG_MESSAGE(::logger::Level::Error, __VA_ARGS__)
 
 #ifdef _DEBUG
 /// \brief Helper Macro for debug logs. If built in debug mode, message will be logged, if built in release the Macro will automatically eliminate the lines of code.
-#	define LOG_DEBUG(...)	LOG_MESSAGE(logger::Level::Debug, __VA_ARGS__)
+#	define LOG_DEBUG(...)	LOG_MESSAGE(::logger::Level::Debug, __VA_ARGS__)
 #else
 /// \brief Helper Macro for debug logs. If built in debug mode, message will be logged, if built in release the Macro will automatically eliminate the lines of code.
-#	define LOG_DEBUG(...)	logger::_p::no_op();
+#	define LOG_DEBUG(...)	::logger::_p::no_op();
 #endif

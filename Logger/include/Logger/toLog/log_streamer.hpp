@@ -42,10 +42,10 @@ namespace logger::_p
 	class LogStreamer
 	{
 	private:
+		const Level m_level;
 		const core::os_string_view m_file;
 		const uint32_t m_line;
 		const uint32_t m_column;
-		const Level m_level;
 
 		Logger_API void push(uintptr_t p_char_count, std::span<const toLog_base*> p_data) const;
 
@@ -73,11 +73,11 @@ namespace logger::_p
 		}
 
 	public:
-		constexpr inline LogStreamer(core::os_string_view p_file, uint32_t p_line, uint32_t p_column, Level p_level)
-			: m_file	(p_file)
+		constexpr inline LogStreamer(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column)
+			: m_level	(p_level)
+			, m_file	(p_file)
 			, m_line	(p_line)
 			, m_column	(p_column)
-			, m_level	(p_level)
 		{
 		}
 
