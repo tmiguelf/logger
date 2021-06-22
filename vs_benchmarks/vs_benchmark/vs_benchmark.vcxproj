@@ -52,6 +52,8 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>SPDLOG_SHARED_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling Condition="'$(TargetOS)'=='Windows'">Sync</ExceptionHandling>
+      <ExceptionHandling Condition="'$(TargetOS)'=='Linux'">Enabled</ExceptionHandling>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
