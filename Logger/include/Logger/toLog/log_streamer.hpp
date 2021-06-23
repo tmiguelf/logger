@@ -51,7 +51,6 @@ namespace logger::_p
 
 		void push(std::span<const toLog_base*> p_data, char8_t* const p_buff, uintptr_t p_size) const;
 
-
 		template <uintptr_t Pos, uintptr_t Size, typename Tuple>
 		static inline uintptr_t fill(const Tuple& p_tuple, std::array<const toLog_base*, Size>& p_data)
 		{
@@ -95,7 +94,22 @@ namespace logger::_p
 					return;
 				}
 			}
+			log();
+		};
+
+		inline void log() const
+		{
 			::logger::log_message(m_level, m_file, m_line, m_column, std::u8string_view{nullptr, 0});
+		};
+
+		inline void log(const std::u8string_view& p_message) const
+		{
+			::logger::log_message(m_level, m_file, m_line, m_column, p_message);
+		};
+
+		inline void log(const std::string_view& p_message) const
+		{
+			::logger::log_message(m_level, m_file, m_line, m_column, std::u8string_view{reinterpret_cast<const char8_t*>(p_message.data()), p_message.size()});
 		};
 	};
 

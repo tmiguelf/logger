@@ -48,11 +48,13 @@ struct log_cache
 
 	std::u8string lineStr;
 	std::u8string columnStr;
-	std::u8string dateTimeThread;
+	std::u8string date;
+	std::u8string time;
+	std::u8string thread;
 	std::u8string levelStr;
 	std::u8string message;
 
-	core::DateTime		time;
+	core::DateTime		timeStruct;
 	core::thread_id_t	threadId;
 	uint32_t			line;
 	uint32_t			column;
@@ -65,17 +67,19 @@ class test_sink: public logger::log_sink
 	{
 		log_cache& cache = m_log_cache.emplace_back();
 
-		cache.file				= p_logData.m_file;
-		cache.lineStr			= p_logData.m_line;
-		cache.columnStr			= p_logData.m_column;
-		cache.dateTimeThread	= p_logData.m_dateTimeThread;
-		cache.levelStr			= p_logData.m_level;
-		cache.message			= p_logData.m_message;
-		cache.time				= p_logData.m_time;
-		cache.threadId			= p_logData.m_threadId;
-		cache.line				= p_logData.m_lineNumber;
-		cache.column			= p_logData.m_columnNumber;
-		cache.level				= p_logData.m_levelNumber;
+		cache.file			= p_logData.m_file;
+		cache.lineStr		= p_logData.m_line;
+		cache.columnStr		= p_logData.m_column;
+		cache.date			= p_logData.m_date;
+		cache.time			= p_logData.m_time;
+		cache.thread		= p_logData.m_thread;
+		cache.levelStr		= p_logData.m_level;
+		cache.message		= p_logData.m_message;
+		cache.timeStruct	= p_logData.m_timeStruct;
+		cache.threadId		= p_logData.m_threadId;
+		cache.line			= p_logData.m_lineNumber;
+		cache.column		= p_logData.m_columnNumber;
+		cache.level			= p_logData.m_levelNumber;
 	}
 public:
 
@@ -155,7 +159,9 @@ TEST(Logger, Logger_interface)
 			ASSERT_EQ(cache.file, fileName) << "Case " << i;
 			ASSERT_EQ(cache.threadId, threadId) << "Case " << i;
 			//TODO: need improvement
-			ASSERT_FALSE(cache.dateTimeThread.empty()) << "Case " << i; //Note might need better test
+			ASSERT_FALSE(cache.date.empty()) << "Case " << i; //Note might need better test
+			ASSERT_FALSE(cache.time.empty()) << "Case " << i; //Note might need better test
+			ASSERT_FALSE(cache.thread.empty()) << "Case " << i; //Note might need better test
 			//cache.time
 		}
 

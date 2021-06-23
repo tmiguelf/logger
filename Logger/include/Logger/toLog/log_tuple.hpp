@@ -28,6 +28,9 @@
 #include <tuple>
 #include <type_traits>
 
+#include <string>
+#include <string_view>
+
 #include "toLog.hpp"
 
 namespace logger::_p
@@ -107,5 +110,36 @@ namespace logger::_p
 
 	template<typename T>
 	concept c_tuple_toLog = is_tuple_toLog<T>::value;
+
+
+	template <c_tuple Tuple>
+	struct tuple_toLog_or_string_view
+	{
+		using type = tuple_toLog<Tuple>::type;
+	};
+
+	template <>
+	struct tuple_toLog_or_string_view <std::tuple<std::u8string_view>>
+	{
+		using type = std::u8string_view;
+	};
+
+	template <>
+	struct tuple_toLog_or_string_view <std::tuple<std::u8string>>
+	{
+		using type = std::u8string_view;
+	};
+
+	template <>
+	struct tuple_toLog_or_string_view <std::tuple<std::string_view>>
+	{
+		using type = std::string_view;
+	};
+
+	template <>
+	struct tuple_toLog_or_string_view <std::tuple<std::string>>
+	{
+		using type = std::string_view;
+	};
 
 } //namespace logger::_p

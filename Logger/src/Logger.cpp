@@ -41,7 +41,7 @@
 
 //Right now we are enforcing validity by having buffer larger than what we would theorethically need
 static constexpr uintptr_t g_DateMessageSize = sizeof("00000/000/000") - 1;
-static constexpr uintptr_t g_TimeMessageSize = sizeof("000:000.00000") - 1;
+static constexpr uintptr_t g_TimeMessageSize = sizeof("000:000:000.00000") - 1;
 
 /// \n
 namespace logger
@@ -165,27 +165,27 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 
 	//category
 	std::array<char8_t, 9> level;
-	uintptr_t level_size = FormatLogLevel(p_level, level);
+	const uintptr_t level_size = FormatLogLevel(p_level, level);
 
 	//date
 	std::array<char8_t, g_DateMessageSize> date;
-	uintptr_t date_size = FormatDate(log_data.m_timeStruct, date);
+	const uintptr_t date_size = FormatDate(log_data.m_timeStruct, date);
 	
 	//time
 	std::array<char8_t, g_TimeMessageSize> time;
-	uintptr_t time_size = FormatTime(log_data.m_timeStruct, time);
+	const uintptr_t time_size = FormatTime(log_data.m_timeStruct, time);
 
 	//thread
 	std::array<char8_t, core::to_chars_dec_max_digits_v<core::thread_id_t>> thread;
-	uintptr_t thread_size = core::to_chars(p_line, thread);
+	const uintptr_t thread_size = core::to_chars(p_line, thread);
 
 	//line
 	std::array<char8_t, 10> line;
-	uintptr_t line_size = core::to_chars(p_line, line);
+	const uintptr_t line_size = core::to_chars(p_line, line);
 
 	//column
 	std::array<char8_t, 10> column;
-	uintptr_t column_size = core::to_chars(p_column, column);
+	const uintptr_t column_size = core::to_chars(p_column, column);
 
 	log_data.m_level	= std::u8string_view(level.data(), level_size);
 	log_data.m_date		= std::u8string_view(date.data(), date_size);
@@ -200,7 +200,7 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 	log_data.m_lineNumber	= p_line;
 	log_data.m_columnNumber	= p_column;
 
-	for(log_sink* sink: m_sinks)
+	for(log_sink* const sink: m_sinks)
 	{
 		sink->output(log_data);
 	}
@@ -213,7 +213,7 @@ void LoggerHelper::add_sink(log_sink& p_sink)
 
 void LoggerHelper::remove_sink(log_sink& p_sink)
 {
-	log_sink* sink_addr = &p_sink;
+	log_sink* const sink_addr = &p_sink;
 	for(decltype(m_sinks)::iterator it = m_sinks.begin(), it_end = m_sinks.end(); it != it_end; ++it)
 	{
 		if((*it) == sink_addr)
@@ -241,12 +241,12 @@ Logger_API void log_remove_sink(log_sink& p_stream)
 
 Logger_API void log_remove_all()
 {
-	logger::g_logger.clear();
+	g_logger.clear();
 }
 
 Logger_API void log_message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
 {
-	logger::g_logger.log(p_level, p_file, p_line, p_column, p_message);
+	g_logger.log(p_level, p_file, p_line, p_column, p_message);
 }
 
-}// namespace simLog
+}// namespace logger
