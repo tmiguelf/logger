@@ -126,7 +126,17 @@ class toLog<char16_t>: public toLog_base
 public:
 	toLog(char16_t p_data)
 	{
-		m_size = core::encode_UTF8(p_data, std::span<char8_t, 7>{m_preCalc.data(), 7});
+		const uintptr_t tsize = core::encode_UTF8(p_data, std::span<char8_t, 4>{m_preCalc.data(), 4});
+		if(tsize)
+		{
+			m_size = tsize;
+		}
+		else
+		{
+			m_preCalc[0] = '?';
+			m_size = 1;
+		}
+
 	}
 
 	void push(char8_t* p_out) const final
@@ -144,7 +154,16 @@ class toLog<char32_t>: public toLog_base
 public:
 	toLog(char32_t p_data)
 	{
-		m_size = core::encode_UTF8(p_data, std::span<char8_t, 7>{m_preCalc.data(), 7});
+		const uintptr_t tsize = core::encode_UTF8(p_data, m_preCalc);
+		if(tsize)
+		{
+			m_size = tsize;
+		}
+		else
+		{
+			m_preCalc[0] = '?';
+			m_size = 1;
+		}
 	}
 
 	void push(char8_t* p_out) const final
@@ -152,7 +171,7 @@ public:
 		memcpy(p_out, m_preCalc.data(), m_size);
 	}
 private:
-	std::array<char8_t, 7> m_preCalc;
+	std::array<char8_t, 4> m_preCalc;
 };
 
 
@@ -217,12 +236,12 @@ class toLog<std::u32string_view>: public toLog_base
 public:
 	toLog(std::u32string_view p_data): m_data(p_data)
 	{
-		m_size = core::_p::UCS4_to_UTF8_estimate(p_data);
+		m_size = core::_p::UCS4_to_UTF8_faulty_estimate(p_data, '?');
 	}
 
 	void push(char8_t* p_out) const final
 	{
-		core::_p::UCS4_to_UTF8_unsafe(m_data, p_out);
+		core::_p::UCS4_to_UTF8_faulty_unsafe(m_data, '?', p_out);
 	}
 
 private:
