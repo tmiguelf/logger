@@ -301,7 +301,7 @@ namespace _p
 }
 //-------- Decimal -------- 
 
-template<typename Num_T> requires core::char_conv_dec_supported<Num_T>::value
+template<typename Num_T> requires core::char_conv_dec_supported<Num_T>::value && std::is_floating_point_v<Num_T>
 class toLog<Num_T>: public toLog_base
 {
 private:
@@ -320,6 +320,27 @@ public:
 private:
 	array_t m_preCalc;
 };
+
+template<typename Num_T> requires core::char_conv_dec_supported<Num_T>::value && !std::is_floating_point_v<Num_T>
+class toLog<Num_T>: public toLog_base
+{
+private:
+	using array_t = std::array<char8_t, core::to_chars_dec_max_digits_v<Num_T>>;
+public:
+	toLog(Num_T p_data): m_data{p_data}
+	{
+		m_size = core::_p::to_chars_estimate(p_data);
+	}
+
+	void push(char8_t* p_out) const final
+	{
+		core::_p::to_chars_unsafe(m_data, p_out);
+	}
+
+private:
+	Num_T m_data;
+};
+
 
 template<typename Num_T> requires (std::integral<Num_T> && !core::char_conv_dec_supported<Num_T>::value)
 class toLog<Num_T>: public toLog<_p::int_aliased_type_t<Num_T>>

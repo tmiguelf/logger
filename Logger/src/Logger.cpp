@@ -28,8 +28,6 @@
 #include <span>
 #include <array>
 
-#include <chrono>
-
 #include <CoreLib/Core_Time.hpp>
 #include <CoreLib/Core_Thread.hpp>
 #include <CoreLib/string/core_os_string.hpp>
@@ -59,7 +57,7 @@ static core::thread_id_t getCurrentThreadId()
 	return threadId;
 }
 
-static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_DateMessageSize> p_out)
+[[maybe_unused]] static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_DateMessageSize> p_out)
 {
 	char8_t* pivot = p_out.data();
 
@@ -78,7 +76,7 @@ static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_D
 	return pivot - p_out.data();
 }
 
-static uintptr_t FormatTime(const core::DateTime& p_time, std::span<char8_t, g_TimeMessageSize> p_out)
+[[maybe_unused]] static uintptr_t FormatTime(const core::DateTime& p_time, std::span<char8_t, g_TimeMessageSize> p_out)
 {
 	char8_t* pivot = p_out.data();
 
@@ -159,6 +157,7 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 #endif
 
 	log_data log_data;
+
 
 	log_data.m_timeStruct	= core::date_time_UTC();
 	log_data.m_threadId		= getCurrentThreadId();
