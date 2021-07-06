@@ -41,6 +41,9 @@
 static constexpr uintptr_t g_DateMessageSize = sizeof("00000/000/000") - 1;
 static constexpr uintptr_t g_TimeMessageSize = sizeof("000:000:000.00000") - 1;
 
+
+//#define BENCHMARK
+
 /// \n
 namespace logger
 {
@@ -152,20 +155,19 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 
 void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os_string_view p_file, [[maybe_unused]] uint32_t p_line, [[maybe_unused]] uint32_t p_column, std::u8string_view p_message)
 {
-#ifndef _DEBUG
-	if(p_level == Level::Debug) return;
-#endif
-
 	log_data log_data;
 
-
+#ifndef BENCHMARK
 	log_data.m_timeStruct	= core::date_time_UTC();
+
+#endif // !BENCHMARK
 	log_data.m_threadId		= getCurrentThreadId();
 
 	//category
 	std::array<char8_t, 9> level;
 	const uintptr_t level_size = FormatLogLevel(p_level, level);
 
+#ifndef BENCHMARK
 	//date
 	std::array<char8_t, g_DateMessageSize> date;
 	const uintptr_t date_size = FormatDate(log_data.m_timeStruct, date);
@@ -173,6 +175,7 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 	//time
 	std::array<char8_t, g_TimeMessageSize> time;
 	const uintptr_t time_size = FormatTime(log_data.m_timeStruct, time);
+#endif // !BENCHMARK
 
 	//thread
 	std::array<char8_t, core::to_chars_dec_max_digits_v<core::thread_id_t>> thread;
@@ -187,8 +190,10 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 	const uintptr_t column_size = core::to_chars(p_column, column);
 
 	log_data.m_level	= std::u8string_view(level.data(), level_size);
+#ifndef BENCHMARK
 	log_data.m_date		= std::u8string_view(date.data(), date_size);
 	log_data.m_time		= std::u8string_view(time.data(), time_size);
+#endif // !BENCHMARK
 	log_data.m_thread	= std::u8string_view(thread.data(), thread_size);
 	log_data.m_file		= p_file;
 	log_data.m_line		= std::u8string_view(line.data(), line_size);

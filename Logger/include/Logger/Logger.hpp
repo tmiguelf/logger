@@ -27,14 +27,14 @@
 
 #include "Logger_client.hpp"
 #include "toLog/log_streamer.hpp"
-#include "toLog/toLog_encoders.hpp"
 
+#include <CoreLib/toPrint/toPrint.hpp>
 
 //======== ======== Macro Magic ======== ========
 
 #define LOG_CUSTOM(File, Line, Column, Level, ...) \
-	::logger::_p::LogStreamer{Level, File, Line, Column} \
-		.log(::logger::_p::tuple_toLog_or_string_view<decltype(::std::make_tuple(__VA_ARGS__))>::type(__VA_ARGS__));
+	core_ToPrint(char8_t, ::logger::_p::LogStreamer(Level, File, Line, Column), __VA_ARGS__)
+
 
 /// \brief Helper Macro to assist on message formating and automatically filling of __FILE__ (__FILEW__ on windows) and __LINE__
 /// \param[in] Level - \ref logger::Level

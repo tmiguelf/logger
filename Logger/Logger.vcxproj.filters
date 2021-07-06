@@ -25,9 +25,6 @@
     <Filter Include="Source Files\sink">
       <UniqueIdentifier>{ce8ad971-8df5-42e4-9ab9-15a1299d301e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\toLog">
-      <UniqueIdentifier>{aadc7dbb-5317-40b6-8aaf-1d787a5bcfb6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logger.include.props">
@@ -74,21 +71,6 @@
     <ClInclude Include="include\Logger\toLog\log_streamer.hpp">
       <Filter>Header Files\toLog</Filter>
     </ClInclude>
-    <ClInclude Include="include\Logger\toLog\log_tuple.hpp">
-      <Filter>Header Files\toLog</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\toLog\toLog.hpp">
-      <Filter>Header Files\toLog</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\toLog\toLog_corelib_net.hpp">
-      <Filter>Header Files\toLog</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\toLog\toLog_encoders.hpp">
-      <Filter>Header Files\toLog</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Logger\toLog\toLog_filesystem.hpp">
-      <Filter>Header Files\toLog</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\dllVersion.rc">
@@ -104,9 +86,6 @@
     </ClCompile>
     <ClCompile Include="src\sink\log_debugger_sink.cpp">
       <Filter>Source Files\sink</Filter>
-    </ClCompile>
-    <ClCompile Include="src\toLog\log_streamer.cpp">
-      <Filter>Source Files\toLog</Filter>
     </ClCompile>
     <ClCompile Include="src\Logger.cpp">
       <Filter>Source Files</Filter>

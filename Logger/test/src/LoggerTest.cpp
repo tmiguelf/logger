@@ -94,15 +94,15 @@ public:
 };
 
 template<>
-class logger::toLog<TestStr>: public toLog_base
+class core::toPrint<TestStr>: public core::toPrint_base
 {
 public:
-	toLog(const TestStr&)
-	{
-		m_size = preamble.size();
-	}
 
-	void push(char8_t* p_out) const final
+	toPrint(const TestStr&) {}
+
+	uintptr_t size(const char8_t&) const { return preamble.size(); }
+
+	void getPrint(char8_t* p_out) const //final
 	{
 		memcpy(p_out, preamble.data(), preamble.size());
 	}
