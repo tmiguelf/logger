@@ -33,8 +33,6 @@
 #include <CoreLib/Core_Thread.hpp>
 #include <CoreLib/Core_Type.hpp>
 
-#include <TestUtils/string_streamers.hpp>
-
 #include <Logger/Logger.hpp>
 #include <Logger/Logger_service.hpp>
 #include <Logger/sink/log_sink.hpp>
