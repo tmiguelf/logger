@@ -153,7 +153,7 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
 
-void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os_string_view p_file, [[maybe_unused]] uint32_t p_line, [[maybe_unused]] uint32_t p_column, std::u8string_view p_message)
+void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
 {
 	log_data log_data;
 
@@ -179,7 +179,7 @@ void LoggerHelper::log([[maybe_unused]] Level p_level, [[maybe_unused]] core::os
 
 	//thread
 	std::array<char8_t, core::to_chars_dec_max_digits_v<core::thread_id_t>> thread;
-	const uintptr_t thread_size = core::to_chars(p_line, thread);
+	const uintptr_t thread_size = core::to_chars(log_data.m_threadId, thread);
 
 	//line
 	std::array<char8_t, 10> line;

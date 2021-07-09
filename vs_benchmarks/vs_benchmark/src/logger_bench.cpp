@@ -18,10 +18,6 @@ static void logger_test_combo(benchmark::State& state)
 {
 	dumpSink_logger tsink;
 	logger::log_add_sink(tsink);
-
-	using test_t = std::remove_cvref_t<decltype(::logger::_p::LogStreamer{logger::Level::Info, L"Test", 32, 1})>;
-
-
 	for (auto _ : state)
 	{
 		LOG_INFO(test_string, test_signed_int,
