@@ -10,3 +10,7 @@
 	path = submodules/utilities
 	url = ../utilities.git
 	ignore = dirty
+[submodule "submodules/benchmark"]
+	path = submodules/benchmark
+	url = ../benchmark.git
+	ignore = dirty

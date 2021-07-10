@@ -25,40 +25,18 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string_view>
-
-#include <CoreLib/Core_Time.hpp>
-#include <CoreLib/Core_Thread.hpp>
-#include <CoreLib/string/core_os_string.hpp>
-
-#include "log_level.hpp"
-
+#include <Logger/Logger_api.h>
+#include "log_sink.hpp"
 
 namespace logger
 {
-///	\brief Holds the Logging data information
-struct log_data
-{
-	core::os_string_view	m_file;
-	std::u8string_view		m_line;
-	std::u8string_view		m_column;
-	std::u8string_view		m_dateTimeThread;
-	std::u8string_view		m_level;
-	std::u8string_view		m_message;
 
-	core::DateTime			m_time;
-	core::thread_id_t		m_threadId;
-	uint32_t				m_lineNumber;
-	uint32_t				m_columnNumber;
-	Level					m_levelNumber;
-};
-
-///	\brief Created to do Logging streams
-class log_sink
+///	\brief Created to do Logging to console
+class log_console_sink final: public log_sink
 {
 public:
-	virtual void output(const log_data& p_logData) = 0;
+	Logger_API log_console_sink();
+	void output(const log_data& p_logData) final;
 };
 
-}	// namespace simLog
+} // namespace logger

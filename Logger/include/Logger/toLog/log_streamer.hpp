@@ -25,21 +25,40 @@
 
 #pragma once
 
-//Windows only
-#if _WIN32
+#include <cstdint>
+#include <span>
+#include <vector>
 
-#include "log_sink.hpp"
-#include "Logger_api.h"
+#include <CoreLib/toPrint/toPrint_sink.hpp>
 
-namespace logger
+#include <Logger/log_level.hpp>
+#include <Logger/Logger_client.hpp>
+
+namespace logger::_p
 {
-///	\brief Created to do Logging to console
-class log_debugger_sink final: public log_sink
-{
-public:
-	Logger_API log_debugger_sink();
-	void output(const log_data& p_logData) final;
-};
-} //namespace logger
+	class LogStreamer: public core::sink_toPrint_base
+	{
+	private:
+		const Level m_level;
+		const core::os_string_view m_file;
+		const uint32_t m_line;
+		const uint32_t m_column;
 
-#endif // _WIN32
+	public:
+		constexpr inline LogStreamer(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column)
+			: m_level	(p_level)
+			, m_file	(p_file)
+			, m_line	(p_line)
+			, m_column	(p_column)
+		{
+		}
+
+		void write(std::u8string_view p_message) const
+		{
+			::logger::log_message(m_level, m_file, m_line, m_column, p_message);
+		}
+	};
+
+	inline constexpr void no_op() {}
+} //namespace logger::_p
+

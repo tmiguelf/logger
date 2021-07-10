@@ -23,23 +23,23 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "Logger/log_console_sink.hpp"
-#include <CoreLib/Core_Console.hpp>
-#include <iostream>
+#pragma once
+
+//Windows only
+#if _WIN32
+
+#include <Logger/Logger_api.h>
+#include "log_sink.hpp"
 
 namespace logger
 {
-
-log_console_sink::log_console_sink() = default;
-
-void log_console_sink::output(const log_data& p_logData)
+///	\brief Created to do Logging to console
+class log_debugger_sink final: public log_sink
 {
-	if(p_logData.m_levelNumber != Level::Info)
-	{
-		core::cout.write(p_logData.m_level);
-	}
-	core::cout.write(p_logData.m_message);
-	core::cout.put('\n');
-}
+public:
+	Logger_API log_debugger_sink();
+	void output(const log_data& p_logData) final;
+};
+} //namespace logger
 
-}
+#endif // _WIN32

@@ -23,40 +23,39 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "Logger/log_debugger_sink.hpp"
+#pragma once
 
-#ifdef _WIN32
+#include <fstream>
+#include <filesystem>
 
-#include <Windows.h>
-#include <WinBase.h>
-
-#include <sstream>
-#include <string_view>
-
-#include <CoreLib/string/core_string_encoding.hpp>
+#include <Logger/Logger_api.h>
+#include "log_sink.hpp"
 
 namespace logger
 {
-
-log_debugger_sink::log_debugger_sink() = default;
-
-void log_debugger_sink::output(const log_data& p_logData)
+///	\brief Created to do Logging to file
+class log_file_sink final: public log_sink
 {
-	std::basic_stringstream<char16_t> t_stream;
-	t_stream << reinterpret_cast<const std::u16string_view&>(p_logData.m_file) << u'('
-		<< core::ANSI_to_UTF16(p_logData.m_line);
+public:
+	Logger_API log_file_sink();
+	Logger_API ~log_file_sink();
 
-	if(p_logData.m_columnNumber)
-	{
-		t_stream << u',' << core::ANSI_to_UTF16(p_logData.m_column);
-	}
+	///	\brief Logs data to file
+	///	\praram[in] - p_logData - Data that will be logged to the file
+	void output(const log_data& p_logData) final;
 
-	t_stream << u"): "
-		<< core::ANSI_to_UTF16(p_logData.m_dateTimeThread)
-		<< u' ' << core::ANSI_to_UTF16(p_logData.m_level)
-		<< core::ANSI_to_UTF16(p_logData.m_message) << u'\n';
-	OutputDebugStringW(reinterpret_cast<const wchar_t*>(t_stream.str().c_str()));
-}
+	///	\brief Initiates the logging to File stream,
+	///			Creates a file with the given file name
+	///	\param[in] - p_fileName - Name of the file that the message will be logged to
+	///	\return true on success, false otherwise
+	Logger_API bool init(const std::filesystem::path& p_fileName);
 
-} //namespace logger
-#endif // _WIN32
+	///	\brief Terminates the logging to File stream,
+	///			Closese the file which the message was logged to
+	Logger_API void end();
+
+private:
+	std::basic_ofstream<char8_t> m_output; //!< Output file
+};
+
+}	// namespace logger

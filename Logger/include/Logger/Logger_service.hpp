@@ -34,9 +34,9 @@ namespace logger
 
 class log_sink;
 
-Logger_API void Log_add_sink(log_sink& p_stream);
-Logger_API void Log_remove_sink(log_sink& p_stream);
-Logger_API void Log_remove_all();
+Logger_API void log_add_sink(log_sink& p_stream);
+Logger_API void log_remove_sink(log_sink& p_stream);
+Logger_API void log_remove_all();
 
 
 }	// namespace simLog
