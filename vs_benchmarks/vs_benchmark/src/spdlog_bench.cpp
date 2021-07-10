@@ -34,7 +34,7 @@ static void spdlog_test_string(benchmark::State& state)
 	spdlog::logger logger("multi_sink", {test_sink});
 	for (auto _ : state)
 	{
-		logger.info("{0}", test_string);
+		logger.log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, test_string);
 	}
 }
 
@@ -44,7 +44,7 @@ static void spdlog_test_null(benchmark::State& state)
 	spdlog::logger logger("multi_sink", {test_sink});
 	for (auto _ : state)
 	{
-		logger.info("");
+		logger.log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, "");
 	}
 }
 

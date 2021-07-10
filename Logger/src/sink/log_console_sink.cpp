@@ -24,22 +24,100 @@
 //======== ======== ======== ======== ======== ======== ======== ========
 
 #include <Logger/sink/log_console_sink.hpp>
+
+#include <vector>
+
 #include <CoreLib/Core_Console.hpp>
-#include <iostream>
+#include <CoreLib/string/core_string_encoding.hpp>
+#include <CoreLib/Core_Alloca.hpp>
 
 namespace logger
 {
 
 log_console_sink::log_console_sink() = default;
 
+#ifdef _WIN32
+
+static void finish_cout(std::u8string_view p_level, std::u8string_view p_message, char16_t* p_buffer, uintptr_t p_size, uintptr_t p_message_estimate, bool p_printLevel)
+{
+	if(p_printLevel)
+	{
+		core::_p::ANSI_to_UCS2_unsafe(p_level, p_buffer);
+		p_buffer += p_level.size();
+	}
+
+	if(p_message_estimate)
+	{
+		core::_p::UTF8_to_UTF16_faulty_unsafe(p_message, '?', p_buffer);
+		p_buffer += p_message_estimate;
+	}
+	*p_buffer = u'\n';
+	core::cout.write(std::u16string_view{p_buffer, p_size});
+}
+
+__declspec(noinline)
 void log_console_sink::output(const log_data& p_logData)
 {
-	if(p_logData.m_levelNumber != Level::Info)
+	const bool print_level = (p_logData.m_levelNumber != Level::Info);
+	const uintptr_t message_estimate = core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.m_message, '?');
+	const uintptr_t char_count =
+		(print_level ? p_logData.m_level.size() : 0)
+		+ message_estimate + 1;
+
+	constexpr uintptr_t alloca_treshold = (0x10000 / sizeof(char16_t));
+
+	if(char_count > alloca_treshold)
 	{
-		core::cout.write(p_logData.m_level);
+		std::vector<char16_t> buff;
+		buff.resize(char_count);
+		finish_cout(p_logData.m_level, p_logData.m_message, buff.data(), char_count, message_estimate, print_level);
 	}
-	core::cout.write(p_logData.m_message);
-	core::cout.put('\n');
+	else
+	{
+		char16_t* buff = reinterpret_cast<char16_t*>(core_alloca(char_count * sizeof(char16_t)));
+		finish_cout(p_logData.m_level, p_logData.m_message, buff, char_count, message_estimate, print_level);
+	}
 }
+
+#else
+
+static void finish_cout(std::u8string_view p_level, std::u8string_view p_message, char8_t* p_buffer, uintptr_t p_size, bool p_printLevel)
+{
+	if(p_printLevel)
+	{
+		const uintptr_t lsize = p_level.size();
+		memcpy(p_buffer, p_level.data(), lsize);
+		p_buffer +=lsize;
+	}
+	const uintptr_t msize = p_message.size();
+	memcpy(p_buffer, p_message.data(), msize);
+	p_buffer += msize;
+	*p_buffer = u8'\n';
+	core::cout.write(std::u8string_view{p_buffer, p_size});
+}
+
+__attribute__((noinline))
+void log_console_sink::output(const log_data& p_logData)
+{
+	const bool print_level = (p_logData.m_levelNumber != Level::Info);
+	const uintptr_t char_count =
+		(print_level ? p_logData.m_level.size() : 0)
+		+ p_logData.m_message.size() + 1;
+
+	constexpr uintptr_t alloca_treshold = 0x10000;
+
+	if(char_count > alloca_treshold)
+	{
+		std::vector<char8_t> buff;
+		buff.resize(char_count);
+		finish_cout(p_logData.m_level, p_logData.m_message, buff.data(), char_count, print_level);
+	}
+	else
+	{
+		char8_t* buff = reinterpret_cast<char8_t*>(core_alloca(char_count));
+		finish_cout(p_logData.m_level, p_logData.m_message, buff, char_count, print_level);
+	}
+}
+#endif
 
 }
