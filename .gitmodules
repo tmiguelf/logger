@@ -14,7 +14,3 @@
 	path = submodules/benchmark
 	url = ../benchmark.git
 	ignore = dirty
-[submodule "vs_benchmarks/spdlog/spdlog"]
-	path = vs_benchmarks/spdlog/spdlog
-	url = https://github.com/gabime/spdlog.git
-	ignore = dirty
