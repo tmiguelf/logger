@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <filesystem>
 
 #include <Logger/Logger_api.h>
@@ -55,7 +54,7 @@ public:
 	Logger_API void end();
 
 private:
-	std::basic_ofstream<char8_t> m_output; //!< Output file
+	void* m_file = nullptr; //!< Output file
 };
 
 }	// namespace logger
