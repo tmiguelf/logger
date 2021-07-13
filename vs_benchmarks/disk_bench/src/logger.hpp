@@ -22,15 +22,15 @@
 ///		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
+
+#pragma once
+
 #include <cstdint>
 #include <string_view>
 
-extern const std::string_view test_string;
-extern const int32_t test_signed_int;
-extern const uint64_t test_unsigned_int;
-extern const double test_fp;
-extern const char test_char;
-
-void dump_output(std::string_view);
-
-#include <benchmark/benchmark.h>
+namespace disk_logger
+{
+	void testSetup();
+	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char);
+	void testClean();
+}

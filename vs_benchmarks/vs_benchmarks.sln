@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31410.223
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31423.177
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spdlog", "spdlog\spdlog.vcxproj", "{3129B64C-F422-449B-A361-FEB598D0EF84}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "..\submodules\benchmark\benchmark\benchmark.vcxproj", "{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vs_benchmark", "vs_benchmark\vs_benchmark.vcxproj", "{A81E0BA9-B79D-47CD-A225-9C827E3D586F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "disk_bench", "disk_bench\disk_bench.vcxproj", "{8BBD3583-EE44-4B42-9B93-307D1C75ED96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,20 @@ Global
 		{A81E0BA9-B79D-47CD-A225-9C827E3D586F}.WSL_Release|x64.Build.0 = WSL_Release|x64
 		{A81E0BA9-B79D-47CD-A225-9C827E3D586F}.WSL_Release|x64.Deploy.0 = WSL_Release|x64
 		{A81E0BA9-B79D-47CD-A225-9C827E3D586F}.WSL_Release|x86.ActiveCfg = WSL_Release|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.Debug|x64.ActiveCfg = Debug|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.Debug|x64.Build.0 = Debug|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.Debug|x86.ActiveCfg = Debug|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.Release|x64.ActiveCfg = Release|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.Release|x64.Build.0 = Release|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.Release|x86.ActiveCfg = Release|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Debug|x64.ActiveCfg = WSL_Debug|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Debug|x64.Build.0 = WSL_Debug|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Debug|x64.Deploy.0 = WSL_Debug|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Debug|x86.ActiveCfg = WSL_Debug|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Release|x64.ActiveCfg = WSL_Release|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Release|x64.Build.0 = WSL_Release|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Release|x64.Deploy.0 = WSL_Release|x64
+		{8BBD3583-EE44-4B42-9B93-307D1C75ED96}.WSL_Release|x86.ActiveCfg = WSL_Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

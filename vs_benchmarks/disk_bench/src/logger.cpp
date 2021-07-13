@@ -22,15 +22,31 @@
 ///		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
-#include <cstdint>
-#include <string_view>
 
-extern const std::string_view test_string;
-extern const int32_t test_signed_int;
-extern const uint64_t test_unsigned_int;
-extern const double test_fp;
-extern const char test_char;
+#include "logger.hpp"
+#include <Logger/Logger.hpp>
+#include <Logger/Logger_service.hpp>
+#include <Logger/sink/log_file_sink.hpp>
 
-void dump_output(std::string_view);
 
-#include <benchmark/benchmark.h>
+namespace disk_logger
+{
+	logger::log_file_sink g_sink;
+
+	void testSetup()
+	{
+		g_sink.init("log.txt");
+		logger::log_add_sink(g_sink);
+	}
+
+	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char)
+	{
+		LOG_INFO(p_str, p_int32, p_uint64, p_double, p_char);
+	}
+
+	void testClean()
+	{
+		logger::log_remove_all();
+		g_sink.end();
+	}
+}
