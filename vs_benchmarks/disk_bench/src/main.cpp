@@ -32,12 +32,13 @@
 #include <CoreLib/Core_Thread.hpp>
 #include <CoreLib/Core_Sync.hpp>
 
-#include "logger.hpp"
+#include "disk_logger.hpp"
 #include "disk_spdlog.hpp"
+#include "disk_NanoLog.hpp"
 
 using namespace std::literals;
 
-const std::string_view test_string = "The quick brown fox jumps over the lazy fox";
+const std::string_view test_string = "The quick brown fox jumps over the lazy dog";
 const int32_t test_signed_int = -34;
 const uint64_t test_unsigned_int = 12345;
 const double test_fp = 5.67;
@@ -106,6 +107,7 @@ int main(
 {
 	RunTest(disk_logger::testSetup, disk_logger::log, disk_logger::testClean, "Logger");
 	RunTest(disk_spdlog::testSetup, disk_spdlog::log, disk_spdlog::testClean, "spdlog");
+	RunTest(disk_NanoLog::testSetup, disk_NanoLog::log, disk_NanoLog::testClean, "NanoLog");
 
 	return 0;
 }

@@ -3,5 +3,6 @@
 	<PropertyGroup Label="UserMacros">
 		<nanologPath>$(MSBuildThisFileDirectory)nanolog/</nanologPath>
 		 <spdlogPath>$(MSBuildThisFileDirectory)spdlog/</spdlogPath>
+		<NanoLogPath>$(MSBuildThisFileDirectory)NanoLog/</NanoLogPath>
 	</PropertyGroup>
 </Project>

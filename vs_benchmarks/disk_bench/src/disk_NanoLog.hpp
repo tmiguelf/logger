@@ -22,20 +22,15 @@
 ///		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
-#include "common.hpp"
 
+#pragma once
 
-const std::string_view test_string = "The quick brown fox jumps over the lazy dog";
-const int32_t test_signed_int = -34;
-const uint64_t test_unsigned_int = 12345;
-const double test_fp = -5.67;
-const char test_char = 'a';
+#include <cstdint>
+#include <string_view>
 
-static const volatile char* g_dump;
-static volatile uintptr_t g_dump2;
-
-void dump_output(std::string_view p_data)
+namespace disk_NanoLog
 {
-	g_dump = p_data.data();
-	g_dump2 = p_data.size();
+	void testSetup();
+	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char);
+	void testClean();
 }

@@ -22,20 +22,27 @@
 ///		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
-#include "common.hpp"
 
+#include "disk_spdlog.hpp"
 
-const std::string_view test_string = "The quick brown fox jumps over the lazy dog";
-const int32_t test_signed_int = -34;
-const uint64_t test_unsigned_int = 12345;
-const double test_fp = -5.67;
-const char test_char = 'a';
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
-static const volatile char* g_dump;
-static volatile uintptr_t g_dump2;
-
-void dump_output(std::string_view p_data)
+namespace disk_spdlog
 {
-	g_dump = p_data.data();
-	g_dump2 = p_data.size();
+	auto test_sink = std::make_shared<spdlog::sinks::basic_file_sink_st>("spdlog.log");
+	spdlog::logger logger("multi_sink", {test_sink});
+
+	void testSetup()
+	{
+	}
+
+	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char)
+	{
+		logger.info("{0}{1}{2}{3}{4}", p_str, p_int32, p_uint64, p_double, p_char);
+	}
+
+	void testClean()
+	{
+	}
 }

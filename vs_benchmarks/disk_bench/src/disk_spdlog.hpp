@@ -23,30 +23,14 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "logger.hpp"
-#include <Logger/Logger.hpp>
-#include <Logger/Logger_service.hpp>
-#include <Logger/sink/log_file_sink.hpp>
+#pragma once
 
+#include <cstdint>
+#include <string_view>
 
-namespace disk_logger
+namespace disk_spdlog
 {
-	logger::log_file_sink g_sink;
-
-	void testSetup()
-	{
-		g_sink.init("log.txt");
-		logger::log_add_sink(g_sink);
-	}
-
-	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char)
-	{
-		LOG_INFO(p_str, p_int32, p_uint64, p_double, p_char);
-	}
-
-	void testClean()
-	{
-		logger::log_remove_all();
-		g_sink.end();
-	}
+	void testSetup();
+	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char);
+	void testClean();
 }
