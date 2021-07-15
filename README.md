@@ -1,4 +1,6 @@
-Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/gc3v3lx0m2x8tud1/branch/master?svg=true)](https://ci.appveyor.com/project/tmiguelf/logger/branch/master)
+Build Status: 
+#### CI Suspended until CI tools are updated to the latest copilers
+
 # Logger
 Incredibly fast and versatile global logger.
 

@@ -1,27 +1,27 @@
-version: '{build}-{branch}'
-
-os: Visual Studio 2019 Preview
-
-install:
-    - wsl lsb_release -a
+#version: '{build}-{branch}'
+#
+#os: Visual Studio 2019 Preview
+#
+#install:
+#    - wsl lsb_release -a
 #    - wsl sudo sed --in-place 's/focal/groovy/g' /etc/apt/sources.list
 #    - wsl sudo apt update
 #    - wsl sudo apt install -y g++
-    - git submodule update --init --depth 1
-
-build: off
-
-build_script:
-    - msbuild /t:Build /p:Configuration=Release "./Logger.sln" -maxcpucount
+#    - git submodule update --init --depth 1
+#
+#build: off
+#
+#build_script:
+#    - msbuild /t:Build /p:Configuration=Release "./Logger.sln" -maxcpucount
 #    - msbuild /t:Build /p:Configuration=WSL_Release "./Logger.sln" -maxcpucount
 
-test_script:
-    - '&"./Runtime/win_x64_Release/LoggerTest.exe" --gtest_output="xml:Logger_result.xml"'
+#test_script:
+#    - '&"./Runtime/win_x64_Release/LoggerTest.exe" --gtest_output="xml:Logger_result.xml"'
 #    - wsl /mnt/c/projects/Logger/Runtime/lin_x86_64_Release/LoggerTest.out --gtest_output="xml:Logger_result_linux.xml"
-
-artifacts:
-  - path: Logger_result.xml
-    name: test_results
+#
+#artifacts:
+#  - path: Logger_result.xml
+#    name: test_results
 #  - path: Logger_result_linux.xml
 #    name: test_results
 
