@@ -26,9 +26,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\NanoLog\NanoLog.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NanoLog\NanoLog.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>

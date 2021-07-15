@@ -55,7 +55,6 @@
     <ClCompile Include="NanoLog\NanoLog.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\NanoLog\NanoLog.hpp" />
     <ClInclude Include="NanoLog\NanoLog.hpp" />
   </ItemGroup>
   <ItemGroup>
