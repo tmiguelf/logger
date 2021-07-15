@@ -57,7 +57,7 @@ void ThreadRunner(void* p_test)
 	double fp = test_fp;
 	char t_char = test_char;
 
-	for(uint64_t i = 1000; i--;)
+	for(uint64_t i = 10000; i--;)
 	{
 		func(test_string, signed_int, unsigned_int, fp, t_char);
 		++signed_int;
