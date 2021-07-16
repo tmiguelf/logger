@@ -24,6 +24,9 @@
     <ClCompile Include="src\logger_bench.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\g3log_bench.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.hpp">

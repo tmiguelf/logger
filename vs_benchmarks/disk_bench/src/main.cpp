@@ -35,6 +35,7 @@
 #include "disk_logger.hpp"
 #include "disk_spdlog.hpp"
 #include "disk_NanoLog.hpp"
+#include "disk_g3log.hpp"
 
 using namespace std::literals;
 
@@ -108,6 +109,7 @@ int main(
 	RunTest(disk_logger::testSetup, disk_logger::log, disk_logger::testClean, "Logger");
 	RunTest(disk_spdlog::testSetup, disk_spdlog::log, disk_spdlog::testClean, "spdlog");
 	RunTest(disk_NanoLog::testSetup, disk_NanoLog::log, disk_NanoLog::testClean, "NanoLog");
+	RunTest(disk_g3log::testSetup, disk_g3log::log, disk_g3log::testClean, "g3log");
 
 	return 0;
 }

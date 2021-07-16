@@ -52,6 +52,7 @@
     <Import Project="$(LoggerPath)Logger.import.props" />
     <Import Project="$(spdlogPath)spdlog.import.props" />
     <Import Project="$(NanoLogPath)NanoLog.import.props" />
+    <Import Project="$(g3logPath)g3log.import.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
@@ -67,11 +68,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="resources\versionSpecific.h" />
+    <ClInclude Include="src\disk_g3log.hpp" />
     <ClInclude Include="src\disk_NanoLog.hpp" />
     <ClInclude Include="src\disk_spdlog.hpp" />
     <ClInclude Include="src\disk_logger.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\disk_g3log.cpp" />
     <ClCompile Include="src\disk_NanoLog.cpp" />
     <ClCompile Include="src\disk_spdlog.cpp" />
     <ClCompile Include="src\disk_logger.cpp" />

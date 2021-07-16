@@ -51,6 +51,7 @@
     <Import Project="$(CoreLibPath)CoreLib.import.props" />
     <Import Project="$(LoggerPath)Logger.import.props" />
     <Import Project="$(spdlogPath)spdlog.import.props" />
+    <Import Project="$(g3logPath)g3log.import.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
@@ -66,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\common.cpp" />
+    <ClCompile Include="src\g3log_bench.cpp" />
     <ClCompile Include="src\logger_bench.cpp" />
     <ClCompile Include="src\spdlog_bench.cpp" />
   </ItemGroup>
