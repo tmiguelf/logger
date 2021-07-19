@@ -202,7 +202,7 @@ Logger in asynchronous mode comes up ahead, but I believe spdlog could achieve s
 In conclusion if you are ok with just logging to a file, with the limited formatting capabilities of NanoLog, and fixing some odd bugs in NanoLog yourself, then consider using it. Props to it, it delivers on its promise.
 But if you need formatting, custom sinks, then go for this Logger, it provides a limitless number of possibilities while being faster than anything else in it's category.
 
-### Hall of shame:
+
 Q: Why weren't libraries such as [Glog](https://github.com/google/glog) or [reckless](https://github.com/mattiasflodin/reckless) included in the benchmark.\
 A: All of the external libraries in this benchmark add bugs in them (obvious ones) that prevented them from being compiled with my setup.
 The ones that eventually made it onto the board were simple enough to fix.
