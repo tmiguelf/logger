@@ -1,8 +1,8 @@
 Build Status: 
-#### CI Suspended until CI tools are updated to the latest copilers
+#### CI Suspended until CI tools are updated to the latest compilers
 
 # Logger
-Incredibly fast and versatile global logger.
+The fastest* logging library of its kind, and an extremely versatile global logger.
 
 It's simple to setup, but even simpler to use:
  1. Include <Logger.hpp>
@@ -31,10 +31,10 @@ The following datapoints can be captured by the logger:
 
 ## User interface
 There are 4 main macros that define the basic user interface:
- * `LOG_INFO` - Uses `Info` log category. Intended for low criticality logging, a state in your program may have changed but nothing is unusual.
- * `LOG_WARNING` - Uses `Warning` log category. Intend for medium criticality logging, there's an abnormal condition but the application can confidently recover and continue the task.
- * `LOG_ERROR` - Uses `Error` log category. Intended for high criticality logging, indicates a serious abnormal condition that the application cannot recover, and has no option but to abort the task (either fully or partially).
- * `LOG_DEBUG` - Uses `Debug` log category. Intended for debugging purposes only. In debug builds the message will be logged, in release builds noting will be logged out.
+ * `LOG_INFO()` - Uses `Info` log category. Intended for low criticality logging, a state in your program may have changed but nothing is unusual.
+ * `LOG_WARNING()` - Uses `Warning` log category. Intend for medium criticality logging, there's an abnormal condition but the application can confidently recover and continue the task.
+ * `LOG_ERROR()` - Uses `Error` log category. Intended for high criticality logging, indicates a serious abnormal condition that the application cannot recover, and has no option but to abort the task (either fully or partially).
+ * `LOG_DEBUG()` - Uses `Debug` log category. Intended for debugging purposes only. In debug builds the message will be logged, in release builds noting will be logged out.
 
 All these 4 macros will automatically capture the file and the line (and the category) in the source code that generated the log.\
 The user just needs to lists the content they want to log as arguments.\
@@ -64,17 +64,17 @@ Where:
  * p_message - Is the user message
 
 Regardless of which of the methods used, the "thread id" and "Date and time" are always captured automatically, and cannot be customized (always captured internally).
-"Date and time" is always in UTC.
+"Date and time" are always in UTC.
 
 Note: It is not required for the user to provide a new line at the end of the log. By convention a new line is implicit per each call to the log (please see Service management interface for more details).
 
 ### Streaming capabilities
 The data types that can be passed to the logger are endless.\
-Anything that has a defined core::toPrint adapter (from the CoreLib library) can be streamed by default, this includes user defined types.
-Or pass any adapter compatible with core::toPrint for any custom format.
+Anything that has a defined core::toPrint adapter (from the CoreLib library) can be streamed by default without any extra enhancements, this includes user defined types.
+Or you can pass any adapter compatible with core::toPrint for any custom format.
 
 ## Service management interface
-What happens to a generated log once dispatched can be controlled by the management interface.
+What happens to a generated log once it's dispatched can be controlled by the management interface.
 This interface can be accessed by including the header `Logger_service.hpp`.
 
 At the start of a program, nothing happens to any dispatched logs. This is because there's nowhere that has been defined for the logs to go.
@@ -82,9 +82,9 @@ To define where the logs are forward to, you must first register a sink that rec
 A sink for example can decide to write the Logs to a file, or print it on the console, or forward it to a socket, or anything that the user wishes to implement.
 
 The following functions are available:
- * `Log_add_sink` - Registers a sink. The life-time of the sink must be guaranteed until it's unregistered.
- * `Log_remove_sink` - Unregister a specific sink.
- * `Log_remove_all` - Unregisters all sinks.
+ * `log_add_sink` - Registers a sink. The life-time of the sink must be guaranteed until it's unregistered.
+ * `log_remove_sink` - Unregister a specific sink.
+ * `log_remove_all` - Unregisters all sinks.
 
 It is possible to register multiple sinks, in this case a generated log is forward to all sinks sequentially by order of registration.
 
@@ -105,3 +105,106 @@ As a convention, users trying to generate logs should not have to worry about th
 
 Registering and unregistering sinks is not thread safe, do not attempt to register or unregister sinks simultaneously in different threads, or try to log while registering/unregistering sinks.
 These will lead to a race condition and cause undefined behavior.
+
+## Benchmarking
+I have added benchmarks against the following popular libraries (considered fast):
+ * [spdlog](https://github.com/gabime/spdlog)
+ * [g3log](https://github.com/KjellKod/g3log)
+ * [NanoLog](https://github.com/Iyengar111/NanoLog)
+
+Feel free to send those projects a thumbs up.
+There were other libraries that were considered, however they had been disqualified out of the fact that they wouldn't compile at all.
+And as harsh as it sounds, if the code doesn't so much as compile, you don't really have much of a working product (logger) as much as you have a randomly collected
+set of ideas. It's just hypothetical.
+
+Before we show any benchmarks, we need to establish some common ground and make sure we are comparing apples to apples.\
+However, exact common ground isn't always possible (and does not occur in this case).\
+Different libaries have been optimized for different use cases, and it is possible to design benchmarks with particular uses cases that would penalize one over the other.
+
+Is the ability to have multiple non-file sinks important?
+
+What is the size in bytes of the generated meta-data?\
+Larger maybe more costly, but what if the extra information is crucial for your system?
+
+Does the library provide date-time pre-formatting capabilities?\
+If you have multiple sinks, pre-formatting would make it faster than have each individual sink formatting it.\
+However, if you don't care for date and time in your logs, pre-formatting would actually cost you.
+
+Do you expect large or small number of concurrent threads writing to the log? \
+There are synchronization mechanisms that are more costly with a lower number of threads but scale better with a larger number of threads.
+
+When you log to a file, does the your system bottleneck on "memory allocation"/"concurrency management" or on disk access?\
+If your system bottle necks on disk, delegating the write to a separate thread would make it faster.\
+However, if it bottlenecks on "memory allocation"/"concurrency management", writing the output directly onto disk can be much faster than delegating it to a separate thread.
+
+Each take different solutions to address these problems. So take any benchmarked values (including these ones) with a grain of salt. \
+Make sure to do your own research first, and pick the one that best fits your usage scenario. \
+If this particular library isn't the best for what you are doing, then that's ok, please consider taking a look at others and check if their strengths better align with your application.
+
+
+### Benchmarks
+There are 2 types of benchmarks provided, but each try to measure one thing, "return time", i.e. The time it takes in the critical path of the user code between the point where a decision to generate a Log is made and the Log call returns the execution to the user's code.
+What it tries to measure is the performance impact a logging call has, lower times are better.\
+Note: We are not measuring how much time it takes for a log to be available to read on disk, or be available for read at whatever custom sink the user cares about.
+Asynchronous loggers can delegate the write task to a separate thread, and take longer to write on disk than others, but can appear much faster because they return execution to the user sooner.
+
+ 1. vs_benchmark - Only for those who support custom sinks. For this a custom output function is provided who’s only tasks is to prevent code form being optimized away.
+    Each logger must create a custom sink that pushes the logged message onto this function. This will serve as a placeholder for any custom sink the user will be able to provide.
+    The default implementation of each type of sink, that is provided by default with these libraries, maybe extremely unperforming, and thus have a huge impact on their times,
+    but theoretically because a user can write their own sinks, the performance can theoretically be made much faster. This test aims at removing the impact of the sinks in the tests results.
+    NanoLog is excluded from this as it does not support custom sinks.
+
+    In this test there are 3 subtests:\
+      a) Log a message - To measure the general capability of just forwarding a simple message at all.\
+      b) Log nothing - Logging nothing isn't really just logging nothing, meta-data is still captured and may end up in the logs. Useful in situations where the meta-data alone is enough to understand the issue being logged. Measures the penalty of meta-data collection.\
+      c) Log a combination of text and numbers - 1 string_view, 1 int, 1 unsigned int, 1 double, and 1 lonely character. Helps measure the performance of the formatting, similar to the general use case where logs have dynamic information in them.
+
+      [benchmark](https://github.com/google/benchmark) is used for these.
+
+ 2. disk_bench - This aims to make a more realistic impact measurement with each library's "file sinks" in the loop.
+    The same formatting input as 1.c (in vs_benchmark) is used with the significant difference that the numeric values are rolling as the tests progresses.
+    5 different threads running concurrently each trying to log 100000 times.
+On this test there are 2 notable discrepancies:\
+      a) The logger tests 2 types of file sinks, synchronous and asynchronous.\
+      b) spdlog uses the single-threaded (st) version of the file sink, instead of the multi-threaded (mt).
+         This was done because their st version actually appears to be thread safe, and because it doesn't use any mutexes, it results in a much faster code.
+         Although the mt version was the one intended to be used in such scenario, someone with sufficient powers of observation could come to the same conclusion
+         and opt to use the st version instead. We want to give these libraries their best chance of succeeding.
+
+Here are the results:
+
+vs_benchmark:
+| nano seconds | Logger | spdlog | g3log |
+| ------------ | ------ | ------ | ----- |
+| Combination  |    202 |    303 |  4031 |
+| String       |   98.1 |   41.9 |  2286 |
+| Nothing      |   94.2 |   41.6 |  1359 |
+
+
+disk_bench:
+| Library      | Seconds |
+| ------------ | ------- |
+| Logger       |  0.4278 |
+| Logger Async |  0.3476 |
+| spdlog       |  0.4314 |
+| g3log        |  1.6384 |
+| NanoLog      |  0.0689 |
+
+On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
+This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 50ns to 80ns ouch!),
+spdlog would need to incur that extra cost later if the sink wished to log that data. However, Logger has a much more efficient formatting library,
+so it ends up ahead when formatting is involved.
+
+On the disk_bench, NanoLog is the clear winner with g3log the clear loser. Logger and spdlog perform pretty much the same since they are both being bottlenecked
+by the synchronous write to disk (splog generate shorter messages), and they both work pretty much similar fashion (fwrite).
+Logger in asynchronous mode comes up ahead, but I believe spdlog could achieve similar results if an asynchronous sink was added.
+
+In conclusion if you are ok with just logging to a file, with the limited formatting capabilities of NanoLog, and fixing some odd bugs in NanoLog yourself, then consider using it. Props to it, it delivers on its promise.
+But if you need formatting, custom sinks, then go for this Logger, it provides a limitless number of possibilities while being faster than anything else in it's category.
+
+### Hall of shame:
+Q: Why weren't libraries such as [Glog](https://github.com/google/glog) or [reckless](https://github.com/mattiasflodin/reckless) included in the benchmark.\
+A: All of the external libraries in this benchmark add bugs in them (obvious ones) that prevented them from being compiled with my setup.
+The ones that eventually made it onto the board were simple enough to fix.
+I have attempted to benchmark Glog and reckless, however there were way too many bugs in them to be able to compile with even the most laxed of rules.
+Sorry for the developers of these libraries, it was way too much work for me to fix them, if you managed to correct them in the future, I will consider adding them.

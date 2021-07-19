@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{cb80a6e2-e5f4-4311-bc5e-2678506fde6c}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WSL_Debug|x64">
+      <Configuration>WSL_Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WSL_Release|x64">
+      <Configuration>WSL_Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="quickMSBuild" Condition="'$(Configuration)'=='Debug'">
+    <CompilerFlavour>MSVC</CompilerFlavour>
+    <BuildMethod>native</BuildMethod>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="quickMSBuild" Condition="'$(Configuration)'=='Release'">
+    <CompilerFlavour>MSVC</CompilerFlavour>
+    <BuildMethod>native</BuildMethod>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="quickMSBuild" Condition="'$(Configuration)'=='WSL_Debug'">
+    <CompilerFlavour>g++</CompilerFlavour>
+    <BuildMethod>WSL</BuildMethod>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="quickMSBuild" Condition="'$(Configuration)'=='WSL_Release'">
+    <CompilerFlavour>g++</CompilerFlavour>
+    <BuildMethod>WSL</BuildMethod>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SolutionDir)locations.props" />
+    <Import Project="$(quickMSBuildPath)default.cpp.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)g3log\src;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="g3log.import.props" />
+    <None Include="g3log.include.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="g3log\src\crashhandler_unix.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="g3log\src\crashhandler_windows.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="g3log\src\filesink.cpp" />
+    <ClCompile Include="g3log\src\g3log.cpp" />
+    <ClCompile Include="g3log\src\logcapture.cpp" />
+    <ClCompile Include="g3log\src\loglevels.cpp" />
+    <ClCompile Include="g3log\src\logmessage.cpp" />
+    <ClCompile Include="g3log\src\logworker.cpp" />
+    <ClCompile Include="g3log\src\stacktrace_windows.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="g3log\src\time.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="g3log\src\filesinkhelper.ipp" />
+    <ClInclude Include="g3log\src\g3log\active.hpp" />
+    <ClInclude Include="g3log\src\g3log\atomicbool.hpp" />
+    <ClInclude Include="g3log\src\g3log\crashhandler.hpp" />
+    <ClInclude Include="g3log\src\g3log\filesink.hpp" />
+    <ClInclude Include="g3log\src\g3log\future.hpp" />
+    <ClInclude Include="g3log\src\g3log\g3log.hpp" />
+    <ClInclude Include="g3log\src\g3log\logcapture.hpp" />
+    <ClInclude Include="g3log\src\g3log\loglevels.hpp" />
+    <ClInclude Include="g3log\src\g3log\logmessage.hpp" />
+    <ClInclude Include="g3log\src\g3log\logworker.hpp" />
+    <ClInclude Include="g3log\src\g3log\moveoncopy.hpp" />
+    <ClInclude Include="g3log\src\g3log\shared_queue.hpp" />
+    <ClInclude Include="g3log\src\g3log\sink.hpp" />
+    <ClInclude Include="g3log\src\g3log\sinkhandle.hpp" />
+    <ClInclude Include="g3log\src\g3log\sinkwrapper.hpp" />
+    <ClInclude Include="g3log\src\g3log\stacktrace_windows.hpp" />
+    <ClInclude Include="g3log\src\g3log\stlpatch_future.hpp" />
+    <ClInclude Include="g3log\src\g3log\time.hpp" />
+  </ItemGroup>
+  <Import Project="$(quickMSBuildPath)default.cpp.targets" />
+</Project>

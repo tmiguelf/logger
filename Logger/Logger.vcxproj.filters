@@ -71,6 +71,9 @@
     <ClInclude Include="include\Logger\toLog\log_streamer.hpp">
       <Filter>Header Files\toLog</Filter>
     </ClInclude>
+    <ClInclude Include="include\Logger\sink\log_async_file_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\dllVersion.rc">
@@ -89,6 +92,9 @@
     </ClCompile>
     <ClCompile Include="src\Logger.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sink\log_async_file_sink.cpp">
+      <Filter>Source Files\sink</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
