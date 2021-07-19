@@ -33,6 +33,7 @@
 #include <CoreLib/Core_Sync.hpp>
 
 #include "disk_logger.hpp"
+#include "disk_async_logger.hpp"
 #include "disk_spdlog.hpp"
 #include "disk_NanoLog.hpp"
 #include "disk_g3log.hpp"
@@ -59,7 +60,7 @@ void ThreadRunner(void* p_test)
 	double fp = test_fp;
 	char t_char = test_char;
 
-	for(uint64_t i = 10000; i--;)
+	for(uint64_t i = 100000; i--;)
 	{
 		func(test_string, signed_int, unsigned_int, fp, t_char);
 		++signed_int;
@@ -73,7 +74,7 @@ void ThreadRunner(void* p_test)
 void RunTest(func_t p_int, log_func p_call, func_t p_clean, std::string_view p_name)
 {
 	p_int();
-	std::array<core::Thread, 10> threads;
+	std::array<core::Thread, 5> threads;
 	const uint64_t start = core::clock_stamp();
 
 	for(core::Thread& t_thread : threads)
@@ -107,6 +108,7 @@ int main(
 #endif
 {
 	RunTest(disk_logger::testSetup, disk_logger::log, disk_logger::testClean, "Logger");
+	RunTest(disk_async_logger::testSetup, disk_async_logger::log, disk_async_logger::testClean, "Logger async");
 	RunTest(disk_spdlog::testSetup, disk_spdlog::log, disk_spdlog::testClean, "spdlog");
 	RunTest(disk_NanoLog::testSetup, disk_NanoLog::log, disk_NanoLog::testClean, "NanoLog");
 	RunTest(disk_g3log::testSetup, disk_g3log::log, disk_g3log::testClean, "g3log");

@@ -23,34 +23,53 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "disk_g3log.hpp"
+#pragma once
 
-#include <g3log/g3log.hpp>
-#include <g3log/filesink.hpp>
+#include <filesystem>
+#include <vector>
+#include <queue>
+#include <atomic>
+#include <CoreLib/Core_Thread.hpp>
+#include <CoreLib/Core_Sync.hpp>
+#include <Logger/Logger_api.h>
+#include "log_sink.hpp"
 
-#include <g3log/logworker.hpp>
 
-
-namespace disk_g3log
+namespace logger
 {
-	std::unique_ptr<g3::LogWorker> logworker;
-	std::unique_ptr<g3::FileSinkHandle> sinkHandle;
-	void testSetup()
-	{
-		logworker = g3::LogWorker::createLogWorker();
-		sinkHandle = logworker->addDefaultLogger("log", "", "g3log");
-		g3::initializeLogging(logworker.get());
-	}
+///	\brief Created to do Logging to file
+class log_async_file_sink final: public log_sink
+{
+public:
+	Logger_API log_async_file_sink();
+	Logger_API ~log_async_file_sink();
 
-	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char)
-	{
-		LOG(INFO) << p_str << p_int32 << p_uint64 << p_double << p_char;
-	}
+	///	\brief Logs data to file
+	///	\praram[in] - p_logData - Data that will be logged to the file
+	void output(const log_data& p_logData) final;
 
-	void testClean()
-	{
-		g3::internal::shutDownLogging();
-		logworker.reset();
-		sinkHandle.reset();
-	}
-}
+	///	\brief Initiates the logging to File stream,
+	///			Creates a file with the given file name
+	///	\param[in] - p_fileName - Name of the file that the message will be logged to
+	///	\return true on success, false otherwise
+	Logger_API bool init(const std::filesystem::path& p_fileName);
+
+	///	\brief Terminates the logging to File stream,
+	///			Closese the file which the message was logged to
+	Logger_API void end();
+
+private:
+	void run(void*);
+	void dispatch();
+
+	void* m_file = nullptr; //!< Output file
+
+
+	std::atomic<bool> m_quit = false;
+	core::Thread m_thread;
+	core::EventTrap m_trap;
+	core::AtomicSpinLock m_lock;
+	std::queue<std::vector<char8_t>> m_data;
+};
+
+}	// namespace logger

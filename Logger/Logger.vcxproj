@@ -63,6 +63,7 @@
     <ClInclude Include="include\Logger\Logger_client.hpp" />
     <ClInclude Include="include\Logger\Logger_service.hpp" />
     <ClInclude Include="include\Logger\log_level.hpp" />
+    <ClInclude Include="include\Logger\sink\log_async_file_sink.hpp" />
     <ClInclude Include="include\Logger\sink\log_console_sink.hpp" />
     <ClInclude Include="include\Logger\sink\log_debugger_sink.hpp" />
     <ClInclude Include="include\Logger\sink\log_file_sink.hpp" />
@@ -82,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Logger.cpp" />
+    <ClCompile Include="src\sink\log_async_file_sink.cpp" />
     <ClCompile Include="src\sink\log_console_sink.cpp" />
     <ClCompile Include="src\sink\log_debugger_sink.cpp" />
     <ClCompile Include="src\sink\log_file_sink.cpp" />

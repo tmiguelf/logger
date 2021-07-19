@@ -28,7 +28,6 @@
 #include <Logger/Logger_service.hpp>
 #include <Logger/sink/log_file_sink.hpp>
 
-
 namespace disk_logger
 {
 	logger::log_file_sink g_sink;

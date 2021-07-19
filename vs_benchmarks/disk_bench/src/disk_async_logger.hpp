@@ -23,34 +23,14 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "disk_g3log.hpp"
+#pragma once
 
-#include <g3log/g3log.hpp>
-#include <g3log/filesink.hpp>
+#include <cstdint>
+#include <string_view>
 
-#include <g3log/logworker.hpp>
-
-
-namespace disk_g3log
+namespace disk_async_logger
 {
-	std::unique_ptr<g3::LogWorker> logworker;
-	std::unique_ptr<g3::FileSinkHandle> sinkHandle;
-	void testSetup()
-	{
-		logworker = g3::LogWorker::createLogWorker();
-		sinkHandle = logworker->addDefaultLogger("log", "", "g3log");
-		g3::initializeLogging(logworker.get());
-	}
-
-	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char)
-	{
-		LOG(INFO) << p_str << p_int32 << p_uint64 << p_double << p_char;
-	}
-
-	void testClean()
-	{
-		g3::internal::shutDownLogging();
-		logworker.reset();
-		sinkHandle.reset();
-	}
+	void testSetup();
+	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char);
+	void testClean();
 }

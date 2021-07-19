@@ -30,6 +30,9 @@
     <ClInclude Include="src\disk_g3log.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\disk_async_logger.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\disk_g3log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\disk_async_logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
