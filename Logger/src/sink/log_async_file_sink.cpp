@@ -203,7 +203,7 @@ void log_async_file_sink::dispatch()
 #ifdef _WIN32
 		_fwrite_nolock(obj.data(), 1, obj.size(), reinterpret_cast<std::FILE*>(m_file));
 #else
-		std::fwrite(obj.data(), 1, obj.size(), reinterpret_cast<std::FILE*>(m_file));
+		fwrite_unlocked(obj.data(), 1, obj.size(), reinterpret_cast<std::FILE*>(m_file));
 #endif // _WIN32
 		local.pop();
 	}
