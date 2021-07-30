@@ -27,6 +27,7 @@
 
 #include <filesystem>
 
+#include <CoreLib/Core_File.hpp>
 #include <Logger/Logger_api.h>
 #include "log_sink.hpp"
 
@@ -54,7 +55,7 @@ public:
 	Logger_API void end();
 
 private:
-	void* m_file = nullptr; //!< Output file
+	core::file_write m_file; //!< Output file
 };
 
 }	// namespace logger

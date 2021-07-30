@@ -49,7 +49,7 @@ static inline void transfer(char8_t*& p_buff, std::u8string_view p_str)
 #endif
 
 static inline void
-	AUX_WRITE_DATA(std::FILE* p_file,
+	AUX_WRITE_DATA(core::file_write& p_file,
 		const log_data& p_logData,
 		char8_t* const p_buffer,
 		uintptr_t p_buffer_size,
@@ -86,7 +86,7 @@ static inline void
 	transfer(pivot, p_logData.m_message);
 	*(pivot) = u8'\n';
 
-	std::fwrite(p_buffer, 1, p_buffer_size, p_file);
+	p_file.write(p_buffer, p_buffer_size);
 }
 
 
@@ -101,7 +101,7 @@ log_file_sink::~log_file_sink()
 
 void log_file_sink::output(const log_data& p_logData)
 {
-	if(!m_file) return;
+	if(!m_file.is_open()) return;
 
 #ifdef _WIN32
 	const uintptr_t fileSize_estimate = core::_p::UTF16_to_UTF8_faulty_estimate(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?');
@@ -126,12 +126,12 @@ void log_file_sink::output(const log_data& p_logData)
 	{
 		std::vector<char8_t> buff;
 		buff.resize(count);
-		AUX_WRITE_DATA(reinterpret_cast<std::FILE*>(m_file), p_logData, buff.data(), count, fileSize_estimate);
+		AUX_WRITE_DATA(m_file, p_logData, buff.data(), count, fileSize_estimate);
 	}
 	else
 	{
 		char8_t* buff = reinterpret_cast<char8_t*>(core_alloca(count));
-		AUX_WRITE_DATA(reinterpret_cast<std::FILE*>(m_file), p_logData, buff, count, fileSize_estimate);
+		AUX_WRITE_DATA(m_file, p_logData, buff, count, fileSize_estimate);
 	}
 }
 
@@ -150,31 +150,23 @@ bool log_file_sink::init(const std::filesystem::path& p_fileName)
 		return false;
 	}
 
-	std::filesystem::create_directories(fileName.parent_path());
 
-#ifdef _WIN32
-	reinterpret_cast<std::FILE*&>(m_file) = _wfopen(fileName.native().c_str(), L"w+b");
-#else
-	reinterpret_cast<std::FILE*&>(m_file) = std::fopen(fileName.native().c_str(), "w+b");
-#endif
+	if(m_file.open(fileName, core::file_write::open_mode::create, true) != std::errc{})
+	{
+		return false;
+	}
 
-	if(!m_file) return false;
 
 	constexpr std::array UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
 
-	std::fwrite(UTF8_BOM.data(), 1, UTF8_BOM.size(), reinterpret_cast<std::FILE*>(m_file));
+	m_file.write(UTF8_BOM.data(), UTF8_BOM.size());
 	return true;
 }
 
 void log_file_sink::end()
 {
-	void* tfile = nullptr;
-	std::swap(m_file, tfile);
-	if(tfile)
-	{
-		std::fflush(reinterpret_cast<std::FILE*>(tfile));
-		std::fclose(reinterpret_cast<std::FILE*>(tfile));
-	}
+	m_file.flush();
+	m_file.close();
 }
 
 } //namespace simLog
