@@ -29,9 +29,12 @@
 #include <vector>
 #include <queue>
 #include <atomic>
+
 #include <CoreLib/Core_Thread.hpp>
 #include <CoreLib/Core_Sync.hpp>
+#include <CoreLib/Core_File.hpp>
 #include <Logger/Logger_api.h>
+
 #include "log_sink.hpp"
 
 
@@ -62,8 +65,7 @@ private:
 	void run(void*);
 	void dispatch();
 
-	void* m_file = nullptr; //!< Output file
-
+	core::file_write m_file; //!< Output file
 
 	std::atomic<bool> m_quit = false;
 	core::Thread m_thread;

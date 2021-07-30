@@ -26,7 +26,6 @@
 #include <Logger/sink/log_async_file_sink.hpp>
 
 #include <array>
-#include <cstdio>
 #include <vector>
 #include <utility>
 
@@ -56,7 +55,7 @@ log_async_file_sink::~log_async_file_sink()
 
 void log_async_file_sink::output(const log_data& p_logData)
 {
-	if(!m_file) return;
+	if(!m_file.is_open()) return;
 
 #ifdef _WIN32
 	const uintptr_t fileSize_estimate = core::_p::UTF16_to_UTF8_faulty_estimate(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?');
@@ -133,21 +132,16 @@ bool log_async_file_sink::init(const std::filesystem::path& p_fileName)
 		return false;
 	}
 
-	std::filesystem::create_directories(fileName.parent_path());
-
-#ifdef _WIN32
-	reinterpret_cast<std::FILE*&>(m_file) = _wfopen(fileName.native().c_str(), L"w+b");
-#else
-	reinterpret_cast<std::FILE*&>(m_file) = std::fopen(fileName.native().c_str(), "w+b");
-#endif
-
-	if(!m_file) return false;
+	if(m_file.open(fileName, core::file_write::open_mode::create, true) != std::errc{})
+	{
+		return false;
+	}
 
 	m_quit.store(false, std::memory_order::relaxed);
 	m_trap.reset();
 	if(m_thread.create(this, &log_async_file_sink::run, nullptr) != core::Thread::Error::None)
 	{
-		std::fclose(reinterpret_cast<std::FILE*>(m_file));
+		m_file.close();
 		return false;
 	}
 
@@ -163,19 +157,15 @@ void log_async_file_sink::end()
 		m_thread.join();
 	}
 
-	void* tfile = nullptr;
-	std::swap(m_file, tfile);
-	if(tfile)
-	{
-		std::fflush(reinterpret_cast<std::FILE*>(tfile));
-		std::fclose(reinterpret_cast<std::FILE*>(tfile));
-	}
+	m_file.flush();
+	m_file.close();
 }
 
 void log_async_file_sink::run(void*)
 {
 	constexpr std::array UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
-	std::fwrite(UTF8_BOM.data(), 1, UTF8_BOM.size(), reinterpret_cast<std::FILE*>(m_file));
+
+	m_file.write_unlocked(UTF8_BOM.data(), UTF8_BOM.size());
 
 	while(!m_quit.load(std::memory_order::acquire))
 	{
@@ -200,11 +190,7 @@ void log_async_file_sink::dispatch()
 	while(!local.empty())
 	{
 		std::vector<char8_t>& obj = local.front();
-#ifdef _WIN32
-		_fwrite_nolock(obj.data(), 1, obj.size(), reinterpret_cast<std::FILE*>(m_file));
-#else
-		fwrite_unlocked(obj.data(), 1, obj.size(), reinterpret_cast<std::FILE*>(m_file));
-#endif // _WIN32
+		m_file.write_unlocked(obj.data(), obj.size());
 		local.pop();
 	}
 }
