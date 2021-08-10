@@ -51,7 +51,7 @@ static inline void AuxWriteData(
 {
 	char16_t* pivot = p_buffer;
 
-	memcpy(pivot, p_logData.m_file.data(), p_logData.m_file.size());
+	memcpy(pivot, p_logData.m_file.data(), p_logData.m_file.size() * sizeof(core::os_char));
 	pivot += p_logData.m_file.size();
 
 	*(pivot++) = u'(';
@@ -80,10 +80,6 @@ static inline void AuxWriteData(
 
 	core::_p::ANSI_to_UCS2_unsafe(p_logData.m_level, pivot);
 	pivot += p_level_estimate;
-
-	std::basic_stringstream<char16_t> t_stream;
-	t_stream << reinterpret_cast<const std::u16string_view&>(p_logData.m_file) << u'('
-		<< core::ANSI_to_UTF16(p_logData.m_line);
 
 
 	core::_p::UTF8_to_UTF16_faulty_unsafe(p_logData.m_message, '?', pivot);
