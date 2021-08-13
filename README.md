@@ -176,19 +176,19 @@ Here are the results:
 vs_benchmark:
 | nano seconds | Logger | spdlog | g3log |
 | ------------ | ------ | ------ | ----- |
-| Combination  |    202 |    303 |  4031 |
-| String       |   98.1 |   41.9 |  2286 |
-| Nothing      |   94.2 |   41.6 |  1359 |
+| Combination  |    188 |    343 |  3948 |
+| String       |   83.3 |   45.1 |  2190 |
+| Nothing      |   83.2 |   47.1 |  1418 |
 
 
 disk_bench:
 | Library      | Seconds |
 | ------------ | ------- |
-| Logger       |  0.4278 |
-| Logger Async |  0.3476 |
-| spdlog       |  0.4314 |
-| g3log        |  1.6384 |
-| NanoLog      |  0.0689 |
+| Logger       |  0.3776 |
+| Logger Async |  0.2255 |
+| spdlog       |  0.4090 |
+| g3log        |  1.5855 |
+| NanoLog      |  0.0660 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
 This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 50ns to 80ns ouch!),
@@ -200,7 +200,7 @@ by the synchronous write to disk (splog generate shorter messages), and they bot
 Logger in asynchronous mode comes up ahead, but I believe spdlog could achieve similar results if an asynchronous sink was added.
 
 In conclusion if you are ok with just logging to a file, with the limited formatting capabilities of NanoLog, and fixing some odd bugs in NanoLog yourself, then consider using it. Props to it, it delivers on its promise.
-But if you need formatting, custom sinks, then go for this Logger, it provides a limitless number of possibilities while being faster than anything else in it's category.
+But if you need formatting, custom sinks, then go for this Logger, it provides a limitless formating possibilities while being faster than anything else in it's category.
 
 
 Q: Why weren't libraries such as [Glog](https://github.com/google/glog) or [reckless](https://github.com/mattiasflodin/reckless) included in the benchmark.\
