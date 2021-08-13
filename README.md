@@ -191,7 +191,7 @@ disk_bench:
 | NanoLog      |  0.0660 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
-This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 50ns to 80ns ouch!),
+This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 30ns to 60ns ouch!),
 spdlog would need to incur that extra cost later if the sink wished to log that data. However, Logger has a much more efficient formatting library,
 so it ends up ahead when formatting is involved.
 
