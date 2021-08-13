@@ -76,7 +76,6 @@ static core::thread_id_t getCurrentThreadId()
 		*(pivot++) = u8'0' + p_time.date.month / 10; 
 		*(pivot++) = u8'0' + p_time.date.month % 10; 
 	}
-	//pivot += core::to_chars(p_time.date.month, std::span<char8_t, 3>{pivot, 3});
 
 	//day
 	*(pivot++) = u8'/';
@@ -90,7 +89,6 @@ static core::thread_id_t getCurrentThreadId()
 		*(pivot++) = u8'0' + p_time.date.day / 10;
 		*(pivot++) = u8'0' + p_time.date.day % 10;
 	}
-	//pivot += core::to_chars(p_time.date.day, std::span<char8_t, 3>{pivot, 3});
 	return pivot - p_out.data();
 }
 
@@ -109,7 +107,6 @@ static core::thread_id_t getCurrentThreadId()
 		*(pivot++) = u8'0' + p_time.time.hour / 10;
 		*(pivot++) = u8'0' + p_time.time.hour % 10;
 	}
-	//pivot += core::to_chars(p_time.time.hour, std::span<char8_t, 3>{pivot, 3});
 
 	//minute
 	*(pivot++) = u8':';
@@ -123,7 +120,6 @@ static core::thread_id_t getCurrentThreadId()
 		*(pivot++) = u8'0' + p_time.time.minute / 10;
 		*(pivot++) = u8'0' + p_time.time.minute % 10;
 	}
-	//pivot += core::to_chars(p_time.time.minute, std::span<char8_t, 3>{pivot, 3});
 
 	//second
 	*(pivot++) = u8':';
@@ -137,7 +133,6 @@ static core::thread_id_t getCurrentThreadId()
 		*(pivot++) = u8'0' + p_time.time.second / 10;
 		*(pivot++) = u8'0' + p_time.time.second % 10;
 	}
-	//pivot += core::to_chars(p_time.time.second, std::span<char8_t, 3>{pivot, 3});
 
 	//millisecond
 	*(pivot++) = u8'.';
@@ -162,7 +157,6 @@ static core::thread_id_t getCurrentThreadId()
 		*(pivot++) = u8'0' + rem / 10;
 		*(pivot++) = u8'0' + rem % 10;
 	}
-	//pivot += core::to_chars(p_time.time.msecond, std::span<char8_t, 5>{pivot, 5});
 	return pivot - p_out.data();
 }
 
