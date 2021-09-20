@@ -42,12 +42,12 @@ namespace logger
 
 static inline void AuxWriteData(
 	const log_data& p_logData, char16_t* const p_buffer,
-	uintptr_t p_line_estimate,
-	uintptr_t p_col_estimate,
-	uintptr_t p_time_estimate,
-	uintptr_t p_thread_estimate,
-	uintptr_t p_level_estimate,
-	uintptr_t p_message_estimate)
+	const uintptr_t p_line_estimate,
+	const uintptr_t p_col_estimate,
+	const uintptr_t p_time_estimate,
+	const uintptr_t p_thread_estimate,
+	const uintptr_t p_level_estimate,
+	const uintptr_t p_message_estimate)
 {
 	char16_t* pivot = p_buffer;
 
@@ -95,12 +95,12 @@ log_debugger_sink::log_debugger_sink() = default;
 
 void log_debugger_sink::output(const log_data& p_logData)
 {
-	const uintptr_t line_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_line);
-	const uintptr_t col_estimate = p_logData.m_columnNumber ? core::_p::ANSI_to_UCS2_estimate(p_logData.m_line) : 0;
-	const uintptr_t time_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_time);
-	const uintptr_t thread_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_thread);
-	const uintptr_t level_estimate = core::_p::ANSI_to_UCS2_estimate(p_logData.m_level);
-	const uintptr_t message_estimate = core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.m_message, '?');
+	const uintptr_t line_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_line);
+	const uintptr_t col_estimate		= p_logData.m_columnNumber ? core::_p::ANSI_to_UCS2_estimate(p_logData.m_line) : 0;
+	const uintptr_t time_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_time);
+	const uintptr_t thread_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_thread);
+	const uintptr_t level_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_level);
+	const uintptr_t message_estimate	= core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.m_message, '?');
 
 	//File(Line,Col): [Date] Level: Message\n\0
 	const uintptr_t count = p_logData.m_file.size()

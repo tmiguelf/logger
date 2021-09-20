@@ -38,7 +38,6 @@
 #include <Logger/sink/log_sink.hpp>
 
 using namespace core::literals;
-using namespace std::literals;
 
 struct log_cache
 {

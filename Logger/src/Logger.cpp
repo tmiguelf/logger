@@ -57,7 +57,7 @@ static core::thread_id_t getCurrentThreadId()
 	return threadId;
 }
 
-[[maybe_unused]] static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_DateMessageSize> p_out)
+static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
 
@@ -92,7 +92,7 @@ static core::thread_id_t getCurrentThreadId()
 	return pivot - p_out.data();
 }
 
-[[maybe_unused]] static uintptr_t FormatTime(const core::DateTime& p_time, std::span<char8_t, g_TimeMessageSize> p_out)
+static uintptr_t FormatTime(const core::DateTime& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
 
@@ -160,8 +160,7 @@ static core::thread_id_t getCurrentThreadId()
 	return pivot - p_out.data();
 }
 
-
-static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
+static uintptr_t FormatLogLevel(const Level p_level, std::span<char8_t, 9> const p_out)
 {
 	switch(p_level)
 	{
@@ -204,12 +203,12 @@ static size_t FormatLogLevel(Level p_level,  std::span<char8_t, 9> p_out)
 
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
-void LoggerHelper::log(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
+void LoggerHelper::log(const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
 {
 	log_data log_data;
 
 	core::date_time_UTC(log_data.m_timeStruct);
-	log_data.m_threadId		= getCurrentThreadId();
+	log_data.m_threadId = getCurrentThreadId();
 
 	//category
 	std::array<char8_t, 9> level;
@@ -261,7 +260,7 @@ void LoggerHelper::add_sink(log_sink& p_sink)
 void LoggerHelper::remove_sink(log_sink& p_sink)
 {
 	log_sink* const sink_addr = &p_sink;
-	for(decltype(m_sinks)::iterator it = m_sinks.begin(), it_end = m_sinks.end(); it != it_end; ++it)
+	for(decltype(m_sinks)::const_iterator it = m_sinks.cbegin(), it_end = m_sinks.cend(); it != it_end; ++it)
 	{
 		if((*it) == sink_addr)
 		{
@@ -291,7 +290,7 @@ Logger_API void log_remove_all()
 	g_logger.clear();
 }
 
-Logger_API void log_message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)
+Logger_API void log_message(const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
 {
 	g_logger.log(p_level, p_file, p_line, p_column, p_message);
 }

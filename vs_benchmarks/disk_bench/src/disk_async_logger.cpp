@@ -23,7 +23,7 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include "disk_logger.hpp"
+#include "disk_async_logger.hpp"
 #include <Logger/Logger.hpp>
 #include <Logger/Logger_service.hpp>
 #include <Logger/sink/log_async_file_sink.hpp>

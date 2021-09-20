@@ -35,7 +35,7 @@
 namespace logger
 {
 
-static inline void transfer(char8_t*& p_buff, std::u8string_view p_str)
+static inline void transfer(char8_t*& p_buff, const std::u8string_view p_str)
 {
 	memcpy(p_buff, p_str.data(), p_str.size());
 	p_buff += p_str.size();
@@ -111,7 +111,7 @@ void log_async_file_sink::output(const log_data& p_logData)
 	}
 
 	{
-		core::AtomicSpinLock::ScopeLocker lock{m_lock};
+		const core::AtomicSpinLock::ScopeLocker lock{m_lock};
 		m_data.emplace(std::move(buff));
 	}
 	m_trap.signal();
@@ -120,7 +120,7 @@ void log_async_file_sink::output(const log_data& p_logData)
 bool log_async_file_sink::init(const std::filesystem::path& p_fileName)
 {
 	end();
-	bool input_absolute = p_fileName.is_absolute();
+	const bool input_absolute = p_fileName.is_absolute();
 	std::error_code ec;
 	const std::filesystem::path& fileName =
 		input_absolute ?
@@ -161,7 +161,7 @@ void log_async_file_sink::end()
 	m_file.close();
 }
 
-void log_async_file_sink::run(void*)
+void log_async_file_sink::run(void*const)
 {
 	constexpr std::array UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
 

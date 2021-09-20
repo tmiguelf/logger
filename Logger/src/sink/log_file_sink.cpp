@@ -36,7 +36,7 @@
 namespace logger
 {
 
-static inline void transfer(char8_t*& p_buff, std::u8string_view p_str)
+static inline void transfer(char8_t*& p_buff, const std::u8string_view p_str)
 {
 	memcpy(p_buff, p_str.data(), p_str.size());
 	p_buff += p_str.size();
@@ -51,9 +51,9 @@ static inline void transfer(char8_t*& p_buff, std::u8string_view p_str)
 static inline void
 	AUX_WRITE_DATA(core::file_write& p_file,
 		const log_data& p_logData,
-		char8_t* const p_buffer,
-		uintptr_t p_buffer_size,
-		uintptr_t p_fileName_size)
+		char8_t* const  p_buffer,
+		const uintptr_t p_buffer_size,
+		const uintptr_t p_fileName_size)
 {
 	char8_t* pivot = p_buffer;
 	*(pivot++) = u8'[';
@@ -138,7 +138,7 @@ void log_file_sink::output(const log_data& p_logData)
 bool log_file_sink::init(const std::filesystem::path& p_fileName)
 {
 	end();
-	bool input_absolute = p_fileName.is_absolute();
+	const bool input_absolute = p_fileName.is_absolute();
 	std::error_code ec;
 	const std::filesystem::path& fileName =
 		input_absolute ?

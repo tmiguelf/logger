@@ -38,7 +38,7 @@ log_console_sink::log_console_sink() = default;
 
 #ifdef _WIN32
 
-static void finish_cout(std::u8string_view p_level, std::u8string_view p_message, char16_t* p_buffer, uintptr_t p_size, uintptr_t p_message_estimate, bool p_printLevel)
+static void finish_cout(const std::u8string_view p_level, const std::u8string_view p_message, char16_t* p_buffer, const uintptr_t p_size, const uintptr_t p_message_estimate, const bool p_printLevel)
 {
 	if(p_printLevel)
 	{
@@ -81,7 +81,7 @@ void log_console_sink::output(const log_data& p_logData)
 
 #else
 
-static void finish_cout(std::u8string_view p_level, std::u8string_view p_message, char8_t* p_buffer, uintptr_t p_size, bool p_printLevel)
+static void finish_cout(const std::u8string_view p_level, const std::u8string_view p_message, char8_t* p_buffer, const uintptr_t p_size, const bool p_printLevel)
 {
 	if(p_printLevel)
 	{
