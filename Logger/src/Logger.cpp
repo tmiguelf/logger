@@ -222,7 +222,7 @@ void LoggerHelper::log(const Level p_level, const core::os_string_view p_file, c
 	std::array<char8_t, g_TimeMessageSize> time;
 	const uintptr_t time_size = FormatTime(log_data.m_timeStruct, time);
 	//thread
-	std::array<char8_t, core::to_chars_dec_max_digits_v<core::thread_id_t>> thread;
+	std::array<char8_t, core::to_chars_dec_max_size_v<core::thread_id_t>> thread;
 	const uintptr_t thread_size = core::to_chars(log_data.m_threadId, thread);
 
 	//line
