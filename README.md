@@ -12,7 +12,7 @@ It's simple to setup, but even simpler to use:
 	* `LOG_ERROR`
 	* `LOG_DEBUG`
  3. Log your message by listing your arguments in order \
-Ex. `LOG_INFO("This is my message. It accepts the usual types ", 42);`
+Ex. `LOG_INFO("This is my message. It accepts the usual types "sv, 42);`
 
 
 There are 2 types of interfaces:
@@ -38,7 +38,7 @@ There are 4 main macros that define the basic user interface:
 
 All these 4 macros will automatically capture the file and the line (and the category) in the source code that generated the log.\
 The user just needs to lists the content they want to log as arguments.\
-Ex. `LOG_WARNING("This is a warning")`
+Ex. `LOG_WARNING("This is a warning"sv)`
 
 However, if the user whishes too, it is possible to also customize the file and line that they whish to add to the log.
 For example, to use in situation where the issue being found is not about an occurrence in the source code, but an occurrence on an external datafile,
@@ -52,7 +52,7 @@ Where:
  * `Level`- Is the log category (or log level). An enum of type `logger::Level`
 
 The `LOG_CUSTOM` can also be used to log the same way as the previous macros did, example:\
-`LOG_CUSTOM("custom_file_name.txt", 42, 0, logger::Level::Info, "This is my custom message.")`
+`LOG_CUSTOM("custom_file_name.txt", 42, 0, logger::Level::Info, "This is my custom message."sv)`
 
 If instead the user wishes to specify their own custom streamers and take formatting into their own hands, then they can just use the function\
 `void Log_Message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)`\
