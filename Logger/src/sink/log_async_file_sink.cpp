@@ -111,7 +111,7 @@ void log_async_file_sink::output(const log_data& p_logData)
 	}
 
 	{
-		const core::AtomicSpinLock::ScopeLocker lock{m_lock};
+		const core::atomic_spinlock::scope_locker lock{m_lock};
 		m_data.emplace(std::move(buff));
 	}
 	m_trap.signal();
@@ -139,7 +139,7 @@ bool log_async_file_sink::init(const std::filesystem::path& p_fileName)
 
 	m_quit.store(false, std::memory_order::relaxed);
 	m_trap.reset();
-	if(m_thread.create(this, &log_async_file_sink::run, nullptr) != core::Thread::Error::None)
+	if(m_thread.create(this, &log_async_file_sink::run, nullptr) != core::thread::Error::None)
 	{
 		m_file.close();
 		return false;
@@ -183,7 +183,7 @@ void log_async_file_sink::dispatch()
 {
 	std::queue<std::vector<char8_t>> local;
 	{
-		core::AtomicSpinLock::ScopeLocker lock{m_lock};
+		core::atomic_spinlock::scope_locker lock{m_lock};
 		m_data.swap(local);
 	}
 

@@ -74,17 +74,17 @@ void ThreadRunner(void* p_test)
 void RunTest(func_t p_int, log_func p_call, func_t p_clean, std::string_view p_name)
 {
 	p_int();
-	std::array<core::Thread, 5> threads;
+	std::array<core::thread, 5> threads;
 	const uint64_t start = core::clock_stamp();
 
-	for(core::Thread& t_thread : threads)
+	for(core::thread& t_thread : threads)
 	{
 		t_thread.create(ThreadRunner, reinterpret_cast<void*>(p_call));
 	}
 
-	for(core::Thread& t_thread : threads)
+	for(core::thread& t_thread : threads)
 	{
-		if(t_thread.join() != core::Thread::Error::None) exit(1);
+		if(t_thread.join() != core::thread::Error::None) exit(1);
 	}
 
 	const uint64_t end = core::clock_stamp();

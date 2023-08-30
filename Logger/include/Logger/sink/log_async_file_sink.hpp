@@ -68,9 +68,9 @@ private:
 	core::file_write m_file; //!< Output file
 
 	std::atomic<bool> m_quit = false;
-	core::Thread m_thread;
-	core::EventTrap m_trap;
-	core::AtomicSpinLock m_lock;
+	core::thread m_thread;
+	core::event_trap m_trap;
+	core::atomic_spinlock m_lock;
 	std::queue<std::vector<char8_t>> m_data;
 };
 

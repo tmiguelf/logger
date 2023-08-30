@@ -51,7 +51,7 @@ struct log_cache
 	std::u8string levelStr;
 	std::u8string message;
 
-	core::DateTime		timeStruct;
+	core::date_time		timeStruct;
 	core::thread_id_t	threadId;
 	uint32_t			line;
 	uint32_t			column;

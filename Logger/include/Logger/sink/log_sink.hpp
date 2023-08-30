@@ -49,7 +49,7 @@ struct log_data
 	std::u8string_view		m_level;
 	std::u8string_view		m_message;
 
-	core::DateTime			m_timeStruct;
+	core::date_time			m_timeStruct;
 	core::thread_id_t		m_threadId;
 	uint32_t				m_lineNumber;
 	uint32_t				m_columnNumber;

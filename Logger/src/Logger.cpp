@@ -57,7 +57,7 @@ static core::thread_id_t getCurrentThreadId()
 	return threadId;
 }
 
-static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
+static uintptr_t FormatDate(const core::date_time& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
 
@@ -92,7 +92,7 @@ static uintptr_t FormatDate(const core::DateTime& p_time, std::span<char8_t, g_D
 	return pivot - p_out.data();
 }
 
-static uintptr_t FormatTime(const core::DateTime& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
+static uintptr_t FormatTime(const core::date_time& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
 
