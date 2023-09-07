@@ -100,6 +100,10 @@ The folloing function are available:
  * `log_set_filter` - Sets a custom filter. The life-time of the filter must be guaranteed until it's unregistered.
  * `log_reset_filter` - Resets the filter to the default filter and set its behaviour (i.e. either accept all or reject all)
 
+A user may write its own filter by inheriting from the abstract class `log_filter` and defining the behaviour of the `filter` virtual method, if `filter` returns true the log is accepted.
+Note: The filter will allways receive the "file" and "line" of the corresponding source code generating the log, even if the user specified a custom "file" and "line" when using LOG_CUSTOM,
+this is so that developers are able to effectly write filters targeting specific components in their applications without being blinded by content that maybe runtime specific.
+
 ## Thread safety
 Logging is as thread as the `output` method of the sinks. (I.e. If the `output` is thread safe, logging is thread safe).\
 As a convention, users trying to generate logs should not have to worry about thread safety, and it is thus recommended for sink designers to ensure that their sinks are thread safe.
