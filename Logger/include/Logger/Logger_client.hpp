@@ -38,11 +38,12 @@
 namespace logger
 {
 ///	\brief Public interface for logging
+///	\param[in] p_moduleBase - Based address of the module generating the log
 ///	\param[in] p_level - \ref logger::Level
 ///	\param[in] p_file - Name of source file generating the log. Pleas use the Macro __FILE__
 ///	\param[in] p_line - Source file line number where the Log was generated. Please use the Macro __LINE__
 ///	\param[in] p_column - Source file column number. Use 0 to signify the whole line.
 ///	\param[in] p_message - Message to Log
-Logger_API void log_message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message);
+Logger_API void log_message(void const* p_moduleBase, Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message);
 
 } //namespace logger

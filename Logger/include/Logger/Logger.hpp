@@ -29,11 +29,12 @@
 #include "toLog/log_streamer.hpp"
 
 #include <CoreLib/toPrint/toPrint.hpp>
+#include <CoreLib/core_module.hpp>
 
 //======== ======== Macro Magic ======== ========
 
 #define LOG_CUSTOM(File, Line, Column, Level, ...) \
-	core_ToPrint(char8_t, ::logger::_p::LogStreamer(Level, File, Line, Column), __VA_ARGS__)
+	core_ToPrint(char8_t, ::logger::_p::LogStreamer(::core::get_current_module_base(), Level, File, Line, Column), __VA_ARGS__)
 
 
 /// \brief Helper Macro to assist on message formating and automatically filling of __FILE__ (__FILEW__ on windows) and __LINE__

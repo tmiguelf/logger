@@ -28,6 +28,7 @@ The following datapoints can be captured by the logger:
  * category - A user specified log category. May also be referred to as "log level".
  * thread id - ID of the thread that generated the log, not customizable by the user
  * Date and time - UTC date a time, not customizable by the user
+ * base address - the base address of the module generating the log, not intended for user customization
 
 ## User interface
 There are 4 main macros that define the basic user interface:
@@ -64,6 +65,7 @@ Where:
  * p_message - Is the user message
 
 Regardless of which of the methods used, the "thread id" and "Date and time" are always captured automatically, and cannot be customized (always captured internally).
+The generating module base address is intended to be automatically captured, but is reliant on fudgeable client side data hacking.
 "Date and time" are always in UTC.
 
 Note: It is not required for the user to provide a new line at the end of the log. By convention a new line is implicit per each call to the log (please see Service management interface for more details).
@@ -176,22 +178,22 @@ Here are the results:
 vs_benchmark:
 | nano seconds | Logger | spdlog | g3log |
 | ------------ | ------ | ------ | ----- |
-| Combination  |    188 |    343 |  3948 |
-| String       |   83.3 |   45.1 |  2190 |
-| Nothing      |   83.2 |   47.1 |  1418 |
+| Combination  |    103 |    169 |  1499 |
+| String       |   51.0 |   29.7 |   767 |
+| Nothing      |   53.5 |   29.6 |   502 |
 
 
 disk_bench:
 | Library      | Seconds |
 | ------------ | ------- |
-| Logger       |  0.3776 |
-| Logger Async |  0.2255 |
-| spdlog       |  0.4090 |
-| g3log        |  1.5855 |
-| NanoLog      |  0.0660 |
+| Logger       |  0.1743 |
+| Logger Async |  0.0892 |
+| spdlog       |  0.1628 |
+| g3log        |  0.5806 |
+| NanoLog      |  0.0315 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
-This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 30ns to 60ns ouch!),
+This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 35ns to 40ns ouch!),
 spdlog would need to incur that extra cost later if the sink wished to log that data. However, Logger has a much more efficient formatting library,
 so it ends up ahead when formatting is involved.
 

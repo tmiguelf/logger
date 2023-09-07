@@ -57,6 +57,7 @@ static core::thread_id_t getCurrentThreadId()
 	return threadId;
 }
 
+
 static uintptr_t FormatDate(const core::date_time& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
@@ -203,12 +204,12 @@ static uintptr_t FormatLogLevel(const Level p_level, std::span<char8_t, 9> const
 
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
-void LoggerHelper::log(const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
+void LoggerHelper::log(void const* p_moduleBase, const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
 {
 	log_data log_data;
 
+
 	core::date_time_UTC(log_data.m_timeStruct);
-	log_data.m_threadId = getCurrentThreadId();
 
 	//category
 	std::array<char8_t, 9> level;
@@ -233,15 +234,17 @@ void LoggerHelper::log(const Level p_level, const core::os_string_view p_file, c
 	std::array<char8_t, 10> column;
 	const uintptr_t column_size = core::to_chars(p_column, column);
 
-	log_data.m_level	= std::u8string_view(level.data(), level_size);
-	log_data.m_date		= std::u8string_view(date.data(), date_size);
-	log_data.m_time		= std::u8string_view(time.data(), time_size);
-	log_data.m_thread	= std::u8string_view(thread.data(), thread_size);
-	log_data.m_file		= p_file;
-	log_data.m_line		= std::u8string_view(line.data(), line_size);
-	log_data.m_column	= std::u8string_view(column.data(), column_size);
-	log_data.m_message	= p_message;
+	log_data.m_file			= p_file;
+	log_data.m_line			= std::u8string_view(line.data(), line_size);
+	log_data.m_column		= std::u8string_view(column.data(), column_size);
+	log_data.m_date			= std::u8string_view(date.data(), date_size);
+	log_data.m_time			= std::u8string_view(time.data(), time_size);
+	log_data.m_thread		= std::u8string_view(thread.data(), thread_size);
+	log_data.m_level		= std::u8string_view(level.data(), level_size);
+	log_data.m_message		= p_message;
 
+	log_data.m_moduleBase	= p_moduleBase;
+	log_data.m_threadId		= getCurrentThreadId();
 	log_data.m_levelNumber	= p_level;
 	log_data.m_lineNumber	= p_line;
 	log_data.m_columnNumber	= p_column;
@@ -290,9 +293,9 @@ Logger_API void log_remove_all()
 	g_logger.clear();
 }
 
-Logger_API void log_message(const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
+Logger_API void log_message(void const* const p_moduleBase, const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
 {
-	g_logger.log(p_level, p_file, p_line, p_column, p_message);
+	g_logger.log(p_moduleBase, p_level, p_file, p_line, p_column, p_message);
 }
 
 }// namespace logger
