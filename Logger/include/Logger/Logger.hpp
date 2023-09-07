@@ -29,12 +29,32 @@
 #include "toLog/log_streamer.hpp"
 
 #include <CoreLib/toPrint/toPrint.hpp>
+#include <CoreLib/core_module.hpp>
+
+
 
 //======== ======== Macro Magic ======== ========
-
-#define LOG_CUSTOM(File, Line, Column, Level, ...) \
-	core_ToPrint(char8_t, ::logger::_p::LogStreamer(Level, File, Line, Column), __VA_ARGS__)
-
+#ifdef _WIN32
+#define LOG_CUSTOM(File, Line, Column, _Level, ...) \
+	{ \
+		const void* const _P_LOG_BASE_ADDR__ = ::core::get_current_module_base(); \
+		const ::logger::Level _P_LOG_LEVEL__ = _Level; \
+		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::std::wstring_view{__FILEW__}, static_cast<uint32_t>(__LINE__))) \
+		{ \
+			core_ToPrint(char8_t, ::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column), __VA_ARGS__); \
+		} \
+	}
+#else
+#define LOG_CUSTOM(File, Line, Column, _Level, ...) \
+	{ \
+		const void* const _P_LOG_BASE_ADDR__ = ::core::get_current_module_base(); \
+		const ::logger::Level _P_LOG_LEVEL__ = _Level; \
+		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::std::string_view{__FILE__}, static_cast<uint32_t>(__LINE__))) \
+		{ \
+			core_ToPrint(char8_t, ::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column), __VA_ARGS__); \
+		} \
+	}
+#endif
 
 /// \brief Helper Macro to assist on message formating and automatically filling of __FILE__ (__FILEW__ on windows) and __LINE__
 /// \param[in] Level - \ref logger::Level

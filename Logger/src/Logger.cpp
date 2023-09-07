@@ -35,6 +35,7 @@
 
 #include <Logger/Logger_client.hpp>
 #include <Logger/Logger_service.hpp>
+#include <Logger/log_filter.hpp>
 #include <Logger/sink/log_file_sink.hpp>
 
 //Right now we are enforcing validity by having buffer larger than what we would theorethically need
@@ -46,8 +47,9 @@ namespace logger
 {
 
 //======== ======== ======== ======== Global ======== ======== ======== ========
-LoggerHelper g_logger; //!< Preserves settings
-
+static LoggerHelper g_logger; //!< Preserves settings
+static log_filter const* g_filter = nullptr;
+static bool g_default_filter_behaviour = true;
 
 //======== ======== ======== ======== Format assists ======== ======== ======== ========
 
@@ -203,12 +205,12 @@ static uintptr_t FormatLogLevel(const Level p_level, std::span<char8_t, 9> const
 
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
-void LoggerHelper::log(const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
+void LoggerHelper::log(void const* p_moduleBase, const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
 {
 	log_data log_data;
 
+
 	core::date_time_UTC(log_data.m_timeStruct);
-	log_data.m_threadId = getCurrentThreadId();
 
 	//category
 	std::array<char8_t, 9> level;
@@ -233,15 +235,17 @@ void LoggerHelper::log(const Level p_level, const core::os_string_view p_file, c
 	std::array<char8_t, 10> column;
 	const uintptr_t column_size = core::to_chars(p_column, column);
 
-	log_data.m_level	= std::u8string_view(level.data(), level_size);
-	log_data.m_date		= std::u8string_view(date.data(), date_size);
-	log_data.m_time		= std::u8string_view(time.data(), time_size);
-	log_data.m_thread	= std::u8string_view(thread.data(), thread_size);
-	log_data.m_file		= p_file;
-	log_data.m_line		= std::u8string_view(line.data(), line_size);
-	log_data.m_column	= std::u8string_view(column.data(), column_size);
-	log_data.m_message	= p_message;
+	log_data.m_file			= p_file;
+	log_data.m_line			= std::u8string_view(line.data(), line_size);
+	log_data.m_column		= std::u8string_view(column.data(), column_size);
+	log_data.m_date			= std::u8string_view(date.data(), date_size);
+	log_data.m_time			= std::u8string_view(time.data(), time_size);
+	log_data.m_thread		= std::u8string_view(thread.data(), thread_size);
+	log_data.m_level		= std::u8string_view(level.data(), level_size);
+	log_data.m_message		= p_message;
 
+	log_data.m_moduleBase	= p_moduleBase;
+	log_data.m_threadId		= getCurrentThreadId();
 	log_data.m_levelNumber	= p_level;
 	log_data.m_lineNumber	= p_line;
 	log_data.m_columnNumber	= p_column;
@@ -275,6 +279,9 @@ void LoggerHelper::clear()
 	m_sinks.clear();
 }
 
+
+//======== ======== ======== ======== Public API ======== ======== ======== ========
+
 Logger_API void log_add_sink(log_sink& p_stream)
 {
 	g_logger.add_sink(p_stream);
@@ -290,9 +297,34 @@ Logger_API void log_remove_all()
 	g_logger.clear();
 }
 
-Logger_API void log_message(const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
+Logger_API void log_message(void const* const p_moduleBase, const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column, const std::u8string_view p_message)
 {
-	g_logger.log(p_level, p_file, p_line, p_column, p_message);
+	g_logger.log(p_moduleBase, p_level, p_file, p_line, p_column, p_message);
 }
+
+Logger_API void log_set_filter(log_filter const& p_filter)
+{
+	g_filter = &p_filter;
+}
+
+Logger_API void log_reset_filter(bool p_default_behaviour)
+{
+	g_filter = nullptr;
+	g_default_filter_behaviour = p_default_behaviour;
+}
+
+namespace _p
+{
+
+Logger_API bool log_check_filter(void const* const p_moduleBase, const Level p_level, const core::os_string_view p_file, const uint32_t p_line)
+{
+	if(g_filter)
+	{
+		return g_filter->filter(p_moduleBase, p_level, p_file, p_line);
+	}
+	return g_default_filter_behaviour;
+}
+
+} //namespace _p
 
 }// namespace logger

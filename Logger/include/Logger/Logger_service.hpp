@@ -27,16 +27,20 @@
 
 #include "Logger_api.h"
 
+
 //======== ======== API ======== ========
 
 namespace logger
 {
 
 class log_sink;
+class log_filter;
 
 Logger_API void log_add_sink(log_sink& p_stream);
 Logger_API void log_remove_sink(log_sink& p_stream);
 Logger_API void log_remove_all();
 
+Logger_API void log_set_filter(log_filter const& p_filter);
+Logger_API void log_reset_filter(bool p_default_behaviour);
 
 }	// namespace simLog

@@ -39,23 +39,30 @@ namespace logger::_p
 	class LogStreamer: public core::sink_toPrint_base
 	{
 	private:
+		void const* const m_moduleBase; 
 		const Level m_level;
 		const core::os_string_view m_file;
 		const uint32_t m_line;
 		const uint32_t m_column;
 
 	public:
-		constexpr inline LogStreamer(const Level p_level, const core::os_string_view p_file, const uint32_t p_line, const uint32_t p_column)
-			: m_level	(p_level)
-			, m_file	(p_file)
-			, m_line	(p_line)
-			, m_column	(p_column)
+		constexpr inline LogStreamer(
+			void const* const p_moduleBase,
+			const Level p_level,
+			const core::os_string_view p_file,
+			const uint32_t p_line,
+			const uint32_t p_column)
+			: m_moduleBase	(p_moduleBase)
+			, m_level		(p_level)
+			, m_file		(p_file)
+			, m_line		(p_line)
+			, m_column		(p_column)
 		{
 		}
 
 		void write(const std::u8string_view p_message) const
 		{
-			::logger::log_message(m_level, m_file, m_line, m_column, p_message);
+			::logger::log_message(m_moduleBase, m_level, m_file, m_line, m_column, p_message);
 		}
 	};
 

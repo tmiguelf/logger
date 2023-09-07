@@ -1,3 +1,4 @@
+
 //======== ======== ======== ======== ======== ======== ======== ========
 ///	\file
 ///
@@ -25,43 +26,14 @@
 
 #pragma once
 
-#include <string_view>
-#include <vector>
-
-#include <CoreLib/string/core_os_string.hpp>
-
-#include <Logger/log_level.hpp>
+#include "log_level.hpp"
 
 namespace logger
 {
-
-class log_sink;
-
-/// \brief Log helper class that holds Logger streamers such as Logging to File and Logging to Console
-class LoggerHelper
-{
-	/// create list of references to Logger streamers
-	std::vector<log_sink*> m_sinks;
-
-public:
-
-	///	\brief Send the log to the Log sink
-	///	\param[in] p_category - \ref logger::Level
-	///	\param[in] p_file - Name of source file generating the log.
-	///	\param[in] p_line - Source file line number where the Log was generated.
-	///	\param[in] p_message - Null terminated message to Log
-	void log(void const* p_moduleBase, Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message);
-
-	///	\brief add the current log stream to the streams container
-	///	param[in] p_stream - Log stream containg the log data
-	void add_sink(log_sink& p_sink);
-
-	///	\brief remove the current log stream from the streams container
-	///	param[in] p_stream Log stream containing the log data
-	void remove_sink(log_sink& p_sink);
-
-	///	\breif clear streams container
-	void clear();
-};
-
-}	// namespace simLog
+	class log_filter
+	{
+	public:
+		///	\brief If false is return the log is not procesed 
+		virtual bool filter(void const* p_moduleBase, Level p_level, core::os_string_view p_file, uint32_t p_line) const = 0;
+	};
+}
