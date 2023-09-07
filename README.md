@@ -55,15 +55,6 @@ Where:
 The `LOG_CUSTOM` can also be used to log the same way as the previous macros did, example:\
 `LOG_CUSTOM("custom_file_name.txt", 42, 0, logger::Level::Info, "This is my custom message."sv)`
 
-If instead the user wishes to specify their own custom streamers and take formatting into their own hands, then they can just use the function\
-`void Log_Message(Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message)`\
-Where:
- * p_level - Is the log level
- * p_file - Is the file name
- * p_line - Is the line number
- * p_column - Is the column number
- * p_message - Is the user message
-
 Regardless of which of the methods used, the "thread id" and "Date and time" are always captured automatically, and cannot be customized (always captured internally).
 The generating module base address is intended to be automatically captured, but is reliant on fudgeable client side data hacking.
 "Date and time" are always in UTC.
@@ -76,6 +67,7 @@ Anything that has a defined core::toPrint adapter (from the CoreLib library) can
 Or you can pass any adapter compatible with core::toPrint for any custom format.
 
 ## Service management interface
+### Sinks
 What happens to a generated log once it's dispatched can be controlled by the management interface.
 This interface can be accessed by including the header `Logger_service.hpp`.
 
@@ -90,22 +82,29 @@ The following functions are available:
 
 It is possible to register multiple sinks, in this case a generated log is forward to all sinks sequentially by order of registration.
 
-### Provided sinks
+#### Provided sinks
 The following sinks are provided with this library:
  * logger::log_file_sink - Used to log to a file. Defined in header `log_file_sink.hpp`.
  * logger::log_console_sink - Used to log to `std::cout`. Defined in header `log_console_sink.hpp`.
 
 The user can create their own custom sink by inheriting from `logger::log_sink` defined in header `log_sink.hpp`. Note that by convention, the user need not specify a new line at the end of a message (implicit), and thus one will not exist at the end of the message. The implementer of the sink should honor this agreement by adding any extra new line at the end of the stream (if applicable).
 
-### Windows only
+#### Windows only
 On a windows only, this library provides a sink that can send the logs to the debugger console (for example Visual Studio console).
 In Visual Studio, this supports the functionality to be able to jump to the referenced file and line when double clicking on the logged message.
+
+### Filter
+In addition this library supports global filtering, i.e. the user can specify its own custom filter to pick exactly which logs to process.
+By default, if no user filter is registered all logs are accepted.
+The folloing function are available:
+ * `log_set_filter` - Sets a custom filter. The life-time of the filter must be guaranteed until it's unregistered.
+ * `log_reset_filter` - Resets the filter to the default filter and set its behaviour (i.e. either accept all or reject all)
 
 ## Thread safety
 Logging is as thread as the `output` method of the sinks. (I.e. If the `output` is thread safe, logging is thread safe).\
 As a convention, users trying to generate logs should not have to worry about thread safety, and it is thus recommended for sink designers to ensure that their sinks are thread safe.
 
-Registering and unregistering sinks is not thread safe, do not attempt to register or unregister sinks simultaneously in different threads, or try to log while registering/unregistering sinks.
+Registering and unregistering sinks/filters is not thread safe, do not attempt to register or unregister sinks/filters simultaneously in different threads, or try to log while registering/unregistering sinks/filters.
 These will lead to a race condition and cause undefined behavior.
 
 ## Benchmarking
@@ -178,19 +177,19 @@ Here are the results:
 vs_benchmark:
 | nano seconds | Logger | spdlog | g3log |
 | ------------ | ------ | ------ | ----- |
-| Combination  |    103 |    169 |  1499 |
-| String       |   51.0 |   29.7 |   767 |
-| Nothing      |   53.5 |   29.6 |   502 |
+| Combination  |    104 |    169 |  1499 |
+| String       |   52.8 |   29.7 |   767 |
+| Nothing      |   53.7 |   29.6 |   502 |
 
 
 disk_bench:
 | Library      | Seconds |
 | ------------ | ------- |
-| Logger       |  0.1743 |
-| Logger Async |  0.0892 |
-| spdlog       |  0.1628 |
-| g3log        |  0.5806 |
-| NanoLog      |  0.0315 |
+| Logger       |  0.1518 |
+| Logger Async |  0.0891 |
+| spdlog       |  0.1700 |
+| g3log        |  0.5712 |
+| NanoLog      |  0.0323 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
 This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 35ns to 40ns ouch!),

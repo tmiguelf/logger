@@ -46,4 +46,9 @@ namespace logger
 ///	\param[in] p_message - Message to Log
 Logger_API void log_message(void const* p_moduleBase, Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message);
 
+namespace _p
+{
+	[[nodiscard]] Logger_API bool log_check_filter(void const* p_moduleBase, Level p_level, core::os_string_view p_file, uint32_t p_line);
+} //namespace _p
+
 } //namespace logger

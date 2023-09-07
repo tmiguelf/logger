@@ -28,14 +28,13 @@
 #ifdef _WIN32
 
 #include <Windows.h>
-#include <WinBase.h>
 
-#include <sstream>
 #include <string_view>
 #include <vector>
 
 #include <CoreLib/string/core_string_encoding.hpp>
 #include <CoreLib/Core_Alloca.hpp>
+#include <CoreLib/Core_extra_compiler.hpp>
 
 namespace logger
 {
@@ -88,51 +87,51 @@ static inline void AuxWriteData(
 	*(pivot++) = u'\n';
 	*pivot = 0;
 	OutputDebugStringW(reinterpret_cast<const wchar_t*>(p_buffer));
-
 }
 
 log_debugger_sink::log_debugger_sink() = default;
 
-void log_debugger_sink::output(const log_data& p_logData)
+NO_INLINE void log_debugger_sink::output(const log_data& p_logData)
 {
-	const uintptr_t line_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_line);
-	const uintptr_t col_estimate		= p_logData.m_columnNumber ? core::_p::ANSI_to_UCS2_estimate(p_logData.m_line) : 0;
-	const uintptr_t time_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_time);
-	const uintptr_t thread_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_thread);
-	const uintptr_t level_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_level);
-	const uintptr_t message_estimate	= core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.m_message, '?');
-
-	//File(Line,Col): [Date] Level: Message\n\0
-	const uintptr_t count = p_logData.m_file.size()
-		+ line_estimate
-		+ (p_logData.m_columnNumber ? col_estimate + 1 : 0) //,
-		+ time_estimate
-		+ thread_estimate
-		+ level_estimate
-		+ message_estimate
-		+ 10; //(): [|] \n\0
-
-
-	constexpr uintptr_t alloca_treshold = 0x8000;
-
-	if(count > alloca_treshold)
+	if(IsDebuggerPresent())
 	{
-		std::vector<char16_t> buff;
-		buff.resize(count);
-		AuxWriteData(p_logData, buff.data(),
-			line_estimate, col_estimate,
-			time_estimate, thread_estimate,
-			level_estimate, message_estimate);
-	}
-	else
-	{
-		char16_t* buff = reinterpret_cast<char16_t*>(core_alloca(count * sizeof(char16_t)));
-		AuxWriteData(p_logData, buff,
-			line_estimate, col_estimate,
-			time_estimate, thread_estimate,
-			level_estimate, message_estimate);
-	}
+		const uintptr_t line_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_line);
+		const uintptr_t col_estimate		= p_logData.m_columnNumber ? core::_p::ANSI_to_UCS2_estimate(p_logData.m_line) : 0;
+		const uintptr_t time_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_time);
+		const uintptr_t thread_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_thread);
+		const uintptr_t level_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.m_level);
+		const uintptr_t message_estimate	= core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.m_message, '?');
 
+		//File(Line,Col): [Date] Level: Message\n\0
+		const uintptr_t count = p_logData.m_file.size()
+			+ line_estimate
+			+ (p_logData.m_columnNumber ? col_estimate + 1 : 0) //,
+			+ time_estimate
+			+ thread_estimate
+			+ level_estimate
+			+ message_estimate
+			+ 10; //(): [|] \n\0
+
+		constexpr uintptr_t alloca_treshold = 0x8000;
+
+		if(count > alloca_treshold)
+		{
+			std::vector<char16_t> buff;
+			buff.resize(count);
+			AuxWriteData(p_logData, buff.data(),
+				line_estimate, col_estimate,
+				time_estimate, thread_estimate,
+				level_estimate, message_estimate);
+		}
+		else
+		{
+			char16_t* buff = reinterpret_cast<char16_t*>(core_alloca(count * sizeof(char16_t)));
+			AuxWriteData(p_logData, buff,
+				line_estimate, col_estimate,
+				time_estimate, thread_estimate,
+				level_estimate, message_estimate);
+		}
+	}
 }
 
 } //namespace logger

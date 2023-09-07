@@ -62,6 +62,7 @@
     <ClInclude Include="include\Logger\Logger_api.h" />
     <ClInclude Include="include\Logger\Logger_client.hpp" />
     <ClInclude Include="include\Logger\Logger_service.hpp" />
+    <ClInclude Include="include\Logger\log_filter.hpp" />
     <ClInclude Include="include\Logger\log_level.hpp" />
     <ClInclude Include="include\Logger\sink\log_async_file_sink.hpp" />
     <ClInclude Include="include\Logger\sink\log_console_sink.hpp" />

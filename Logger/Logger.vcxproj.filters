@@ -74,6 +74,9 @@
     <ClInclude Include="include\Logger\sink\log_async_file_sink.hpp">
       <Filter>Header Files\sink</Filter>
     </ClInclude>
+    <ClInclude Include="include\Logger\log_filter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\dllVersion.rc">

@@ -1,3 +1,4 @@
+
 //======== ======== ======== ======== ======== ======== ======== ========
 ///	\file
 ///
@@ -25,22 +26,14 @@
 
 #pragma once
 
-#include "Logger_api.h"
-
-
-//======== ======== API ======== ========
+#include "log_level.hpp"
 
 namespace logger
 {
-
-class log_sink;
-class log_filter;
-
-Logger_API void log_add_sink(log_sink& p_stream);
-Logger_API void log_remove_sink(log_sink& p_stream);
-Logger_API void log_remove_all();
-
-Logger_API void log_set_filter(log_filter const& p_filter);
-Logger_API void log_reset_filter(bool p_default_behaviour);
-
-}	// namespace simLog
+	class log_filter
+	{
+	public:
+		///	\brief If false is return the log is not procesed 
+		virtual bool filter(void const* p_moduleBase, Level p_level, core::os_string_view p_file, uint32_t p_line) const = 0;
+	};
+}

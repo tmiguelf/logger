@@ -40,10 +40,10 @@ namespace logger::_p
 	{
 	private:
 		void const* const m_moduleBase; 
+		const Level m_level;
 		const core::os_string_view m_file;
 		const uint32_t m_line;
 		const uint32_t m_column;
-		const Level m_level;
 
 	public:
 		constexpr inline LogStreamer(
