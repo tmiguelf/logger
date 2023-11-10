@@ -102,7 +102,7 @@ public:
 
 	uintptr_t size(const char8_t&) const { return preamble.size(); }
 
-	void getPrint(char8_t* p_out) const //final
+	void get_print(char8_t* p_out) const //final
 	{
 		memcpy(p_out, preamble.data(), preamble.size());
 	}
