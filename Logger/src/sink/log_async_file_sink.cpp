@@ -42,10 +42,7 @@ static inline void transfer(char8_t*& p_buff, const std::u8string_view p_str)
 }
 
 
-log_async_file_sink::log_async_file_sink()
-{
-	m_trap.create();
-}
+log_async_file_sink::log_async_file_sink() = default;
 
 log_async_file_sink::~log_async_file_sink()
 {
