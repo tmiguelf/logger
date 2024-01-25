@@ -181,19 +181,19 @@ Here are the results:
 vs_benchmark:
 | nano seconds | Logger | spdlog | g3log |
 | ------------ | ------ | ------ | ----- |
-| Combination  |    104 |    169 |  1499 |
-| String       |   52.8 |   29.7 |   767 |
-| Nothing      |   53.7 |   29.6 |   502 |
+| Combination  |   95.2 |    159 |  1579 |
+| String       |   44.4 |   28.5 |  1224 |
+| Nothing      |   45.0 |   28.5 |   823 |
 
 
 disk_bench:
 | Library      | Seconds |
 | ------------ | ------- |
-| Logger       |  0.1518 |
-| Logger Async |  0.0891 |
-| spdlog       |  0.1700 |
-| g3log        |  0.5712 |
-| NanoLog      |  0.0323 |
+| Logger       |  0.1583 |
+| Logger Async |  0.1177 |
+| spdlog       |  0.2125 |
+| g3log        |  0.7666 |
+| NanoLog      |  0.0599 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
 This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 35ns to 40ns ouch!),
