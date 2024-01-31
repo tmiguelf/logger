@@ -87,9 +87,12 @@ void RunTest(func_t p_int, log_func p_call, func_t p_clean, std::string_view p_n
 		if(t_thread.join() != core::thread::Error::None) exit(1);
 	}
 
-	const uint64_t end = core::clock_stamp();
 
 	p_clean();
+
+	const uint64_t end = core::clock_stamp();
+
+
 
 	core_ToPrint(char8_t, core::cout, p_name, " time: "sv, static_cast<double>(end - start) / 1'000'000'000.0, "s\n"sv);
 }

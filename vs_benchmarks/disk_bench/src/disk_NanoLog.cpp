@@ -42,6 +42,6 @@ namespace disk_NanoLog
 
 	void testClean()
 	{
-
+		nanolog::initialize(nanolog::GuaranteedLogger(), "", "nanolog2.log", 20);
 	}
 }

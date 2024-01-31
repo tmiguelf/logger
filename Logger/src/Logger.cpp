@@ -59,109 +59,59 @@ static core::thread_id_t getCurrentThreadId()
 	return threadId;
 }
 
+[[maybe_unused]]
 static uintptr_t FormatDate(const core::date_time& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
 
 	//year
-	pivot += core::to_chars(p_time.date.year, std::span<char8_t, 5>{pivot, 5});
+	pivot += core::to_chars(p_time.date.year, std::span<char8_t, 5>{pivot, 5}) + 6;
 
-	//month
-	*(pivot++) = u8'/';
-	if(p_time.date.month < 10)
-	{
-		*(pivot++) = u8'0'; 
-		*(pivot++) = u8'0' + p_time.date.month; 
-	}
-	else
-	{
-		*(pivot++) = u8'0' + p_time.date.month / 10; 
-		*(pivot++) = u8'0' + p_time.date.month % 10; 
-	}
+	uintptr_t const size = pivot - p_out.data();
 
 	//day
-	*(pivot++) = u8'/';
-	if(p_time.date.day < 10)
-	{
-		*(pivot++) = u8'0';
-		*(pivot++) = u8'0' + p_time.date.day;
-	}
-	else
-	{
-		*(pivot++) = u8'0' + p_time.date.day / 10;
-		*(pivot++) = u8'0' + p_time.date.day % 10;
-	}
-	return pivot - p_out.data();
+	*(--pivot) = u8'0' + p_time.date.day % 10;
+	*(--pivot) = u8'0' + p_time.date.day / 10;
+	*(--pivot) = u8'/';
+
+	//month
+	*(--pivot) = u8'0' + p_time.date.month % 10; 
+	*(--pivot) = u8'0' + p_time.date.month / 10; 
+	*(--pivot) = u8'/';
+
+	return size;
 }
 
-static uintptr_t FormatTime(const core::date_time& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
+[[maybe_unused]]
+static void FormatTime(const core::date_time& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
 {
-	char8_t* pivot = p_out.data();
-
-	//hour
-	if(p_time.time.hour < 10)
-	{
-		*(pivot++) = u8'0';
-		*(pivot++) = u8'0' + p_time.time.hour;
-	}
-	else
-	{
-		*(pivot++) = u8'0' + p_time.time.hour / 10;
-		*(pivot++) = u8'0' + p_time.time.hour % 10;
-	}
-
-	//minute
-	*(pivot++) = u8':';
-	if(p_time.time.minute < 10)
-	{
-		*(pivot++) = u8'0';
-		*(pivot++) = u8'0' + p_time.time.minute;
-	}
-	else
-	{
-		*(pivot++) = u8'0' + p_time.time.minute / 10;
-		*(pivot++) = u8'0' + p_time.time.minute % 10;
-	}
-
-	//second
-	*(pivot++) = u8':';
-	if(p_time.time.second < 10)
-	{
-		*(pivot++) = u8'0';
-		*(pivot++) = u8'0' + p_time.time.second;
-	}
-	else
-	{
-		*(pivot++) = u8'0' + p_time.time.second / 10;
-		*(pivot++) = u8'0' + p_time.time.second % 10;
-	}
+	char8_t* pivot = p_out.data() + 11;
 
 	//millisecond
-	*(pivot++) = u8'.';
-	if(p_time.time.msecond < 100)
+	*(pivot) = u8'0' + p_time.time.msecond % 10;
 	{
-		*(pivot++) = u8'0';
-		if(p_time.time.msecond < 10)
-		{
-			*(pivot++) = u8'0';
-			*(pivot++) = static_cast<char8_t>(u8'0' + p_time.time.msecond);
-		}
-		else
-		{
-			*(pivot++) = static_cast<char8_t>(u8'0' + p_time.time.msecond / 10);
-			*(pivot++) = static_cast<char8_t>(u8'0' + p_time.time.msecond % 10);
-		}
+		const char8_t rem = static_cast<char8_t>(p_time.time.msecond / 10);
+		*(--pivot) = u8'0' + rem % 10;
+		*(--pivot) = u8'0' + rem / 10;
 	}
-	else
-	{
-		*(pivot++) = static_cast<char8_t>(u8'0' + p_time.time.msecond / 100);
-		const char8_t rem = static_cast<char8_t>(p_time.time.msecond % 100);
-		*(pivot++) = u8'0' + rem / 10;
-		*(pivot++) = u8'0' + rem % 10;
-	}
-	return pivot - p_out.data();
+	*(--pivot) = u8'.';
+
+	//second
+	*(--pivot) = u8'0' + p_time.time.second % 10;
+	*(--pivot) = u8'0' + p_time.time.second / 10;
+	*(--pivot) =  u8':';
+
+	//minute
+	*(--pivot) = u8'0' + p_time.time.minute % 10;
+	*(--pivot) = u8'0' + p_time.time.minute / 10;
+	*(--pivot) = u8':';
+
+	//hour
+	*(--pivot) = u8'0' + p_time.time.hour % 10;
+	*(--pivot) = u8'0' + p_time.time.hour / 10;
 }
 
+[[maybe_unused]]
 static uintptr_t FormatLogLevel(const Level p_level, std::span<char8_t, 9> const p_out)
 {
 	switch(p_level)
@@ -209,7 +159,6 @@ void LoggerHelper::log(void const* p_moduleBase, const Level p_level, const core
 {
 	log_data log_data;
 
-
 	core::date_time_UTC(log_data.m_timeStruct);
 
 	//category
@@ -222,7 +171,7 @@ void LoggerHelper::log(void const* p_moduleBase, const Level p_level, const core
 	
 	//time
 	std::array<char8_t, g_TimeMessageSize> time;
-	const uintptr_t time_size = FormatTime(log_data.m_timeStruct, time);
+	constexpr uintptr_t time_size = 12; FormatTime(log_data.m_timeStruct, time);
 	//thread
 	std::array<char8_t, core::to_chars_dec_max_size_v<core::thread_id_t>> thread;
 	const uintptr_t thread_size = core::to_chars(log_data.m_threadId, thread);

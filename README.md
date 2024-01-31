@@ -179,33 +179,30 @@ On this test there are 2 notable discrepancies:\
 Here are the results:
 
 vs_benchmark:
-| nano seconds | Logger | spdlog | g3log |
-| ------------ | ------ | ------ | ----- |
-| Combination  |   95.2 |    159 |  1579 |
-| String       |   44.4 |   28.5 |  1224 |
-| Nothing      |   45.0 |   28.5 |   823 |
+| nano seconds | Logger | spdlog | spdlog +time | g3log |
+| ------------ | ------ | ------ | ------------ | ----- |
+| Combination  |   95.2 |    159 |          183 |  1579 |
+| String       |   44.4 |   28.5 |         53.3 |  1224 |
+| Nothing      |   45.0 |   28.5 |         53.3 |   823 |
 
 
 disk_bench:
 | Library      | Seconds |
 | ------------ | ------- |
-| Logger       |  0.1583 |
-| Logger Async |  0.1177 |
-| spdlog       |  0.2125 |
-| g3log        |  0.7666 |
-| NanoLog      |  0.0599 |
+| Logger       |  0.1552 |
+| Logger Async |  0.1106 |
+| spdlog       |  0.1936 |
+| g3log        |  2.2059 |
+| NanoLog      |  2.6186 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
-This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is between 35ns to 40ns ouch!),
-spdlog would need to incur that extra cost later if the sink wished to log that data. However, Logger has a much more efficient formatting library,
-so it ends up ahead when formatting is involved.
+This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is about 10ns ouch!),
+spdlog doesn't collect time-stamps by default and would need to incur that extra cost later if the sink wished to log that data.
+However, Logger has a much more efficient formatting library, so it ends up ahead when formatting is involved.
 
-On the disk_bench, NanoLog is the clear winner with g3log the clear loser. Logger and spdlog perform pretty much the same since they are both being bottlenecked
-by the synchronous write to disk (splog generate shorter messages), and they both work pretty much similar fashion (fwrite).
+On the disk_bench, Logger is the winner with NanoLog the clear loser. Logger and spdlog perform very closely since they are both being bottlenecked
+by the synchronous write to disk (splog generates shorter messages), and they both work pretty much in a similar fashion (fwrite).
 Logger in asynchronous mode comes up ahead, but I believe spdlog could achieve similar results if an asynchronous sink was added.
-
-In conclusion if you are ok with just logging to a file, with the limited formatting capabilities of NanoLog, and fixing some odd bugs in NanoLog yourself, then consider using it. Props to it, it delivers on its promise.
-But if you need formatting, custom sinks, then go for this Logger, it provides a limitless formating possibilities while being faster than anything else in it's category.
 
 
 Q: Why weren't libraries such as [Glog](https://github.com/google/glog) or [reckless](https://github.com/mattiasflodin/reckless) included in the benchmark.\
