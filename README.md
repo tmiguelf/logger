@@ -1,4 +1,7 @@
+Play video>
+
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/6v1uG4JJ59Q/0.jpg)](http://www.youtube.com/watch?v=6v1uG4JJ59Q)
+
 
 Build Status: 
 #### CI Suspended until CI tools are updated to the latest compilers
