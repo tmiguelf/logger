@@ -88,7 +88,7 @@ static void FormatTime(const core::date_time& p_time, std::span<char8_t, g_TimeM
 	char8_t* pivot = p_out.data() + 11;
 
 	//millisecond
-	*(pivot) = u8'0' + p_time.time.msecond % 10;
+	*(pivot) = u8'0' + static_cast<char8_t>(p_time.time.msecond % 10);
 	{
 		const char8_t rem = static_cast<char8_t>(p_time.time.msecond / 10);
 		*(--pivot) = u8'0' + rem % 10;
