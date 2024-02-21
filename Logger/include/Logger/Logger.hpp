@@ -28,20 +28,22 @@
 #include "Logger_client.hpp"
 #include "toLog/log_streamer.hpp"
 
+#include <CoreLib/string/core_os_string.hpp>
 #include <CoreLib/toPrint/toPrint.hpp>
 #include <CoreLib/core_module.hpp>
 
 
 
 //======== ======== Macro Magic ======== ========
+
 #ifdef _WIN32
 #define LOG_CUSTOM(File, Line, Column, _Level, ...) \
 	{ \
 		const void* const _P_LOG_BASE_ADDR__ = ::core::get_current_module_base(); \
 		const ::logger::Level _P_LOG_LEVEL__ = _Level; \
-		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::std::wstring_view{__FILEW__}, static_cast<uint32_t>(__LINE__))) \
+		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::core::os_string_view{__FILEW__}, static_cast<uint32_t>(__LINE__))) \
 		{ \
-			core_ToPrint(char8_t, ::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column), __VA_ARGS__); \
+			core::print<char8_t>(::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column) __VA_OPT__(,) __VA_ARGS__); \
 		} \
 	}
 #else
@@ -49,9 +51,9 @@
 	{ \
 		const void* const _P_LOG_BASE_ADDR__ = ::core::get_current_module_base(); \
 		const ::logger::Level _P_LOG_LEVEL__ = _Level; \
-		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::std::string_view{__FILE__}, static_cast<uint32_t>(__LINE__))) \
+		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::core::os_string_view{__FILE__}, static_cast<uint32_t>(__LINE__))) \
 		{ \
-			core_ToPrint(char8_t, ::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column), __VA_ARGS__); \
+			core::print<char8_t>(::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column) __VA_OPT__(,) __VA_ARGS__); \
 		} \
 	}
 #endif
@@ -60,9 +62,9 @@
 /// \param[in] Level - \ref logger::Level
 
 #ifdef _WIN32
-#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::std::wstring_view{__FILEW__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
+#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::core::os_string_view{__FILEW__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
 #else
-#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::std::string_view{__FILE__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
+#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::core::os_string_view{__FILE__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
 #endif
 
 /// \brief Helper Macro for info logs
