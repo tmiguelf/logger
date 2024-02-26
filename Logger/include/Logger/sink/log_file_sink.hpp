@@ -27,7 +27,7 @@
 
 #include <filesystem>
 
-#include <CoreLib/Core_File.hpp>
+#include <CoreLib/core_file.hpp>
 #include <Logger/Logger_api.h>
 #include "log_sink.hpp"
 

@@ -33,8 +33,8 @@
 #include <vector>
 
 #include <CoreLib/string/core_string_encoding.hpp>
-#include <CoreLib/Core_Alloca.hpp>
-#include <CoreLib/Core_extra_compiler.hpp>
+#include <CoreLib/core_alloca.hpp>
+#include <CoreLib/core_extra_compiler.hpp>
 
 namespace logger
 {

@@ -28,8 +28,8 @@
 #include <span>
 #include <array>
 
-#include <CoreLib/Core_Time.hpp>
-#include <CoreLib/Core_Thread.hpp>
+#include <CoreLib/core_time.hpp>
+#include <CoreLib/core_thread.hpp>
 #include <CoreLib/string/core_os_string.hpp>
 #include <CoreLib/string/core_string_numeric.hpp>
 

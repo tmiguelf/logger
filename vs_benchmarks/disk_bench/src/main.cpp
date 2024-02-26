@@ -26,11 +26,11 @@
 #include <cstdint>
 #include <string_view>
 
-#include <CoreLib/Core_Console.hpp>
+#include <CoreLib/core_console.hpp>
 #include <CoreLib/toPrint/toPrint.hpp>
-#include <CoreLib/Core_Time.hpp>
-#include <CoreLib/Core_Thread.hpp>
-#include <CoreLib/Core_Sync.hpp>
+#include <CoreLib/core_time.hpp>
+#include <CoreLib/core_thread.hpp>
+#include <CoreLib/core_sync.hpp>
 
 #include "disk_logger.hpp"
 #include "disk_async_logger.hpp"
@@ -94,7 +94,7 @@ void RunTest(func_t p_int, log_func p_call, func_t p_clean, std::string_view p_n
 
 
 
-	core_ToPrint(char8_t, core::cout, p_name, " time: "sv, static_cast<double>(end - start) / 1'000'000'000.0, "s\n"sv);
+	core::print<char8_t>(core::cout, p_name, " time: "sv, static_cast<double>(end - start) / 1'000'000'000.0, "s\n"sv);
 }
 
 

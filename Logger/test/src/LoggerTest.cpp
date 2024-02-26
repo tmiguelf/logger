@@ -30,8 +30,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <CoreLib/Core_Thread.hpp>
-#include <CoreLib/Core_Type.hpp>
+#include <CoreLib/core_thread.hpp>
+#include <CoreLib/core_type.hpp>
 #include <CoreLib/core_module.hpp>
 
 #include <Logger/Logger.hpp>

@@ -30,9 +30,9 @@
 #include <queue>
 #include <atomic>
 
-#include <CoreLib/Core_Thread.hpp>
-#include <CoreLib/Core_Sync.hpp>
-#include <CoreLib/Core_File.hpp>
+#include <CoreLib/core_thread.hpp>
+#include <CoreLib/core_sync.hpp>
+#include <CoreLib/core_file.hpp>
 #include <Logger/Logger_api.h>
 
 #include "log_sink.hpp"

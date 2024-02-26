@@ -30,7 +30,7 @@
 #include <utility>
 
 #include <CoreLib/string/core_string_encoding.hpp>
-#include <CoreLib/Core_Alloca.hpp>
+#include <CoreLib/core_alloca.hpp>
 
 namespace logger
 {

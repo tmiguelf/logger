@@ -28,8 +28,8 @@
 #include <cstdint>
 #include <string_view>
 
-#include <CoreLib/Core_Time.hpp>
-#include <CoreLib/Core_Thread.hpp>
+#include <CoreLib/core_time.hpp>
+#include <CoreLib/core_thread.hpp>
 #include <CoreLib/string/core_os_string.hpp>
 
 #include <Logger/log_level.hpp>
