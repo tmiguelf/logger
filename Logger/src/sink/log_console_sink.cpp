@@ -58,10 +58,10 @@ static void finish_cout(const std::u8string_view p_level, const std::u8string_vi
 __declspec(noinline)
 void log_console_sink::output(const log_data& p_logData)
 {
-	const bool print_level = (p_logData.m_levelNumber != Level::Info);
-	const uintptr_t message_estimate = core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.m_message, '?');
+	const bool print_level = (p_logData.level != Level::Info);
+	const uintptr_t message_estimate = core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.message, '?');
 	const uintptr_t char_count =
-		(print_level ? p_logData.m_level.size() : 0)
+		(print_level ? p_logData.sv_level.size() : 0)
 		+ message_estimate + 1;
 
 	constexpr uintptr_t alloca_treshold = (0x10000 / sizeof(char16_t));
@@ -70,12 +70,12 @@ void log_console_sink::output(const log_data& p_logData)
 	{
 		std::vector<char16_t> buff;
 		buff.resize(char_count);
-		finish_cout(p_logData.m_level, p_logData.m_message, buff.data(), char_count, message_estimate, print_level);
+		finish_cout(p_logData.sv_level, p_logData.message, buff.data(), char_count, message_estimate, print_level);
 	}
 	else
 	{
 		char16_t* buff = reinterpret_cast<char16_t*>(core_alloca(char_count * sizeof(char16_t)));
-		finish_cout(p_logData.m_level, p_logData.m_message, buff, char_count, message_estimate, print_level);
+		finish_cout(p_logData.sv_level, p_logData.message, buff, char_count, message_estimate, print_level);
 	}
 }
 
@@ -99,10 +99,10 @@ static void finish_cout(const std::u8string_view p_level, const std::u8string_vi
 __attribute__((noinline))
 void log_console_sink::output(const log_data& p_logData)
 {
-	const bool print_level = (p_logData.m_levelNumber != Level::Info);
+	const bool print_level = (p_logData.level != Level::Info);
 	const uintptr_t char_count =
-		(print_level ? p_logData.m_level.size() : 0)
-		+ p_logData.m_message.size() + 1;
+		(print_level ? p_logData.sv_level.size() : 0)
+		+ p_logData.message.size() + 1;
 
 	constexpr uintptr_t alloca_treshold = 0x10000;
 
@@ -110,12 +110,12 @@ void log_console_sink::output(const log_data& p_logData)
 	{
 		std::vector<char8_t> buff;
 		buff.resize(char_count);
-		finish_cout(p_logData.m_level, p_logData.m_message, buff.data(), char_count, print_level);
+		finish_cout(p_logData.sv_level, p_logData.message, buff.data(), char_count, print_level);
 	}
 	else
 	{
 		char8_t* buff = reinterpret_cast<char8_t*>(core_alloca(char_count));
-		finish_cout(p_logData.m_level, p_logData.m_message, buff, char_count, print_level);
+		finish_cout(p_logData.sv_level, p_logData.message, buff, char_count, print_level);
 	}
 }
 #endif

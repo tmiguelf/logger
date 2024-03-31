@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Logger_client.hpp"
+#include "Logger_struct.hpp"
 #include "toLog/log_streamer.hpp"
 
 #include <CoreLib/string/core_os_string.hpp>
@@ -33,39 +34,36 @@
 #include <CoreLib/core_module.hpp>
 
 
-
 //======== ======== Macro Magic ======== ========
 
 #ifdef _WIN32
-#define LOG_CUSTOM(File, Line, Column, _Level, ...) \
-	{ \
-		const void* const _P_LOG_BASE_ADDR__ = ::core::get_current_module_base(); \
-		const ::logger::Level _P_LOG_LEVEL__ = _Level; \
-		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::core::os_string_view{__FILEW__}, static_cast<uint32_t>(__LINE__))) \
-		{ \
-			core::print<char8_t>(::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column) __VA_OPT__(,) __VA_ARGS__); \
-		} \
-	}
+#define __LOG_FILE __FILEW__
+
 #else
+#define __LOG_FILE __FILE__
+#endif
+
 #define LOG_CUSTOM(File, Line, Column, _Level, ...) \
 	{ \
-		const void* const _P_LOG_BASE_ADDR__ = ::core::get_current_module_base(); \
-		const ::logger::Level _P_LOG_LEVEL__ = _Level; \
-		if(::logger::_p::log_check_filter(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, ::core::os_string_view{__FILE__}, static_cast<uint32_t>(__LINE__))) \
+		::logger::log_message_data _P_BASE_LOG_DATA; \
+		_P_BASE_LOG_DATA.module_base = ::core::get_current_module_base(); \
+		_P_BASE_LOG_DATA.module_name = ::core::get_current_module_name(); \
+		_P_BASE_LOG_DATA.file        = ::core::os_string_view{__LOG_FILE}; \
+		_P_BASE_LOG_DATA.line        = static_cast<uint32_t>(__LINE__); \
+		_P_BASE_LOG_DATA.level       = _Level; \
+		if(::logger::_p::log_check_filter(_P_BASE_LOG_DATA)) \
 		{ \
-			core::print<char8_t>(::logger::_p::LogStreamer(_P_LOG_BASE_ADDR__, _P_LOG_LEVEL__, File, Line, Column) __VA_OPT__(,) __VA_ARGS__); \
+			_P_BASE_LOG_DATA.file   = File; \
+			_P_BASE_LOG_DATA.line   = Line; \
+			_P_BASE_LOG_DATA.column = Column; \
+			core::print<char8_t>(::logger::_p::LogStreamer(_P_BASE_LOG_DATA) __VA_OPT__(,) __VA_ARGS__); \
 		} \
 	}
-#endif
+
 
 /// \brief Helper Macro to assist on message formating and automatically filling of __FILE__ (__FILEW__ on windows) and __LINE__
 /// \param[in] Level - \ref logger::Level
-
-#ifdef _WIN32
-#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::core::os_string_view{__FILEW__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
-#else
-#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::core::os_string_view{__FILE__}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
-#endif
+#define LOG_MESSAGE(Level, ...) LOG_CUSTOM(::core::os_string_view{__LOG_FILE}, static_cast<uint32_t>(__LINE__), 0, Level, __VA_ARGS__)
 
 /// \brief Helper Macro for info logs
 #define LOG_INFO(...)		LOG_MESSAGE(::logger::Level::Info, __VA_ARGS__)

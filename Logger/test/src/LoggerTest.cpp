@@ -43,6 +43,7 @@ using namespace core::literals;
 struct log_cache
 {
 	core::os_string file;
+	core::os_string_view module_name;
 
 	std::u8string lineStr;
 	std::u8string columnStr;
@@ -52,11 +53,11 @@ struct log_cache
 	std::u8string levelStr;
 	std::u8string message;
 
-	void const*			moduleBase;
-	core::thread_id_t	threadId;
+	void const*			module_base;
+	core::thread_id_t	thread_id;
 	uint32_t			line;
 	uint32_t			column;
-	core::date_time		timeStruct;
+	core::date_time		time_struct;
 	logger::Level		level;
 };
 
@@ -66,20 +67,21 @@ class test_sink: public logger::log_sink
 	{
 		log_cache& cache = m_log_cache.emplace_back();
 
-		cache.file			= p_logData.m_file;
-		cache.lineStr		= p_logData.m_line;
-		cache.columnStr		= p_logData.m_column;
-		cache.date			= p_logData.m_date;
-		cache.time			= p_logData.m_time;
-		cache.thread		= p_logData.m_thread;
-		cache.levelStr		= p_logData.m_level;
-		cache.message		= p_logData.m_message;
-		cache.moduleBase	= p_logData.m_moduleBase;
-		cache.threadId		= p_logData.m_threadId;
-		cache.line			= p_logData.m_lineNumber;
-		cache.column		= p_logData.m_columnNumber;
-		cache.timeStruct	= p_logData.m_timeStruct;
-		cache.level			= p_logData.m_levelNumber;
+		cache.file			= p_logData.file;
+		cache.lineStr		= p_logData.sv_line;
+		cache.columnStr		= p_logData.sv_column;
+		cache.date			= p_logData.sv_date;
+		cache.time			= p_logData.sv_time;
+		cache.thread		= p_logData.sv_thread;
+		cache.levelStr		= p_logData.sv_level;
+		cache.message		= p_logData.message;
+		cache.module_base	= p_logData.module_base;
+		cache.module_name	= p_logData.module_name;
+		cache.thread_id		= p_logData.thread_id;
+		cache.line			= p_logData.line;
+		cache.column		= p_logData.column;
+		cache.time_struct	= p_logData.time_struct;
+		cache.level			= p_logData.level;
 	}
 public:
 
@@ -129,6 +131,7 @@ TEST(Logger, Logger_interface)
 		std::vector<uint32_t> logLines;
 		core::thread_id_t threadId = core::current_thread_id();
 		void const* base_addr = core::get_current_module_base();
+		core::os_string_view mod_name = core::get_current_module_name();
 
 		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_INFO(test);
 		logLines.push_back(static_cast<uint32_t>(__LINE__)); LOG_WARNING(32);
@@ -158,8 +161,9 @@ TEST(Logger, Logger_interface)
 			ASSERT_EQ(cache.column, 0_ui32) << "Case " << i;
 			ASSERT_EQ(cache.columnStr, u8"0") << "Case " << i;
 			ASSERT_EQ(cache.file, fileName) << "Case " << i;
-			ASSERT_EQ(cache.threadId, threadId) << "Case " << i;
-			ASSERT_EQ(cache.moduleBase, base_addr) << "Case " << i;
+			ASSERT_EQ(cache.thread_id, threadId) << "Case " << i;
+			ASSERT_EQ(cache.module_base, base_addr) << "Case " << i;
+			ASSERT_EQ(cache.module_name, mod_name) << "Case " << i;
 			//TODO: need improvement
 			ASSERT_FALSE(cache.date.empty()) << "Case " << i; //Note might need better test
 			ASSERT_FALSE(cache.time.empty()) << "Case " << i; //Note might need better test

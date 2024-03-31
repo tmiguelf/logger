@@ -34,7 +34,7 @@ class dumpSink_logger: public logger::log_sink
 public:
 	void output(const logger::log_data& p_logData) override
 	{
-		dump_output(std::string_view{reinterpret_cast<const char*>(p_logData.m_message.data()), p_logData.m_message.size()});
+		dump_output(std::string_view{reinterpret_cast<const char*>(p_logData.message.data()), p_logData.message.size()});
 	}
 };
 

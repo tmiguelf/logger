@@ -33,28 +33,29 @@
 #include <CoreLib/string/core_os_string.hpp>
 
 #include <Logger/log_level.hpp>
-
+#include <Logger/Logger_struct.hpp>
 
 namespace logger
 {
 ///	\brief Holds the Logging data information
-struct log_data
+struct log_data: public log_message_data
 {
-	core::os_string_view	m_file;
-	std::u8string_view		m_line;
-	std::u8string_view		m_column;
-	std::u8string_view		m_date;
-	std::u8string_view		m_time;
-	std::u8string_view		m_thread;
-	std::u8string_view		m_level;
-	std::u8string_view		m_message;
+	inline log_data() = default;
+	inline log_data(log_message_data const& p_other)
+		: log_message_data(p_other)
+	{
+	}
 
-	void const*				m_moduleBase;
-	core::thread_id_t		m_threadId;
-	uint32_t				m_lineNumber;
-	uint32_t				m_columnNumber;
-	core::date_time			m_timeStruct;
-	Level					m_levelNumber;
+	core::thread_id_t		thread_id;
+	core::date_time			time_struct;
+
+	std::u8string_view		message;
+	std::u8string_view		sv_line;
+	std::u8string_view		sv_column;
+	std::u8string_view		sv_date;
+	std::u8string_view		sv_time;
+	std::u8string_view		sv_thread;
+	std::u8string_view		sv_level;
 };
 
 ///	\brief Created to do Logging streams

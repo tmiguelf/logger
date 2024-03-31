@@ -55,21 +55,21 @@ void log_async_file_sink::output(const log_data& p_logData)
 	if(!m_file.is_open()) return;
 
 #ifdef _WIN32
-	const uintptr_t fileSize_estimate = core::_p::UTF16_to_UTF8_faulty_estimate(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?');
+	const uintptr_t fileSize_estimate = core::_p::UTF16_to_UTF8_faulty_estimate(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?');
 #else
-	const uintptr_t fileSize_estimate = p_logData.m_file.size();
+	const uintptr_t fileSize_estimate = p_logData.file.size();
 #endif
 
 	//[date]File(Line,Column) Message\n
 	const uintptr_t count =
-		p_logData.m_date.size()
-		+ p_logData.m_time.size()
-		+ p_logData.m_thread.size()
+		p_logData.sv_date.size()
+		+ p_logData.sv_time.size()
+		+ p_logData.sv_thread.size()
 		+ fileSize_estimate
-		+ p_logData.m_line.size()
-		+ (p_logData.m_columnNumber ? p_logData.m_column.size() + 1 : 0) //,
-		+ p_logData.m_level.size()
-		+ p_logData.m_message.size() + 8; //[-|]() \n
+		+ p_logData.sv_line.size()
+		+ (p_logData.column ? p_logData.sv_column.size() + 1 : 0) //,
+		+ p_logData.sv_level.size()
+		+ p_logData.message.size() + 8; //[-|]() \n
 
 	std::vector<char8_t> buff;
 	buff.resize(count);
@@ -77,33 +77,33 @@ void log_async_file_sink::output(const log_data& p_logData)
 	{
 		char8_t* pivot = buff.data();
 		*(pivot++) = u8'[';
-		transfer(pivot, p_logData.m_date);
+		transfer(pivot, p_logData.sv_date);
 		*(pivot++) = u8'-';
-		transfer(pivot, p_logData.m_time);
+		transfer(pivot, p_logData.sv_time);
 		*(pivot++) = u8'|';
-		transfer(pivot, p_logData.m_thread);
+		transfer(pivot, p_logData.sv_thread);
 		*(pivot++) = u8']';
 
 #ifdef _WIN32
-		core::_p::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.m_file.data()), p_logData.m_file.size()}, '?', pivot);
+		core::_p::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
 		pivot += fileSize_estimate;
 #else
-		memcpy(pivot, p_logData.m_file.data(), p_logData.m_file.size());
-		pivot += p_logData.m_file.size();
+		memcpy(pivot, p_logData.file.data(), p_logData.file.size());
+		pivot += p_logData.file.size();
 #endif
 
-		* (pivot++) = u8'(';
-		transfer(pivot, p_logData.m_line);
+		*(pivot++) = u8'(';
+		transfer(pivot, p_logData.sv_line);
 
-		if(p_logData.m_columnNumber)
+		if(p_logData.column)
 		{
 			*(pivot++) = u8',';
-			transfer(pivot, p_logData.m_column);
+			transfer(pivot, p_logData.sv_column);
 		}
 		*(pivot++) = u8')';
 		*(pivot++) = u8' ';
-		transfer(pivot, p_logData.m_level);
-		transfer(pivot, p_logData.m_message);
+		transfer(pivot, p_logData.sv_level);
+		transfer(pivot, p_logData.message);
 		*(pivot) = u8'\n';
 	}
 

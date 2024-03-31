@@ -1,4 +1,3 @@
-
 //======== ======== ======== ======== ======== ======== ======== ========
 ///	\file
 ///
@@ -26,15 +25,26 @@
 
 #pragma once
 
+#include <cstdint>
+#include <string_view>
+
 #include "log_level.hpp"
-#include "Logger_struct.hpp"
+
+//======== ======== API ======== ========
 
 namespace logger
 {
-	class log_filter
+	struct log_filter_data
 	{
-	public:
-		///	\brief If false is returned the log is not to be procesed
-		virtual bool filter(log_filter_data const& p_data) const = 0;
+		void const* module_base;
+		core::os_string_view module_name;
+		core::os_string_view file;
+		uint32_t line;
+		Level level;
 	};
-}
+
+	struct log_message_data: public log_filter_data
+	{
+		uint32_t column;
+	};
+} //namespace logger

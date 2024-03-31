@@ -30,15 +30,15 @@
 
 #include <CoreLib/string/core_os_string.hpp>
 
-#include <Logger/log_level.hpp>
 
 namespace logger
 {
 
 class log_sink;
+struct log_message_data;
 
-/// \brief Log helper class that holds Logger streamers such as Logging to File and Logging to Console
-class LoggerHelper
+/// \brief Log group class that holds Logger streamers such as Logging to File and Logging to Console
+class LoggerGroup
 {
 	/// create list of references to Logger streamers
 	std::vector<log_sink*> m_sinks;
@@ -46,11 +46,7 @@ class LoggerHelper
 public:
 
 	///	\brief Send the log to the Log sink
-	///	\param[in] p_category - \ref logger::Level
-	///	\param[in] p_file - Name of source file generating the log.
-	///	\param[in] p_line - Source file line number where the Log was generated.
-	///	\param[in] p_message - Null terminated message to Log
-	void log(void const* p_moduleBase, Level p_level, core::os_string_view p_file, uint32_t p_line, uint32_t p_column, std::u8string_view p_message);
+	void log(log_message_data const& data, std::u8string_view message);
 
 	///	\brief add the current log stream to the streams container
 	///	param[in] p_stream - Log stream containg the log data

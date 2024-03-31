@@ -77,6 +77,9 @@
     <ClInclude Include="include\Logger\log_filter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Logger\Logger_struct.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\dllVersion.rc">
