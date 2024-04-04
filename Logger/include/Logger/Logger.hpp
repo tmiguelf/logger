@@ -50,6 +50,7 @@
 		_P_BASE_LOG_DATA.module_name = ::core::get_current_module_name(); \
 		_P_BASE_LOG_DATA.file        = ::core::os_string_view{__LOG_FILE}; \
 		_P_BASE_LOG_DATA.line        = static_cast<uint32_t>(__LINE__); \
+		_P_BASE_LOG_DATA.column      = 0; \
 		_P_BASE_LOG_DATA.level       = _Level; \
 		if(::logger::_p::log_check_filter(_P_BASE_LOG_DATA)) \
 		{ \

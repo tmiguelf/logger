@@ -40,11 +40,11 @@ namespace logger
 		core::os_string_view module_name;
 		core::os_string_view file;
 		uint32_t line;
+		uint32_t column;
 		Level level;
 	};
 
 	struct log_message_data: public log_filter_data
 	{
-		uint32_t column;
 	};
 } //namespace logger
