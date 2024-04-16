@@ -57,12 +57,12 @@ static inline void AuxWriteData(
 
 	*(pivot++) = u'(';
 
-	core::_p::ANSI_to_UCS2_unsafe(p_logData.sv_line, pivot);
+	core::ANSI_to_UCS2_unsafe(p_logData.sv_line, pivot);
 	pivot += p_line_estimate;
 
 	if(p_logData.column)
 	{
-		core::_p::ANSI_to_UCS2_unsafe(p_logData.sv_column, pivot);
+		core::ANSI_to_UCS2_unsafe(p_logData.sv_column, pivot);
 		pivot += p_col_estimate;
 	}
 
@@ -71,19 +71,19 @@ static inline void AuxWriteData(
 	*(pivot++) = u' ';
 	*(pivot++) = u'[';
 
-	core::_p::ANSI_to_UCS2_unsafe(p_logData.sv_time, pivot);
+	core::ANSI_to_UCS2_unsafe(p_logData.sv_time, pivot);
 	pivot += p_time_estimate;
 	*(pivot++) = u'|';
-	core::_p::ANSI_to_UCS2_unsafe(p_logData.sv_thread, pivot);
+	core::ANSI_to_UCS2_unsafe(p_logData.sv_thread, pivot);
 	pivot += p_thread_estimate;
 	*(pivot++) = u']';
 	*(pivot++) = u' ';
 
-	core::_p::ANSI_to_UCS2_unsafe(p_logData.sv_level, pivot);
+	core::ANSI_to_UCS2_unsafe(p_logData.sv_level, pivot);
 	pivot += p_level_estimate;
 
 
-	core::_p::UTF8_to_UTF16_faulty_unsafe(p_logData.message, '?', pivot);
+	core::UTF8_to_UTF16_faulty_unsafe(p_logData.message, '?', pivot);
 	pivot += p_message_estimate;
 
 	*(pivot++) = u'\n';
@@ -97,12 +97,12 @@ NO_INLINE void log_debugger_sink::output(const log_data& p_logData)
 {
 	if(IsDebuggerPresent())
 	{
-		const uintptr_t line_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.sv_line);
-		const uintptr_t col_estimate		= p_logData.column ? core::_p::ANSI_to_UCS2_estimate(p_logData.sv_column) : 0;
-		const uintptr_t time_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.sv_time);
-		const uintptr_t thread_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.sv_thread);
-		const uintptr_t level_estimate		= core::_p::ANSI_to_UCS2_estimate(p_logData.sv_level);
-		const uintptr_t message_estimate	= core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.message, '?');
+		const uintptr_t line_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_line);
+		const uintptr_t col_estimate		= p_logData.column ? core::ANSI_to_UCS2_size(p_logData.sv_column) : 0;
+		const uintptr_t time_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_time);
+		const uintptr_t thread_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_thread);
+		const uintptr_t level_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_level);
+		const uintptr_t message_estimate	= core::UTF8_to_UTF16_faulty_size(p_logData.message, '?');
 
 		//File(Line,Col): [Date] Level: Message\n\0
 		const uintptr_t count = p_logData.file.size()

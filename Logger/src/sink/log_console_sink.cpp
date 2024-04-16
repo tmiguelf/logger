@@ -44,13 +44,13 @@ static void finish_cout(const std::u8string_view p_level, const std::u8string_vi
 {
 	if(p_printLevel)
 	{
-		core::_p::ANSI_to_UCS2_unsafe(p_level, p_buffer);
+		core::ANSI_to_UCS2_unsafe(p_level, p_buffer);
 		p_buffer += p_level.size();
 	}
 
 	if(p_message_estimate)
 	{
-		core::_p::UTF8_to_UTF16_faulty_unsafe(p_message, '?', p_buffer);
+		core::UTF8_to_UTF16_faulty_unsafe(p_message, '?', p_buffer);
 		p_buffer += p_message_estimate;
 	}
 	*p_buffer = u'\n';
@@ -61,7 +61,7 @@ __declspec(noinline)
 void log_console_sink::output(const log_data& p_logData)
 {
 	const bool print_level = (p_logData.level != Level::Info);
-	const uintptr_t message_estimate = core::_p::UTF8_to_UTF16_faulty_estimate(p_logData.message, '?');
+	const uintptr_t message_estimate = core::UTF8_to_UTF16_faulty_size(p_logData.message, '?');
 	const uintptr_t char_count =
 		(print_level ? p_logData.sv_level.size() : 0)
 		+ message_estimate + 1;

@@ -67,7 +67,7 @@ static inline void
 	*(pivot++) = u8']';
 
 #ifdef _WIN32
-	core::_p::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
+	core::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
 	pivot += p_fileName_size;
 #else
 	memcpy(pivot, p_logData.file.data(), p_logData.file.size());
@@ -106,7 +106,7 @@ void log_file_sink::output(const log_data& p_logData)
 	if(!m_file.is_open()) return;
 
 #ifdef _WIN32
-	const uintptr_t fileSize_estimate = core::_p::UTF16_to_UTF8_faulty_estimate(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?');
+	const uintptr_t fileSize_estimate = core::UTF16_to_UTF8_faulty_size(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?');
 #else
 	const uintptr_t fileSize_estimate = p_logData.file.size();
 #endif
