@@ -32,9 +32,12 @@
 
 #include <CoreLib/string/core_os_string.hpp>
 
-#include "log_level.hpp"
+#include <LogLib/logger_struct.hpp>
+#include <LogLib/log_level.hpp>
+
 #include "Logger_api.h"
-#include "Logger_struct.hpp"
+
+
 //======== ======== API ======== ========
 
 namespace logger

@@ -27,26 +27,17 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string_view>
-
-#include "log_level.hpp"
-
-//======== ======== API ======== ========
+#include "log_sink.hpp"
 
 namespace logger
 {
-	struct log_filter_data
-	{
-		void const* module_base;
-		core::os_string_view module_name;
-		core::os_string_view file;
-		uint32_t line;
-		uint32_t column;
-		Level level;
-	};
 
-	struct log_message_data: public log_filter_data
-	{
-	};
-} //namespace logger
+///	\brief Created to do Logging to console
+class log_console_sink final: public log_sink
+{
+public:
+	log_console_sink();
+	void output(const log_data& p_logData) final;
+};
+
+} // namespace logger

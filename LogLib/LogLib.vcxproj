@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{a81e0ba9-b79d-47cd-a225-9c827e3d586f}</ProjectGuid>
+    <ProjectGuid>{8a84cfaf-d0d5-427a-b70e-84dd047d8575}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -42,38 +42,40 @@
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(SolutionDir)locations.props" />
     <Import Project="$(quickMSBuildPath)default.cpp.props" />
-    <Import Project="$(benchmarkPath)benchmark.import.props" />
     <Import Project="$(CoreLibPath)CoreLib.import.props" />
-    <Import Project="$(LogLibPath)LogLib.import.props" />
-    <Import Project="$(LoggerPath)Logger.import.props" />
-    <Import Project="$(spdlogPath)spdlog.import.props" />
-    <Import Project="$(g3logPath)g3log.import.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>SPDLOG_SHARED_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling Condition="'$(TargetOS)'=='Windows'">Sync</ExceptionHandling>
-      <ExceptionHandling Condition="'$(TargetOS)'=='Linux'">Enabled</ExceptionHandling>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\common.cpp" />
-    <ClCompile Include="src\g3log_bench.cpp" />
-    <ClCompile Include="src\logger_bench.cpp" />
-    <ClCompile Include="src\spdlog_bench.cpp" />
+    <None Include="LogLib.import.props" />
+    <None Include="LogLib.include.props" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\common.hpp" />
+    <ClCompile Include="src\logger_group.cpp" />
+    <ClCompile Include="src\sink\log_async_file_sink.cpp" />
+    <ClCompile Include="src\sink\log_console_sink.cpp" />
+    <ClCompile Include="src\sink\log_debugger_sink.cpp" />
+    <ClCompile Include="src\sink\log_file_sink.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\LogLib\logger_group.hpp" />
+    <ClInclude Include="include\LogLib\logger_struct.hpp" />
+    <ClInclude Include="include\LogLib\log_filter.hpp" />
+    <ClInclude Include="include\LogLib\log_level.hpp" />
+    <ClInclude Include="include\LogLib\sink\log_async_file_sink.hpp" />
+    <ClInclude Include="include\LogLib\sink\log_console_sink.hpp" />
+    <ClInclude Include="include\LogLib\sink\log_debugger_sink.hpp" />
+    <ClInclude Include="include\LogLib\sink\log_file_sink.hpp" />
+    <ClInclude Include="include\LogLib\sink\log_sink.hpp" />
   </ItemGroup>
   <Import Project="$(quickMSBuildPath)default.cpp.targets" />
 </Project>

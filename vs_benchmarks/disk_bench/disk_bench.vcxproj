@@ -49,6 +49,7 @@
     <Import Project="$(quickMSBuildPath)default.cpp.props" />
     <Import Project="$(versionPath)version.include.props" />
     <Import Project="$(CoreLibPath)CoreLib.import.props" />
+    <Import Project="$(LogLibPath)LogLib.import.props" />
     <Import Project="$(LoggerPath)Logger.import.props" />
     <Import Project="$(spdlogPath)spdlog.import.props" />
     <Import Project="$(NanoLogPath)NanoLog.import.props" />

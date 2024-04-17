@@ -27,37 +27,43 @@
 
 #pragma once
 
-#include <filesystem>
+#include <cstdint>
+#include <string_view>
 
-#include <CoreLib/core_file.hpp>
-#include <Logger/Logger_api.h>
-#include "log_sink.hpp"
+#include <CoreLib/core_time.hpp>
+#include <CoreLib/core_thread.hpp>
+#include <CoreLib/string/core_os_string.hpp>
+
+#include "../logger_struct.hpp"
 
 namespace logger
 {
-///	\brief Created to do Logging to file
-class log_file_sink final: public log_sink
+///	\brief Holds the Logging data information
+struct log_data: public log_message_data
 {
-public:
-	Logger_API log_file_sink();
-	Logger_API ~log_file_sink();
+	inline log_data() = default;
+	inline log_data(log_message_data const& p_other)
+		: log_message_data(p_other)
+	{
+	}
 
-	///	\brief Logs data to file
-	///	\praram[in] - p_logData - Data that will be logged to the file
-	void output(const log_data& p_logData) final;
+	core::thread_id_t		thread_id;
+	core::date_time			time_struct;
 
-	///	\brief Initiates the logging to File stream,
-	///			Creates a file with the given file name
-	///	\param[in] - p_fileName - Name of the file that the message will be logged to
-	///	\return true on success, false otherwise
-	Logger_API bool init(const std::filesystem::path& p_fileName);
-
-	///	\brief Terminates the logging to File stream,
-	///			Closese the file which the message was logged to
-	Logger_API void end();
-
-private:
-	core::file_write m_file; //!< Output file
+	std::u8string_view		message;
+	std::u8string_view		sv_line;
+	std::u8string_view		sv_column;
+	std::u8string_view		sv_date;
+	std::u8string_view		sv_time;
+	std::u8string_view		sv_thread;
+	std::u8string_view		sv_level;
 };
 
-}	// namespace logger
+///	\brief Created to do Logging streams
+class log_sink
+{
+public:
+	virtual void output(const log_data& p_logData) = 0;
+};
+
+}	// namespace simLog

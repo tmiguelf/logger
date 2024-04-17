@@ -38,7 +38,7 @@
 
 #include <Logger/Logger.hpp>
 #include <Logger/Logger_service.hpp>
-#include <Logger/sink/log_sink.hpp>
+#include <LogLib/sink/log_sink.hpp>
 
 using namespace core::literals;
 

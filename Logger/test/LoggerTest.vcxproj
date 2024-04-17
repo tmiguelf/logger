@@ -50,6 +50,7 @@
     <Import Project="$(googletestPath)googletest.import.props" />
     <Import Project="$(googlemockPath)googlemock.import.props" />
     <Import Project="$(CoreLibPath)CoreLib.import.props" />
+    <Import Project="$(LogLibPath)LogLib.import.props" />
     <Import Project="$(ProjectDir)../Logger.import.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />

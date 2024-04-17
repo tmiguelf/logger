@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Export">
+      <UniqueIdentifier>{2bc57ff5-c123-4941-8313-f4b58b7c181f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\sink">
+      <UniqueIdentifier>{62aecb97-2e67-4656-8d5a-0ab90b28b6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sink">
+      <UniqueIdentifier>{c78e62d8-b970-4736-a97c-990f8d5281df}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LogLib.include.props">
+      <Filter>Export</Filter>
+    </None>
+    <None Include="LogLib.import.props">
+      <Filter>Export</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\LogLib\sink\log_async_file_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\sink\log_console_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\sink\log_debugger_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\sink\log_file_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\sink\log_sink.hpp">
+      <Filter>Header Files\sink</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\log_level.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\log_filter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\logger_struct.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogLib\logger_group.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\logger_group.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sink\log_file_sink.cpp">
+      <Filter>Source Files\sink</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sink\log_async_file_sink.cpp">
+      <Filter>Source Files\sink</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sink\log_console_sink.cpp">
+      <Filter>Source Files\sink</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sink\log_debugger_sink.cpp">
+      <Filter>Source Files\sink</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

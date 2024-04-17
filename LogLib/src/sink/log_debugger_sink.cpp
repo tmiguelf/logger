@@ -25,7 +25,7 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include <Logger/sink/log_debugger_sink.hpp>
+#include <LogLib/sink/log_debugger_sink.hpp>
 
 #ifdef _WIN32
 

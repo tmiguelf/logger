@@ -28,7 +28,7 @@
 
 #include <Logger/Logger.hpp>
 #include <Logger/Logger_service.hpp>
-#include <Logger/sink/log_sink.hpp>
+#include <LogLib/sink/log_sink.hpp>
 
 
 class dumpSink_logger: public logger::log_sink

@@ -25,10 +25,9 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include <Logger/sink/log_file_sink.hpp>
+#include <LogLib/sink/log_async_file_sink.hpp>
 
 #include <array>
-#include <cstdio>
 #include <vector>
 #include <utility>
 
@@ -44,64 +43,16 @@ static inline void transfer(char8_t*& p_buff, const std::u8string_view p_str)
 	p_buff += p_str.size();
 }
 
-#ifdef _WIN32
-#	define AUX_WRITE_DATA(STREAM, DATA, BUFFER, SIZE, FILE_SIZE) AuxWriteData(STREAM, DATA, BUFFER, SIZE, FILE_SIZE)
-#else
-#	define AUX_WRITE_DATA(STREAM, DATA, BUFFER, SIZE, FILE_SIZE) AuxWriteData(STREAM, DATA, BUFFER, SIZE)
-#endif
 
-static inline void
-	AUX_WRITE_DATA(core::file_write& p_file,
-		const log_data& p_logData,
-		char8_t* const  p_buffer,
-		const uintptr_t p_buffer_size,
-		const uintptr_t p_fileName_size)
-{
-	char8_t* pivot = p_buffer;
-	*(pivot++) = u8'[';
-	transfer(pivot, p_logData.sv_date);
-	*(pivot++) = u8'-';
-	transfer(pivot, p_logData.sv_time);
-	*(pivot++) = u8'|';
-	transfer(pivot, p_logData.sv_thread);
-	*(pivot++) = u8']';
+log_async_file_sink::log_async_file_sink() = default;
 
-#ifdef _WIN32
-	core::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
-	pivot += p_fileName_size;
-#else
-	memcpy(pivot, p_logData.file.data(), p_logData.file.size());
-	pivot += p_logData.file.size();
-#endif
-
-	*(pivot++) = u8'(';
-	transfer(pivot, p_logData.sv_line);
-
-	if(p_logData.column)
-	{
-		*(pivot++) = u8',';
-		transfer(pivot, p_logData.sv_column);
-	}
-	*(pivot++) = u8')';
-	*(pivot++) = u8' ';
-	transfer(pivot, p_logData.sv_level);
-	transfer(pivot, p_logData.message);
-	*(pivot) = u8'\n';
-
-	p_file.write(p_buffer, p_buffer_size);
-}
-
-
-
-log_file_sink::log_file_sink() = default;
-
-log_file_sink::~log_file_sink()
+log_async_file_sink::~log_async_file_sink()
 {
 	end();
 }
 
 
-void log_file_sink::output(const log_data& p_logData)
+void log_async_file_sink::output(const log_data& p_logData)
 {
 	if(!m_file.is_open()) return;
 
@@ -122,22 +73,50 @@ void log_file_sink::output(const log_data& p_logData)
 		+ p_logData.sv_level.size()
 		+ p_logData.message.size() + 8; //[-|]() \n
 
-	constexpr uintptr_t alloca_treshold = 0x10000;
+	std::vector<char8_t> buff;
+	buff.resize(count);
 
-	if(count > alloca_treshold)
 	{
-		std::vector<char8_t> buff;
-		buff.resize(count);
-		AUX_WRITE_DATA(m_file, p_logData, buff.data(), count, fileSize_estimate);
+		char8_t* pivot = buff.data();
+		*(pivot++) = u8'[';
+		transfer(pivot, p_logData.sv_date);
+		*(pivot++) = u8'-';
+		transfer(pivot, p_logData.sv_time);
+		*(pivot++) = u8'|';
+		transfer(pivot, p_logData.sv_thread);
+		*(pivot++) = u8']';
+
+#ifdef _WIN32
+		core::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
+		pivot += fileSize_estimate;
+#else
+		memcpy(pivot, p_logData.file.data(), p_logData.file.size());
+		pivot += p_logData.file.size();
+#endif
+
+		*(pivot++) = u8'(';
+		transfer(pivot, p_logData.sv_line);
+
+		if(p_logData.column)
+		{
+			*(pivot++) = u8',';
+			transfer(pivot, p_logData.sv_column);
+		}
+		*(pivot++) = u8')';
+		*(pivot++) = u8' ';
+		transfer(pivot, p_logData.sv_level);
+		transfer(pivot, p_logData.message);
+		*(pivot) = u8'\n';
 	}
-	else
+
 	{
-		char8_t* buff = reinterpret_cast<char8_t*>(core_alloca(count));
-		AUX_WRITE_DATA(m_file, p_logData, buff, count, fileSize_estimate);
+		const core::atomic_spinlock::scope_locker lock{m_lock};
+		m_data.emplace(std::move(buff));
 	}
+	m_trap.signal();
 }
 
-bool log_file_sink::init(const std::filesystem::path& p_fileName)
+bool log_async_file_sink::init(const std::filesystem::path& p_fileName)
 {
 	end();
 	const bool input_absolute = p_fileName.is_absolute();
@@ -152,23 +131,67 @@ bool log_file_sink::init(const std::filesystem::path& p_fileName)
 		return false;
 	}
 
-
 	if(m_file.open(fileName, core::file_write::open_mode::create, true) != std::errc{})
 	{
 		return false;
 	}
 
+	m_quit.store(false, std::memory_order::relaxed);
+	m_trap.reset();
+	if(m_thread.create(this, &log_async_file_sink::run, nullptr) != core::thread::Error::None)
+	{
+		m_file.close();
+		return false;
+	}
 
-	constexpr std::array UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
-
-	m_file.write(UTF8_BOM.data(), UTF8_BOM.size());
 	return true;
 }
 
-void log_file_sink::end()
+void log_async_file_sink::end()
 {
+	if(m_thread.joinable())
+	{
+		m_quit.store(true, std::memory_order::release);
+		m_trap.signal();
+		m_thread.join();
+	}
+
 	m_file.flush();
 	m_file.close();
+}
+
+void log_async_file_sink::run(void*const)
+{
+	constexpr std::array UTF8_BOM = {char8_t{0xEF}, char8_t{0xBB}, char8_t{0xBF}};
+
+	m_file.write_unlocked(UTF8_BOM.data(), UTF8_BOM.size());
+
+	while(!m_quit.load(std::memory_order::acquire))
+	{
+		m_trap.wait();
+		m_trap.reset();
+		while(!m_data.empty())
+		{
+			dispatch();
+		}
+	}
+	dispatch();
+}
+
+void log_async_file_sink::dispatch()
+{
+	std::queue<std::vector<char8_t>> local;
+	{
+		core::atomic_spinlock::scope_locker lock{m_lock};
+		m_data.swap(local);
+	}
+
+	while(!local.empty())
+	{
+		std::vector<char8_t>& obj = local.front();
+		m_file.write_unlocked(obj.data(), obj.size());
+		local.pop();
+	}
 }
 
 } //namespace simLog

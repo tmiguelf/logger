@@ -30,41 +30,25 @@
 #include <cstdint>
 #include <string_view>
 
-#include <CoreLib/core_time.hpp>
-#include <CoreLib/core_thread.hpp>
-#include <CoreLib/string/core_os_string.hpp>
+#include <CoreLib/core_os.hpp>
 
-#include <Logger/log_level.hpp>
-#include <Logger/Logger_struct.hpp>
+#include "log_level.hpp"
+
+//======== ======== API ======== ========
 
 namespace logger
 {
-///	\brief Holds the Logging data information
-struct log_data: public log_message_data
-{
-	inline log_data() = default;
-	inline log_data(log_message_data const& p_other)
-		: log_message_data(p_other)
+	struct log_filter_data
 	{
-	}
+		void const* module_base;
+		core::os_string_view module_name;
+		core::os_string_view file;
+		uint32_t line;
+		uint32_t column;
+		Level level;
+	};
 
-	core::thread_id_t		thread_id;
-	core::date_time			time_struct;
-
-	std::u8string_view		message;
-	std::u8string_view		sv_line;
-	std::u8string_view		sv_column;
-	std::u8string_view		sv_date;
-	std::u8string_view		sv_time;
-	std::u8string_view		sv_thread;
-	std::u8string_view		sv_level;
-};
-
-///	\brief Created to do Logging streams
-class log_sink
-{
-public:
-	virtual void output(const log_data& p_logData) = 0;
-};
-
-}	// namespace simLog
+	struct log_message_data: public log_filter_data
+	{
+	};
+} //namespace logger
