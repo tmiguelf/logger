@@ -27,11 +27,11 @@
 #include <cstdint>
 #include <string_view>
 
-extern const std::string_view test_string;
-extern const int32_t test_signed_int;
-extern const uint64_t test_unsigned_int;
-extern const double test_fp;
-extern const char test_char;
+extern std::string_view const test_string;
+extern int32_t const test_signed_int;
+extern uint64_t const test_unsigned_int;
+extern double const test_fp;
+extern char const test_char;
 
 void dump_output(std::string_view);
 

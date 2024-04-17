@@ -65,7 +65,7 @@ struct log_cache
 
 class test_sink: public logger::log_sink
 {
-	void output(const logger::log_data& p_logData)
+	void output(logger::log_data const& p_logData)
 	{
 		log_cache& cache = m_log_cache.emplace_back();
 
@@ -102,9 +102,9 @@ class core::toPrint<TestStr>: public core::toPrint_base
 {
 public:
 
-	toPrint(const TestStr&) {}
+	toPrint(TestStr const&) {}
 
-	uintptr_t size(const char8_t&) const { return preamble.size(); }
+	uintptr_t size(char8_t const&) const { return preamble.size(); }
 
 	void get_print(char8_t* p_out) const //final
 	{
@@ -215,9 +215,9 @@ TEST(Logger, Logger_interface)
 		logger::log_add_sink(tsink);
 
 #ifdef _WIN32
-		const core::os_string fileName {L"Random Name"};
+		core::os_string const fileName {L"Random Name"};
 #else
-		const core::os_string fileName {"Random Name"};
+		core::os_string const fileName {"Random Name"};
 #endif
 
 		LOG_CUSTOM(fileName, 42, 7, logger::Level{0x12}, "Custom Test "sv, 32, ' ');

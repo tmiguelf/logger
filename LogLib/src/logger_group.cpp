@@ -52,12 +52,12 @@ namespace logger
 
 static core::thread_id_t getCurrentThreadId()
 {
-	thread_local static const core::thread_id_t threadId = core::current_thread_id();
+	thread_local static core::thread_id_t const threadId = core::current_thread_id();
 	return threadId;
 }
 
 [[maybe_unused]]
-static uintptr_t FormatDate(const core::date_time& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
+static uintptr_t FormatDate(core::date_time const& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
 
@@ -80,14 +80,14 @@ static uintptr_t FormatDate(const core::date_time& p_time, std::span<char8_t, g_
 }
 
 [[maybe_unused]]
-static void FormatTime(const core::date_time& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
+static void FormatTime(core::date_time const& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data() + 11;
 
 	//millisecond
 	*(pivot) = u8'0' + static_cast<char8_t>(p_time.time.msecond % 10);
 	{
-		const char8_t rem = static_cast<char8_t>(p_time.time.msecond / 10);
+		char8_t const rem = static_cast<char8_t>(p_time.time.msecond / 10);
 		*(--pivot) = u8'0' + rem % 10;
 		*(--pivot) = u8'0' + rem / 10;
 	}
@@ -109,7 +109,7 @@ static void FormatTime(const core::date_time& p_time, std::span<char8_t, g_TimeM
 }
 
 [[maybe_unused]]
-static uintptr_t FormatLogLevel(const Level p_level, std::span<char8_t, 9> const p_out)
+static uintptr_t FormatLogLevel(Level const p_level, std::span<char8_t, 9> const p_out)
 {
 	switch(p_level)
 	{
@@ -161,26 +161,26 @@ void LoggerGroup::log(log_message_data const& data, std::u8string_view message)
 	tlog_data.message = message;
 	//category
 	std::array<char8_t, 9> level;
-	const uintptr_t level_size = FormatLogLevel(data.level, level);
+	uintptr_t const level_size = FormatLogLevel(data.level, level);
 
 	//date
 	std::array<char8_t, g_DateMessageSize> date;
-	const uintptr_t date_size = FormatDate(tlog_data.time_struct, date);
+	uintptr_t const date_size = FormatDate(tlog_data.time_struct, date);
 	
 	//time
 	std::array<char8_t, g_TimeMessageSize> time;
 	constexpr uintptr_t time_size = 12; FormatTime(tlog_data.time_struct, time);
 	//thread
 	std::array<char8_t, core::to_chars_dec_max_size_v<core::thread_id_t>> thread;
-	const uintptr_t thread_size = core::to_chars(tlog_data.thread_id, thread);
+	uintptr_t const thread_size = core::to_chars(tlog_data.thread_id, thread);
 
 	//line
 	std::array<char8_t, 10> line;
-	const uintptr_t line_size = core::to_chars(data.line, line);
+	uintptr_t const line_size = core::to_chars(data.line, line);
 
 	//column
 	std::array<char8_t, 10> column;
-	const uintptr_t column_size = core::to_chars(data.column, column);
+	uintptr_t const column_size = core::to_chars(data.column, column);
 
 	tlog_data.sv_line   = std::u8string_view(line  .data(), line_size);
 	tlog_data.sv_column = std::u8string_view(column.data(), column_size);

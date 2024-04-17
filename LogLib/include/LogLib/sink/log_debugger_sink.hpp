@@ -39,7 +39,7 @@ class log_debugger_sink final: public log_sink
 {
 public:
 	log_debugger_sink();
-	void output(const log_data& p_logData) final;
+	void output(log_data const& p_logData) final;
 };
 } //namespace logger
 

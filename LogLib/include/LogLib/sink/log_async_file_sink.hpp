@@ -50,13 +50,13 @@ public:
 
 	///	\brief Logs data to file
 	///	\praram[in] - p_logData - Data that will be logged to the file
-	void output(const log_data& p_logData) final;
+	void output(log_data const& p_logData) final;
 
 	///	\brief Initiates the logging to File stream,
 	///			Creates a file with the given file name
 	///	\param[in] - p_fileName - Name of the file that the message will be logged to
 	///	\return true on success, false otherwise
-	bool init(const std::filesystem::path& p_fileName);
+	bool init(std::filesystem::path const& p_fileName);
 
 	///	\brief Terminates the logging to File stream,
 	///			Closese the file which the message was logged to

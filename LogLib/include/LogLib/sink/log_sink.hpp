@@ -63,7 +63,7 @@ struct log_data: public log_message_data
 class log_sink
 {
 public:
-	virtual void output(const log_data& p_logData) = 0;
+	virtual void output(log_data const& p_logData) = 0;
 };
 
 }	// namespace simLog

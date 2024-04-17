@@ -37,7 +37,7 @@ class log_console_sink final: public log_sink
 {
 public:
 	log_console_sink();
-	void output(const log_data& p_logData) final;
+	void output(log_data const& p_logData) final;
 };
 
 } // namespace logger

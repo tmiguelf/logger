@@ -35,15 +35,15 @@
 class dumpSink_spdlog: public spdlog::sinks::sink
 {
 public:
-	void log(const spdlog::details::log_msg& msg) override
+	void log(spdlog::details::log_msg const& msg) override
 	{
 		//forced collection of timestamp for test fairness
 		[[maybe_unused]] volatile auto temp = std::chrono::utc_clock::now();
 
-		dump_output(std::string_view{reinterpret_cast<const char*>(msg.payload.data()), msg.payload.size()});
+		dump_output(std::string_view{reinterpret_cast<char const*>(msg.payload.data()), msg.payload.size()});
 	}
 	void flush() override {};
-	void set_pattern(const std::string&) override {};
+	void set_pattern(std::string const&) override {};
 	void set_formatter(std::unique_ptr<spdlog::formatter>) override {};
 };
 

@@ -42,11 +42,11 @@
 
 using namespace std::literals;
 
-const std::string_view test_string = "The quick brown fox jumps over the lazy dog";
-const int32_t test_signed_int = -34;
-const uint64_t test_unsigned_int = 12345;
-const double test_fp = 5.67;
-const char test_char = 'a';
+std::string_view const test_string = "The quick brown fox jumps over the lazy dog";
+int32_t const test_signed_int = -34;
+uint64_t const test_unsigned_int = 12345;
+double const test_fp = 5.67;
+char const test_char = 'a';
 
 using func_t = void (*)();
 using log_func = void (*)(std::string_view, int32_t, uint64_t, double, char );
@@ -77,7 +77,7 @@ void RunTest(func_t p_int, log_func p_call, func_t p_clean, std::string_view p_n
 {
 	p_int();
 	std::array<core::thread, 5> threads;
-	const uint64_t start = core::clock_stamp();
+	uint64_t const start = core::clock_stamp();
 
 	for(core::thread& t_thread : threads)
 	{
@@ -91,7 +91,7 @@ void RunTest(func_t p_int, log_func p_call, func_t p_clean, std::string_view p_n
 
 	p_clean();
 
-	const uint64_t end = core::clock_stamp();
+	uint64_t const end = core::clock_stamp();
 	core::print<char8_t>(core::cout, p_name, " time: "sv, static_cast<double>(end - start) / 1'000'000'000.0, "s\n"sv);
 }
 

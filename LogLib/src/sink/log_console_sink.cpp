@@ -40,7 +40,7 @@ log_console_sink::log_console_sink() = default;
 
 #ifdef _WIN32
 
-static void finish_cout(const std::u8string_view p_level, const std::u8string_view p_message, char16_t* p_buffer, const uintptr_t p_size, const uintptr_t p_message_estimate, const bool p_printLevel)
+static void finish_cout(std::u8string_view const p_level, std::u8string_view const p_message, char16_t* p_buffer, uintptr_t const p_size, uintptr_t const p_message_estimate, bool const p_printLevel)
 {
 	if(p_printLevel)
 	{
@@ -58,11 +58,11 @@ static void finish_cout(const std::u8string_view p_level, const std::u8string_vi
 }
 
 __declspec(noinline)
-void log_console_sink::output(const log_data& p_logData)
+void log_console_sink::output(log_data const& p_logData)
 {
-	const bool print_level = (p_logData.level != Level::Info);
-	const uintptr_t message_estimate = core::UTF8_to_UTF16_faulty_size(p_logData.message, '?');
-	const uintptr_t char_count =
+	bool const print_level = (p_logData.level != Level::Info);
+	uintptr_t const message_estimate = core::UTF8_to_UTF16_faulty_size(p_logData.message, '?');
+	uintptr_t const char_count =
 		(print_level ? p_logData.sv_level.size() : 0)
 		+ message_estimate + 1;
 
@@ -83,15 +83,15 @@ void log_console_sink::output(const log_data& p_logData)
 
 #else
 
-static void finish_cout(const std::u8string_view p_level, const std::u8string_view p_message, char8_t* p_buffer, const uintptr_t p_size, const bool p_printLevel)
+static void finish_cout(std::u8string_view const p_level, std::u8string_view const p_message, char8_t* p_buffer, uintptr_t const p_size, bool const p_printLevel)
 {
 	if(p_printLevel)
 	{
-		const uintptr_t lsize = p_level.size();
+		uintptr_t const lsize = p_level.size();
 		memcpy(p_buffer, p_level.data(), lsize);
 		p_buffer +=lsize;
 	}
-	const uintptr_t msize = p_message.size();
+	uintptr_t const msize = p_message.size();
 	memcpy(p_buffer, p_message.data(), msize);
 	p_buffer += msize;
 	*p_buffer = u8'\n';
@@ -99,10 +99,10 @@ static void finish_cout(const std::u8string_view p_level, const std::u8string_vi
 }
 
 __attribute__((noinline))
-void log_console_sink::output(const log_data& p_logData)
+void log_console_sink::output(log_data const& p_logData)
 {
-	const bool print_level = (p_logData.level != Level::Info);
-	const uintptr_t char_count =
+	bool const print_level = (p_logData.level != Level::Info);
+	uintptr_t const char_count =
 		(print_level ? p_logData.sv_level.size() : 0)
 		+ p_logData.message.size() + 1;
 

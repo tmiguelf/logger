@@ -42,13 +42,13 @@ namespace logger
 {
 
 static inline void AuxWriteData(
-	const log_data& p_logData, char16_t* const p_buffer,
-	const uintptr_t p_line_estimate,
-	const uintptr_t p_col_estimate,
-	const uintptr_t p_time_estimate,
-	const uintptr_t p_thread_estimate,
-	const uintptr_t p_level_estimate,
-	const uintptr_t p_message_estimate)
+	log_data const& p_logData, char16_t* const p_buffer,
+	uintptr_t const p_line_estimate,
+	uintptr_t const p_col_estimate,
+	uintptr_t const p_time_estimate,
+	uintptr_t const p_thread_estimate,
+	uintptr_t const p_level_estimate,
+	uintptr_t const p_message_estimate)
 {
 	char16_t* pivot = p_buffer;
 
@@ -88,24 +88,24 @@ static inline void AuxWriteData(
 
 	*(pivot++) = u'\n';
 	*pivot = 0;
-	OutputDebugStringW(reinterpret_cast<const wchar_t*>(p_buffer));
+	OutputDebugStringW(reinterpret_cast<wchar_t const*>(p_buffer));
 }
 
 log_debugger_sink::log_debugger_sink() = default;
 
-NO_INLINE void log_debugger_sink::output(const log_data& p_logData)
+NO_INLINE void log_debugger_sink::output(log_data const& p_logData)
 {
 	if(IsDebuggerPresent())
 	{
-		const uintptr_t line_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_line);
-		const uintptr_t col_estimate		= p_logData.column ? core::ANSI_to_UCS2_size(p_logData.sv_column) : 0;
-		const uintptr_t time_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_time);
-		const uintptr_t thread_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_thread);
-		const uintptr_t level_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_level);
-		const uintptr_t message_estimate	= core::UTF8_to_UTF16_faulty_size(p_logData.message, '?');
+		uintptr_t const line_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_line);
+		uintptr_t const col_estimate		= p_logData.column ? core::ANSI_to_UCS2_size(p_logData.sv_column) : 0;
+		uintptr_t const time_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_time);
+		uintptr_t const thread_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_thread);
+		uintptr_t const level_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_level);
+		uintptr_t const message_estimate	= core::UTF8_to_UTF16_faulty_size(p_logData.message, '?');
 
 		//File(Line,Col): [Date] Level: Message\n\0
-		const uintptr_t count = p_logData.file.size()
+		uintptr_t const count = p_logData.file.size()
 			+ line_estimate
 			+ (p_logData.column ? col_estimate + 1 : 0) //,
 			+ time_estimate
