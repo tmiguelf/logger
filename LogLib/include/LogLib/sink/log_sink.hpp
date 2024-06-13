@@ -48,7 +48,7 @@ struct log_data: public log_message_data
 	}
 
 	core::thread_id_t		thread_id;
-	core::date_time			time_struct;
+	core::date_time_t		time_struct;
 
 	std::u8string_view		message;
 	std::u8string_view		sv_line;

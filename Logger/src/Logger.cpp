@@ -38,10 +38,6 @@
 #include <Logger/Logger_service.hpp>
 
 
-//Right now we are enforcing validity by having buffer larger than what we would theorethically need
-static constexpr uintptr_t g_DateMessageSize = sizeof("00000/00/00") - 1;
-static constexpr uintptr_t g_TimeMessageSize = sizeof("00:00:00.000") - 1;
-
 /// \n
 namespace logger
 {

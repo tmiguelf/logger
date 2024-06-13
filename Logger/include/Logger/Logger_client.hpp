@@ -47,7 +47,7 @@ Logger_API void log_message(log_message_data const& data, std::u8string_view mes
 
 namespace _p
 {
-	///	\brief Public interface for logging
+	///	\brief Public interface for log filtering
 	[[nodiscard]] Logger_API bool log_check_filter(log_filter_data const& data);
 } //namespace _p
 

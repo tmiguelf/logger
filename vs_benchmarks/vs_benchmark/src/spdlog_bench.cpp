@@ -28,18 +28,14 @@
 #include "common.hpp"
 
 #include <spdlog/spdlog.h>
-
-
-
-
+#include <CoreLib/core_time.hpp>
 class dumpSink_spdlog: public spdlog::sinks::sink
 {
 public:
 	void log(spdlog::details::log_msg const& msg) override
 	{
 		//forced collection of timestamp for test fairness
-		[[maybe_unused]] volatile auto temp = std::chrono::utc_clock::now();
-
+		//[[maybe_unused]] auto volatile temp = std::chrono::system_clock::now();
 		dump_output(std::string_view{reinterpret_cast<char const*>(msg.payload.data()), msg.payload.size()});
 	}
 	void flush() override {};
@@ -54,7 +50,8 @@ static void spdlog_test_combo(benchmark::State& state)
 
 	for (auto _ : state)
 	{
-		logger.info("{0}{1}{2}{3}{4}", test_string, test_signed_int, test_unsigned_int, test_fp, test_char);
+		logger.log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info,
+			"{0}{1}{2}{3}{4}", test_string, test_signed_int, test_unsigned_int, test_fp, test_char);
 	}
 }
 

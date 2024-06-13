@@ -57,10 +57,11 @@ static core::thread_id_t getCurrentThreadId()
 }
 
 [[maybe_unused]]
-static uintptr_t FormatDate(core::date_time const& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
+static uintptr_t FormatDate(core::date_time_t const& p_time, std::span<char8_t, g_DateMessageSize> const p_out)
 {
 	char8_t* pivot = p_out.data();
 
+#if 1
 	//year
 	pivot += core::to_chars(p_time.date.year, std::span<char8_t, 5>{pivot, 5}) + 6;
 
@@ -75,19 +76,31 @@ static uintptr_t FormatDate(core::date_time const& p_time, std::span<char8_t, g_
 	*(--pivot) = u8'0' + p_time.date.month % 10; 
 	*(--pivot) = u8'0' + p_time.date.month / 10; 
 	*(--pivot) = u8'/';
-
 	return size;
+#else
+	pivot += core::to_chars(p_time.date.year, std::span<char8_t, 5>{pivot, 5});
+	*(pivot++) = u8'/';
+	*(pivot++) = u8'0' + p_time.date.month / 10;
+	*(pivot++) = u8'0' + p_time.date.month % 10;
+	*(pivot++) = u8'/';
+	*(pivot++) = u8'0' + p_time.date.day / 10;
+	*(pivot++) = u8'0' + p_time.date.day % 10;
+
+	return pivot - p_out.data();
+#endif
 }
 
 [[maybe_unused]]
-static void FormatTime(core::date_time const& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
+static void FormatTime(core::date_time_t const& p_time, std::span<char8_t, g_TimeMessageSize> const p_out)
 {
+#if 1
 	char8_t* pivot = p_out.data() + 11;
 
 	//millisecond
-	*(pivot) = u8'0' + static_cast<char8_t>(p_time.time.msecond % 10);
+	uint16_t milliseconds = static_cast<uint16_t>(p_time.time.nsecond / 1000000);
+	*(pivot) = u8'0' + static_cast<char8_t>(milliseconds % 10);
 	{
-		char8_t const rem = static_cast<char8_t>(p_time.time.msecond / 10);
+		char8_t const rem = static_cast<char8_t>(milliseconds / 10);
 		*(--pivot) = u8'0' + rem % 10;
 		*(--pivot) = u8'0' + rem / 10;
 	}
@@ -96,7 +109,7 @@ static void FormatTime(core::date_time const& p_time, std::span<char8_t, g_TimeM
 	//second
 	*(--pivot) = u8'0' + p_time.time.second % 10;
 	*(--pivot) = u8'0' + p_time.time.second / 10;
-	*(--pivot) =  u8':';
+	*(--pivot) = u8':';
 
 	//minute
 	*(--pivot) = u8'0' + p_time.time.minute % 10;
@@ -106,6 +119,27 @@ static void FormatTime(core::date_time const& p_time, std::span<char8_t, g_TimeM
 	//hour
 	*(--pivot) = u8'0' + p_time.time.hour % 10;
 	*(--pivot) = u8'0' + p_time.time.hour / 10;
+#else
+	char8_t* pivot = p_out.data();
+	*(pivot++) = u8'0' + p_time.time.hour / 10;
+	*(pivot++) = u8'0' + p_time.time.hour % 10;
+	*(pivot++) = u8':';
+	*(pivot++) = u8'0' + p_time.time.minute / 10;
+	*(pivot++) = u8'0' + p_time.time.minute % 10;
+	*(pivot++) = u8':';
+	*(pivot++) = u8'0' + p_time.time.second / 10;
+	*(pivot++) = u8'0' + p_time.time.second % 10;
+	*(pivot++) = u8'.';
+
+	uint16_t milliseconds = static_cast<uint16_t>(p_time.time.nsecond / 1000000);
+	pivot += 2;
+	*(pivot) = u8'0' + static_cast<char8_t>(milliseconds % 10);
+	{
+		char8_t const rem = static_cast<char8_t>(milliseconds / 10);
+		*(--pivot) = u8'0' + rem % 10;
+		*(--pivot) = u8'0' + rem / 10;
+	}
+#endif
 }
 
 [[maybe_unused]]
@@ -149,14 +183,13 @@ static uintptr_t FormatLogLevel(Level const p_level, std::span<char8_t, 9> const
 	}
 }
 
-
 //======== ======== ======== ======== Class: LoggerHelper ======== ======== ======== ========
 
 void LoggerGroup::log(log_message_data const& data, std::u8string_view message)
 {
 	log_data tlog_data = data;
 
-	core::date_time_UTC(tlog_data.time_struct);
+	tlog_data.time_struct = core::system_time_to_date(core::system_time_fast());
 	tlog_data.thread_id = getCurrentThreadId();
 	tlog_data.message = message;
 	//category
@@ -170,6 +203,7 @@ void LoggerGroup::log(log_message_data const& data, std::u8string_view message)
 	//time
 	std::array<char8_t, g_TimeMessageSize> time;
 	constexpr uintptr_t time_size = 12; FormatTime(tlog_data.time_struct, time);
+
 	//thread
 	std::array<char8_t, core::to_chars_dec_max_size_v<core::thread_id_t>> thread;
 	uintptr_t const thread_size = core::to_chars(tlog_data.thread_id, thread);

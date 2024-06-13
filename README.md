@@ -184,24 +184,31 @@ On this test there are 2 notable discrepancies:\
 Here are the results:
 
 vs_benchmark:
+MSVC Windows:
 | nano seconds | Logger | spdlog | spdlog +time | g3log |
 | ------------ | ------ | ------ | ------------ | ----- |
-| Combination  |   95.2 |    159 |          183 |  1579 |
-| String       |   44.4 |   28.5 |         53.3 |  1224 |
-| Nothing      |   45.0 |   28.5 |         53.3 |   823 |
+| Combination  |    118 |    159 |          168 |  1471 |
+| String       |   65.1 |   28.5 |         44.3 |   736 |
+| Nothing      |   63.5 |   28.5 |         44.1 |   468 |
 
+Gcc Linux:
+| nano seconds | Logger | spdlog | spdlog +time | g3log |
+| ------------ | ------ | ------ | ------------ | ----- |
+| Combination  |   67.1 |   79.7 |         95.2 |   982 |
+| String       |   45.4 |   16.6 |         32.2 |   867 |
+| Nothing      |   45.0 |   16.6 |         31.9 |   529 |
 
-disk_bench:
+disk_bench (Windows):
 | Library      | Seconds |
 | ------------ | ------- |
-| Logger       |  0.1552 |
-| Logger Async |  0.1106 |
-| spdlog       |  0.1936 |
-| g3log        |  2.2059 |
-| NanoLog      |  2.6186 |
+| Logger       |  0.1601 |
+| Logger Async |  0.0948 |
+| spdlog       |  0.1690 |
+| g3log        |  2.0679 |
+| NanoLog      |  2.2840 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
-This is due to the fact that Logger has a more costly time-stamp capturing and pre-formatting (the cost of that alone is about 10ns ouch!),
+This is due to the fact that Logger has a more complete data capture and pre-formatting (the cost of that alone is about 30ns on windows ouch!),
 spdlog doesn't collect time-stamps by default and would need to incur that extra cost later if the sink wished to log that data.
 However, Logger has a much more efficient formatting library, so it ends up ahead when formatting is involved.
 
@@ -211,7 +218,7 @@ Logger in asynchronous mode comes up ahead, but I believe spdlog could achieve s
 
 
 Q: Why weren't libraries such as [Glog](https://github.com/google/glog) or [reckless](https://github.com/mattiasflodin/reckless) included in the benchmark.\
-A: All of the external libraries in this benchmark add bugs in them (obvious ones) that prevented them from being compiled with my setup.
+A: All of the external libraries in this benchmark had bugs in them (obvious ones) that prevented them from being compiled with my setup.
 The ones that eventually made it onto the board were simple enough to fix.
 I have attempted to benchmark Glog and reckless, however there were way too many bugs in them to be able to compile with even the most laxed of rules.
 Sorry for the developers of these libraries, it was way too much work for me to fix them, if you managed to correct them in the future, I will consider adding them.

@@ -59,7 +59,7 @@ struct log_cache
 	core::thread_id_t	thread_id;
 	uint32_t			line;
 	uint32_t			column;
-	core::date_time		time_struct;
+	core::date_time_t	time_struct;
 	logger::Level		level;
 };
 
