@@ -25,7 +25,7 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include <Logger/sink/log_file_sink.hpp>
+#include <LogLib/sink/log_file_sink.hpp>
 
 #include <array>
 #include <cstdio>
@@ -38,7 +38,7 @@
 namespace logger
 {
 
-static inline void transfer(char8_t*& p_buff, const std::u8string_view p_str)
+static inline void transfer(char8_t*& p_buff, std::u8string_view const p_str)
 {
 	memcpy(p_buff, p_str.data(), p_str.size());
 	p_buff += p_str.size();
@@ -52,10 +52,10 @@ static inline void transfer(char8_t*& p_buff, const std::u8string_view p_str)
 
 static inline void
 	AUX_WRITE_DATA(core::file_write& p_file,
-		const log_data& p_logData,
+		log_data const& p_logData,
 		char8_t* const  p_buffer,
-		const uintptr_t p_buffer_size,
-		const uintptr_t p_fileName_size)
+		uintptr_t const p_buffer_size,
+		uintptr_t const p_fileName_size)
 {
 	char8_t* pivot = p_buffer;
 	*(pivot++) = u8'[';
@@ -67,7 +67,7 @@ static inline void
 	*(pivot++) = u8']';
 
 #ifdef _WIN32
-	core::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
+	core::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<char16_t const*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
 	pivot += p_fileName_size;
 #else
 	memcpy(pivot, p_logData.file.data(), p_logData.file.size());
@@ -101,18 +101,18 @@ log_file_sink::~log_file_sink()
 }
 
 
-void log_file_sink::output(const log_data& p_logData)
+void log_file_sink::output(log_data const& p_logData)
 {
 	if(!m_file.is_open()) return;
 
 #ifdef _WIN32
-	const uintptr_t fileSize_estimate = core::UTF16_to_UTF8_faulty_size(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?');
+	uintptr_t const fileSize_estimate = core::UTF16_to_UTF8_faulty_size(std::u16string_view{reinterpret_cast<char16_t const*>(p_logData.file.data()), p_logData.file.size()}, '?');
 #else
-	const uintptr_t fileSize_estimate = p_logData.file.size();
+	uintptr_t const fileSize_estimate = p_logData.file.size();
 #endif
 
 	//[date]File(Line,Column) Message\n
-	const uintptr_t count =
+	uintptr_t const count =
 		p_logData.sv_date.size()
 		+ p_logData.sv_time.size()
 		+ p_logData.sv_thread.size()
@@ -137,12 +137,12 @@ void log_file_sink::output(const log_data& p_logData)
 	}
 }
 
-bool log_file_sink::init(const std::filesystem::path& p_fileName)
+bool log_file_sink::init(std::filesystem::path const& p_fileName)
 {
 	end();
-	const bool input_absolute = p_fileName.is_absolute();
+	bool const input_absolute = p_fileName.is_absolute();
 	std::error_code ec;
-	const std::filesystem::path& fileName =
+	std::filesystem::path const& fileName =
 		input_absolute ?
 		p_fileName :
 		std::filesystem::absolute(p_fileName, ec);

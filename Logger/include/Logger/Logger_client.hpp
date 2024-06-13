@@ -32,9 +32,12 @@
 
 #include <CoreLib/string/core_os_string.hpp>
 
-#include "log_level.hpp"
+#include <LogLib/logger_struct.hpp>
+#include <LogLib/log_level.hpp>
+
 #include "Logger_api.h"
-#include "Logger_struct.hpp"
+
+
 //======== ======== API ======== ========
 
 namespace logger
@@ -44,7 +47,7 @@ Logger_API void log_message(log_message_data const& data, std::u8string_view mes
 
 namespace _p
 {
-	///	\brief Public interface for logging
+	///	\brief Public interface for log filtering
 	[[nodiscard]] Logger_API bool log_check_filter(log_filter_data const& data);
 } //namespace _p
 

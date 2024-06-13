@@ -28,8 +28,9 @@
 #pragma once
 
 #include "Logger_client.hpp"
-#include "Logger_struct.hpp"
 #include "toLog/log_streamer.hpp"
+
+#include <LogLib/logger_struct.hpp>
 
 #include <CoreLib/string/core_os_string.hpp>
 #include <CoreLib/toPrint/toPrint.hpp>

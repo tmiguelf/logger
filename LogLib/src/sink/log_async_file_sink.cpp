@@ -25,7 +25,7 @@
 ///		SOFTWARE.
 //======== ======== ======== ======== ======== ======== ======== ========
 
-#include <Logger/sink/log_async_file_sink.hpp>
+#include <LogLib/sink/log_async_file_sink.hpp>
 
 #include <array>
 #include <vector>
@@ -37,7 +37,7 @@
 namespace logger
 {
 
-static inline void transfer(char8_t*& p_buff, const std::u8string_view p_str)
+static inline void transfer(char8_t*& p_buff, std::u8string_view const p_str)
 {
 	memcpy(p_buff, p_str.data(), p_str.size());
 	p_buff += p_str.size();
@@ -52,18 +52,18 @@ log_async_file_sink::~log_async_file_sink()
 }
 
 
-void log_async_file_sink::output(const log_data& p_logData)
+void log_async_file_sink::output(log_data const& p_logData)
 {
 	if(!m_file.is_open()) return;
 
 #ifdef _WIN32
-	const uintptr_t fileSize_estimate = core::UTF16_to_UTF8_faulty_size(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?');
+	uintptr_t const fileSize_estimate = core::UTF16_to_UTF8_faulty_size(std::u16string_view{reinterpret_cast<char16_t const*>(p_logData.file.data()), p_logData.file.size()}, '?');
 #else
-	const uintptr_t fileSize_estimate = p_logData.file.size();
+	uintptr_t const fileSize_estimate = p_logData.file.size();
 #endif
 
 	//[date]File(Line,Column) Message\n
-	const uintptr_t count =
+	uintptr_t const count =
 		p_logData.sv_date.size()
 		+ p_logData.sv_time.size()
 		+ p_logData.sv_thread.size()
@@ -87,7 +87,7 @@ void log_async_file_sink::output(const log_data& p_logData)
 		*(pivot++) = u8']';
 
 #ifdef _WIN32
-		core::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<const char16_t*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
+		core::UTF16_to_UTF8_faulty_unsafe(std::u16string_view{reinterpret_cast<char16_t const*>(p_logData.file.data()), p_logData.file.size()}, '?', pivot);
 		pivot += fileSize_estimate;
 #else
 		memcpy(pivot, p_logData.file.data(), p_logData.file.size());
@@ -110,18 +110,18 @@ void log_async_file_sink::output(const log_data& p_logData)
 	}
 
 	{
-		const core::atomic_spinlock::scope_locker lock{m_lock};
+		core::atomic_spinlock::scope_locker const lock{m_lock};
 		m_data.emplace(std::move(buff));
 	}
 	m_trap.signal();
 }
 
-bool log_async_file_sink::init(const std::filesystem::path& p_fileName)
+bool log_async_file_sink::init(std::filesystem::path const& p_fileName)
 {
 	end();
-	const bool input_absolute = p_fileName.is_absolute();
+	bool const input_absolute = p_fileName.is_absolute();
 	std::error_code ec;
-	const std::filesystem::path& fileName =
+	std::filesystem::path const& fileName =
 		input_absolute ?
 		p_fileName :
 		std::filesystem::absolute(p_fileName, ec);

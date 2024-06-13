@@ -28,12 +28,12 @@
 #pragma once
 
 #include <cstdint>
-#include <span>
-#include <vector>
+#include <string_view>
 
 #include <CoreLib/toPrint/toPrint_sink.hpp>
 
-#include <Logger/log_level.hpp>
+#include <LogLib/log_level.hpp>
+
 #include <Logger/Logger_client.hpp>
 
 namespace logger::_p

@@ -27,37 +27,28 @@
 
 #pragma once
 
-#include <filesystem>
+#include <cstdint>
+#include <string_view>
 
-#include <CoreLib/core_file.hpp>
-#include <Logger/Logger_api.h>
-#include "log_sink.hpp"
+#include <CoreLib/core_os.hpp>
+
+#include "log_level.hpp"
+
+//======== ======== API ======== ========
 
 namespace logger
 {
-///	\brief Created to do Logging to file
-class log_file_sink final: public log_sink
-{
-public:
-	Logger_API log_file_sink();
-	Logger_API ~log_file_sink();
+	struct log_filter_data
+	{
+		void const* module_base;
+		core::os_string_view module_name;
+		core::os_string_view file;
+		uint32_t line;
+		uint32_t column;
+		Level level;
+	};
 
-	///	\brief Logs data to file
-	///	\praram[in] - p_logData - Data that will be logged to the file
-	void output(const log_data& p_logData) final;
-
-	///	\brief Initiates the logging to File stream,
-	///			Creates a file with the given file name
-	///	\param[in] - p_fileName - Name of the file that the message will be logged to
-	///	\return true on success, false otherwise
-	Logger_API bool init(const std::filesystem::path& p_fileName);
-
-	///	\brief Terminates the logging to File stream,
-	///			Closese the file which the message was logged to
-	Logger_API void end();
-
-private:
-	core::file_write m_file; //!< Output file
-};
-
-}	// namespace logger
+	struct log_message_data: public log_filter_data
+	{
+	};
+} //namespace logger

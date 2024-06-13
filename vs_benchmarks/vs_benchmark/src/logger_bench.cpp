@@ -28,15 +28,15 @@
 
 #include <Logger/Logger.hpp>
 #include <Logger/Logger_service.hpp>
-#include <Logger/sink/log_sink.hpp>
+#include <LogLib/sink/log_sink.hpp>
 
 
 class dumpSink_logger: public logger::log_sink
 {
 public:
-	void output(const logger::log_data& p_logData) override
+	void output(logger::log_data const& p_logData) override
 	{
-		dump_output(std::string_view{reinterpret_cast<const char*>(p_logData.message.data()), p_logData.message.size()});
+		dump_output(std::string_view{reinterpret_cast<char const*>(p_logData.message.data()), p_logData.message.size()});
 	}
 };
 

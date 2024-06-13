@@ -28,7 +28,7 @@
 #include "disk_logger.hpp"
 #include <Logger/Logger.hpp>
 #include <Logger/Logger_service.hpp>
-#include <Logger/sink/log_file_sink.hpp>
+#include <LogLib/sink/log_file_sink.hpp>
 
 namespace disk_logger
 {

@@ -27,18 +27,37 @@
 
 #pragma once
 
-#include <Logger/Logger_api.h>
+#include <filesystem>
+
+#include <CoreLib/core_file.hpp>
+
 #include "log_sink.hpp"
 
 namespace logger
 {
-
-///	\brief Created to do Logging to console
-class log_console_sink final: public log_sink
+///	\brief Created to do Logging to file
+class log_file_sink final: public log_sink
 {
 public:
-	Logger_API log_console_sink();
-	void output(const log_data& p_logData) final;
+	log_file_sink();
+	~log_file_sink();
+
+	///	\brief Logs data to file
+	///	\praram[in] - p_logData - Data that will be logged to the file
+	void output(log_data const& p_logData) final;
+
+	///	\brief Initiates the logging to File stream,
+	///			Creates a file with the given file name
+	///	\param[in] - p_fileName - Name of the file that the message will be logged to
+	///	\return true on success, false otherwise
+	bool init(std::filesystem::path const& p_fileName);
+
+	///	\brief Terminates the logging to File stream,
+	///			Closese the file which the message was logged to
+	void end();
+
+private:
+	core::file_write m_file; //!< Output file
 };
 
-} // namespace logger
+}	// namespace logger

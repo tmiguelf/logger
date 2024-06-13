@@ -34,8 +34,7 @@
 #include <CoreLib/core_thread.hpp>
 #include <CoreLib/string/core_os_string.hpp>
 
-#include <Logger/log_level.hpp>
-#include <Logger/Logger_struct.hpp>
+#include "../logger_struct.hpp"
 
 namespace logger
 {
@@ -49,7 +48,7 @@ struct log_data: public log_message_data
 	}
 
 	core::thread_id_t		thread_id;
-	core::date_time			time_struct;
+	core::date_time_t		time_struct;
 
 	std::u8string_view		message;
 	std::u8string_view		sv_line;
@@ -64,7 +63,7 @@ struct log_data: public log_message_data
 class log_sink
 {
 public:
-	virtual void output(const log_data& p_logData) = 0;
+	virtual void output(log_data const& p_logData) = 0;
 };
 
 }	// namespace simLog

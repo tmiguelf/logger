@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "submodules\ben
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{DF6EF840-6255-4EC0-95DE-D606949FC740}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LogLib", "LogLib\LogLib.vcxproj", "{8A84CFAF-D0D5-427A-B70E-84DD047D8575}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -111,6 +113,20 @@ Global
 		{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}.WSL_Release|x64.ActiveCfg = WSL_Release|x64
 		{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}.WSL_Release|x64.Build.0 = WSL_Release|x64
 		{2B8A8DAF-B3E6-401B-89F7-3F7C3FD4B76F}.WSL_Release|x64.Deploy.0 = WSL_Release|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.Debug|x64.ActiveCfg = Debug|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.Debug|x64.Build.0 = Debug|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.Release|x64.ActiveCfg = Release|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.Release|x64.Build.0 = Release|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.SSH_Debug|x64.ActiveCfg = Debug|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.SSH_Debug|x64.Build.0 = Debug|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.SSH_Release|x64.ActiveCfg = Release|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.SSH_Release|x64.Build.0 = Release|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.WSL_Debug|x64.ActiveCfg = WSL_Debug|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.WSL_Debug|x64.Build.0 = WSL_Debug|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.WSL_Debug|x64.Deploy.0 = WSL_Debug|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.WSL_Release|x64.ActiveCfg = WSL_Release|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.WSL_Release|x64.Build.0 = WSL_Release|x64
+		{8A84CFAF-D0D5-427A-B70E-84DD047D8575}.WSL_Release|x64.Deploy.0 = WSL_Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
