@@ -32,8 +32,13 @@
 
 namespace disk_spdlog
 {
+
+#ifdef _WIN32
+	auto test_sink = std::make_shared<spdlog::sinks::basic_file_sink_st>(L"spdlog.log");
+#else
 	auto test_sink = std::make_shared<spdlog::sinks::basic_file_sink_st>("spdlog.log");
-	spdlog::logger logger("multi_sink", {test_sink});
+#endif
+	spdlog::logger logger("multi_sink", test_sink);
 
 	void testSetup()
 	{
@@ -41,7 +46,8 @@ namespace disk_spdlog
 
 	void log(std::string_view p_str, int32_t p_int32, uint64_t p_uint64, double p_double, char p_char)
 	{
-		logger.info("{0}{1}{2}{3}{4}", p_str, p_int32, p_uint64, p_double, p_char);
+		logger.log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, 
+			"{0}{1}{2}{3}{4}", p_str, p_int32, p_uint64, p_double, p_char);
 	}
 
 	void testClean()

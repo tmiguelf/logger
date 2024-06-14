@@ -35,7 +35,7 @@ public:
 	void log(spdlog::details::log_msg const& msg) override
 	{
 		//forced collection of timestamp for test fairness
-		//[[maybe_unused]] auto volatile temp = std::chrono::system_clock::now();
+		[[maybe_unused]] auto volatile temp = std::chrono::system_clock::now();
 		dump_output(std::string_view{reinterpret_cast<char const*>(msg.payload.data()), msg.payload.size()});
 	}
 	void flush() override {};
