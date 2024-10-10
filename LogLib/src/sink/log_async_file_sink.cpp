@@ -71,7 +71,7 @@ void log_async_file_sink::output(log_data const& p_logData)
 		+ p_logData.sv_line.size()
 		+ (p_logData.column ? p_logData.sv_column.size() + 1 : 0) //,
 		+ p_logData.sv_level.size()
-		+ p_logData.message.size() + 8; //[-|]() \n
+		+ p_logData.message.size() + 10; //[-|]() : \n
 
 	std::vector<char8_t> buff;
 	buff.resize(count);
@@ -105,6 +105,8 @@ void log_async_file_sink::output(log_data const& p_logData)
 		*(pivot++) = u8')';
 		*(pivot++) = u8' ';
 		transfer(pivot, p_logData.sv_level);
+		*(pivot++) = u8':';
+		*(pivot++) = u8' ';
 		transfer(pivot, p_logData.message);
 		*(pivot) = u8'\n';
 	}

@@ -85,6 +85,8 @@ static inline void
 	*(pivot++) = u8')';
 	*(pivot++) = u8' ';
 	transfer(pivot, p_logData.sv_level);
+	*(pivot++) = u8':';
+	*(pivot++) = u8' ';
 	transfer(pivot, p_logData.message);
 	*(pivot) = u8'\n';
 
@@ -120,7 +122,7 @@ void log_file_sink::output(log_data const& p_logData)
 		+ p_logData.sv_line.size()
 		+ (p_logData.column ? p_logData.sv_column.size() + 1 : 0) //,
 		+ p_logData.sv_level.size()
-		+ p_logData.message.size() + 8; //[-|]() \n
+		+ p_logData.message.size() + 10; //[-|]() : \n
 
 	constexpr uintptr_t alloca_treshold = 0x10000;
 

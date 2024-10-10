@@ -149,25 +149,25 @@ static uintptr_t FormatLogLevel(Level const p_level, std::span<char8_t, 9> const
 	{
 		case Level::Info:
 			{
-				constexpr std::u8string_view text = u8"Info: ";
+				constexpr std::u8string_view text = u8"Info";
 				memcpy(p_out.data(), text.data(), text.size());
 				return text.size();
 			}
 		case Level::Warning:
 			{
-				constexpr std::u8string_view text = u8"Warning: ";
+				constexpr std::u8string_view text = u8"Warning";
 				memcpy(p_out.data(), text.data(), text.size());
 				return text.size();
 			}
 		case Level::Error:
 			{
-				constexpr std::u8string_view text = u8"Error: ";
+				constexpr std::u8string_view text = u8"Error";
 				memcpy(p_out.data(), text.data(), text.size());
 				return text.size();
 			}
 		case Level::Debug:
 			{
-				constexpr std::u8string_view text = u8"Debug: ";
+				constexpr std::u8string_view text = u8"Debug";
 				memcpy(p_out.data(), text.data(), text.size());
 				return text.size();
 			}
@@ -176,7 +176,7 @@ static uintptr_t FormatLogLevel(Level const p_level, std::span<char8_t, 9> const
 	}
 
 	{
-		constexpr std::u8string_view text = u8"Lvl(  ): ";
+		constexpr std::u8string_view text = u8"Lvl(  )";
 		memcpy(p_out.data(), text.data(), text.size());
 		core::to_chars_hex_fix(static_cast<uint8_t>(p_level), p_out.subspan<4, 2>());
 		return text.size();
@@ -190,6 +190,7 @@ void LoggerGroup::log(log_message_data const& data, std::u8string_view message)
 	log_data tlog_data = data;
 
 	tlog_data.time_struct = core::system_time_to_date(core::system_time_fast());
+	//[[maybe_unused]] auto const volatile unused = core::system_time_fast();
 	tlog_data.thread_id = getCurrentThreadId();
 	tlog_data.message = message;
 	//category

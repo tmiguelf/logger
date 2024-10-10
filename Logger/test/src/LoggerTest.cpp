@@ -174,11 +174,11 @@ TEST(Logger, Logger_interface)
 		}
 
 		ASSERT_EQ(tsink.m_log_cache[0].level, logger::Level::Info);
-		ASSERT_EQ(tsink.m_log_cache[0].levelStr, std::u8string_view{u8"Info: "});
+		ASSERT_EQ(tsink.m_log_cache[0].levelStr, std::u8string_view{u8"Info"});
 		ASSERT_EQ(tsink.m_log_cache[1].level, logger::Level::Warning);
-		ASSERT_EQ(tsink.m_log_cache[1].levelStr, std::u8string_view{u8"Warning: "});
+		ASSERT_EQ(tsink.m_log_cache[1].levelStr, std::u8string_view{u8"Warning"});
 		ASSERT_EQ(tsink.m_log_cache[2].level, logger::Level::Error);
-		ASSERT_EQ(tsink.m_log_cache[2].levelStr, std::u8string_view{u8"Error: "});
+		ASSERT_EQ(tsink.m_log_cache[2].levelStr, std::u8string_view{u8"Error"});
 
 		ASSERT_EQ(tsink.m_log_cache[0].message, std::u8string_view{u8"TestStr"});
 		ASSERT_EQ(tsink.m_log_cache[1].message, std::u8string_view{u8"32"});
@@ -228,7 +228,7 @@ TEST(Logger, Logger_interface)
 		log_cache& cache = tsink.m_log_cache[0];
 
 		ASSERT_EQ(cache.level, logger::Level{0x12});
-		ASSERT_EQ(cache.levelStr, std::u8string_view{u8"Lvl(12): "});
+		ASSERT_EQ(cache.levelStr, std::u8string_view{u8"Lvl(12)"});
 		ASSERT_EQ(cache.line, 42_ui32);
 		ASSERT_EQ(cache.lineStr, std::u8string_view{u8"42"});
 		ASSERT_EQ(cache.column, 7_ui32);

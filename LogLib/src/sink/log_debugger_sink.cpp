@@ -81,7 +81,8 @@ static inline void AuxWriteData(
 
 	core::ANSI_to_UCS2_unsafe(p_logData.sv_level, pivot);
 	pivot += p_level_estimate;
-
+	*(pivot++) = u':';
+	*(pivot++) = u' ';
 
 	core::UTF8_to_UTF16_faulty_unsafe(p_logData.message, '?', pivot);
 	pivot += p_message_estimate;
@@ -112,7 +113,7 @@ NO_INLINE void log_debugger_sink::output(log_data const& p_logData)
 			+ thread_estimate
 			+ level_estimate
 			+ message_estimate
-			+ 10; //(): [|] \n\0
+			+ 12; //(): [|] : \n\0
 
 		constexpr uintptr_t alloca_treshold = 0x8000;
 

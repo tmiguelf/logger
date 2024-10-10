@@ -144,10 +144,10 @@ Do you expect large or small number of concurrent threads writing to the log? \
 There are synchronization mechanisms that are more costly with a lower number of threads but scale better with a larger number of threads.
 
 When you log to a file, does the your system bottleneck on "memory allocation"/"concurrency management" or on disk access?\
-If your system bottle necks on disk, delegating the write to a separate thread would make it faster.\
+If your system bottlenecks on disk, delegating the write to a separate thread would make it faster.\
 However, if it bottlenecks on "memory allocation"/"concurrency management", writing the output directly onto disk can be much faster than delegating it to a separate thread.
 
-Each take different solutions to address these problems. So take any benchmarked values (including these ones) with a grain of salt. \
+Each takes different solutions to address these problems. So take any benchmarked values (including these ones) with a grain of salt. \
 Make sure to do your own research first, and pick the one that best fits your usage scenario. \
 If this particular library isn't the best for what you are doing, then that's ok, please consider taking a look at others and check if their strengths better align with your application.
 
@@ -210,6 +210,7 @@ disk_bench (Windows):
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
 This is due to the fact that Logger has a more complete data capture and pre-formatting (the cost of that alone is about 30ns on windows ouch!),
 spdlog doesn't collect time-stamps by default and would need to incur that extra cost later if the sink wished to log that data.
+spdlog would be slower if comparable data were to be formatted onto an output stream.
 However, Logger has a much more efficient formatting library, so it ends up ahead when formatting is involved.
 
 On the disk_bench, Logger is the winner with NanoLog the clear loser. Logger and spdlog perform very closely since they are both being bottlenecked
