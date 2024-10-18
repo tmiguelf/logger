@@ -190,7 +190,6 @@ void LoggerGroup::log(log_message_data const& data, std::u8string_view message)
 	log_data tlog_data = data;
 
 	tlog_data.time_struct = core::system_time_to_date(core::system_time_fast());
-	//[[maybe_unused]] auto const volatile unused = core::system_time_fast();
 	tlog_data.thread_id = getCurrentThreadId();
 	tlog_data.message = message;
 	//category

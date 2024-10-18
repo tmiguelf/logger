@@ -50,6 +50,7 @@
 	{ \
 		::logger::log_message_data _P_BASE_LOG_DATA; \
 		_P_BASE_LOG_DATA.module_base = ::core::get_current_module_base(); \
+		_P_BASE_LOG_DATA.user_token  = nullptr; \
 		_P_BASE_LOG_DATA.module_name = ::core::get_current_module_name(); \
 		_P_BASE_LOG_DATA.file        = ::core::os_string_view{__LOG_FILE}; \
 		_P_BASE_LOG_DATA.line        = static_cast<uint32_t>(__LINE__); \
@@ -63,7 +64,6 @@
 			core::print<char8_t>(::logger::_p::LogStreamer(_P_BASE_LOG_DATA) __VA_OPT__(,) __VA_ARGS__); \
 		} \
 	}
-
 
 /// \brief Helper Macro to assist on message formating and automatically filling of __FILE__ (__FILEW__ on windows) and __LINE__
 /// \param[in] Level - \ref logger::Level

@@ -41,6 +41,7 @@ namespace logger
 	struct log_filter_data
 	{
 		void const* module_base;
+		void const* user_token;
 		core::os_string_view module_name;
 		core::os_string_view file;
 		uint32_t line;
