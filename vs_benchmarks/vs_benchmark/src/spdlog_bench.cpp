@@ -78,3 +78,51 @@ static void spdlog_test_null(benchmark::State& state)
 BENCHMARK(spdlog_test_combo);
 BENCHMARK(spdlog_test_string);
 BENCHMARK(spdlog_test_null);
+
+class dumpSink_spdlog_notime: public spdlog::sinks::sink
+{
+public:
+	void log(spdlog::details::log_msg const& msg) override
+	{
+		dump_output(std::string_view{reinterpret_cast<char const*>(msg.payload.data()), msg.payload.size()});
+	}
+	void flush() override {};
+	void set_pattern(std::string const&) override {};
+	void set_formatter(std::unique_ptr<spdlog::formatter>) override {};
+};
+
+static void spdlog_test_combo_notime(benchmark::State& state)
+{
+	auto test_sink = std::make_shared<dumpSink_spdlog_notime>();
+	spdlog::logger logger("multi_sink", {test_sink});
+
+	for (auto _ : state)
+	{
+		logger.log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info,
+			"{0}{1}{2}{3}{4}", test_string, test_signed_int, test_unsigned_int, test_fp, test_char);
+	}
+}
+
+static void spdlog_test_string_notime(benchmark::State& state)
+{
+	auto test_sink = std::make_shared<dumpSink_spdlog_notime>();
+	spdlog::logger logger("multi_sink", {test_sink});
+	for (auto _ : state)
+	{
+		logger.log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, test_string);
+	}
+}
+
+static void spdlog_test_null_notime(benchmark::State& state)
+{
+	auto test_sink = std::make_shared<dumpSink_spdlog_notime>();
+	spdlog::logger logger("multi_sink", {test_sink});
+	for (auto _ : state)
+	{
+		logger.log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, "");
+	}
+}
+
+BENCHMARK(spdlog_test_combo_notime);
+BENCHMARK(spdlog_test_string_notime);
+BENCHMARK(spdlog_test_null_notime);

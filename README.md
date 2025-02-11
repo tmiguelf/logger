@@ -187,25 +187,25 @@ vs_benchmark:
 MSVC Windows:
 | nano seconds | Logger | spdlog | spdlog +time | g3log |
 | ------------ | ------ | ------ | ------------ | ----- |
-| Combination  |    118 |    221 |          244 |  1595 |
-| String       |   65.1 |   28.5 |         44.7 |   750 |
-| Nothing      |   63.5 |   45.0 |         60.5 |   579 |
+| Combination  |   90.5 |  209   |        228   |  1362 |
+| String       |   41.9 |   26.7 |         43.4 |  1030 |
+| Nothing      |   41.9 |   44.0 |         59.8 |   459 |
 
 Gcc Linux:
 | nano seconds | Logger | spdlog | spdlog +time | g3log |
 | ------------ | ------ | ------ | ------------ | ----- |
-| Combination  |   67.1 |    162 |          174 |   913 |
-| String       |   45.4 |   36.1 |         53.0 |   747 |
-| Nothing      |   45.0 |   38.3 |         60.0 |   517 |
+| Combination  |   74.9 |  203   |        222   |  1086 |
+| String       |   48.9 |   39.7 |         60.2 |  1091 |
+| Nothing      |   48.8 |   42.3 |         63.7 |   701 |
 
 disk_bench (Windows):
 | Library      | Seconds |
 | ------------ | ------- |
-| Logger       |  0.1537 |
-| Logger Async |  0.0892 |
-| spdlog       |  0.1993 |
-| g3log        |  1.4368 |
-| NanoLog      |  2.3074 |
+| Logger       |  0.1318 |
+| Logger Async |  0.0877 |
+| spdlog       |  0.1679 |
+| g3log        |  1.2800 |
+| NanoLog      |  2.3287 |
 
 On the vs_benchmark, Logger wins when there's formatting involved, but loses to spdlog when there's just a string or there's nothing to log.
 This is due to the fact that Logger has a more complete data capture and pre-formatting (the cost of that alone is about 30ns on windows ouch!),
