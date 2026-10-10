@@ -48,6 +48,7 @@
     <Import Project="$(SolutionDir)locations.props" />
     <Import Project="$(quickMSBuildPath)default.cpp.props" />
     <Import Project="$(versionPath)version.include.props" />
+	<Import Project="$(fmtlibPath)fmtlib.import.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
@@ -64,71 +65,52 @@
     <None Include="spdlog.include.props" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="spdlog\src\async_logger.cpp" />
-    <ClCompile Include="spdlog\src\cfg\helpers.cpp" />
     <ClCompile Include="spdlog\src\common.cpp" />
+    <ClCompile Include="spdlog\src\details\async_log_msg.cpp" />
+    <ClCompile Include="spdlog\src\details\err_helper.cpp" />
     <ClCompile Include="spdlog\src\details\file_helper.cpp" />
     <ClCompile Include="spdlog\src\details\log_msg.cpp" />
-    <ClCompile Include="spdlog\src\details\log_msg_buffer.cpp" />
-    <ClCompile Include="spdlog\src\details\os_unix.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="spdlog\src\details\os_windows.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="spdlog\src\details\periodic_worker.cpp" />
-    <ClCompile Include="spdlog\src\details\registry.cpp" />
-    <ClCompile Include="spdlog\src\details\thread_pool.cpp" />
+    <ClCompile Include="spdlog\src\details\os_filesystem.cpp" />
+    <ClCompile Include="spdlog\src\details\os_unix.cpp" Condition="'$(TargetOS)'=='Linux'" />
+    <ClCompile Include="spdlog\src\details\os_windows.cpp" Condition="'$(TargetOS)'=='Windows'" />
     <ClCompile Include="spdlog\src\logger.cpp" />
     <ClCompile Include="spdlog\src\pattern_formatter.cpp" />
     <ClCompile Include="spdlog\src\sinks\ansicolor_sink.cpp" />
+    <ClCompile Include="spdlog\src\sinks\async_sink.cpp" />
     <ClCompile Include="spdlog\src\sinks\base_sink.cpp" />
     <ClCompile Include="spdlog\src\sinks\basic_file_sink.cpp" />
     <ClCompile Include="spdlog\src\sinks\rotating_file_sink.cpp" />
-    <ClCompile Include="spdlog\src\sinks\sink.cpp" />
-    <ClCompile Include="spdlog\src\sinks\stdout_color_sinks.cpp" />
     <ClCompile Include="spdlog\src\sinks\stdout_sinks.cpp" />
-    <ClCompile Include="spdlog\src\sinks\wincolor_sink.cpp" >
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="spdlog\src\sinks\wincolor_sink.cpp" Condition="'$(TargetOS)'=='Windows'" />
     <ClCompile Include="spdlog\src\spdlog.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="spdlog\include\spdlog\async.h" />
-    <ClInclude Include="spdlog\include\spdlog\async_logger.h" />
-    <ClInclude Include="spdlog\include\spdlog\cfg\argv.h" />
-    <ClInclude Include="spdlog\include\spdlog\cfg\env.h" />
-    <ClInclude Include="spdlog\include\spdlog\cfg\helpers.h" />
+    <ClInclude Include="spdlog\include\spdlog\bin_to_hex.h" />
     <ClInclude Include="spdlog\include\spdlog\common.h" />
+    <ClInclude Include="spdlog\include\spdlog\details\async_log_msg.h" />
     <ClInclude Include="spdlog\include\spdlog\details\circular_q.h" />
+    <ClInclude Include="spdlog\include\spdlog\details\err_helper.h" />
     <ClInclude Include="spdlog\include\spdlog\details\file_helper.h" />
     <ClInclude Include="spdlog\include\spdlog\details\fmt_helper.h" />
     <ClInclude Include="spdlog\include\spdlog\details\log_msg.h" />
-    <ClInclude Include="spdlog\include\spdlog\details\log_msg_buffer.h" />
     <ClInclude Include="spdlog\include\spdlog\details\mpmc_blocking_q.h" />
     <ClInclude Include="spdlog\include\spdlog\details\null_mutex.h" />
     <ClInclude Include="spdlog\include\spdlog\details\os.h" />
-    <ClInclude Include="spdlog\include\spdlog\details\periodic_worker.h" />
-    <ClInclude Include="spdlog\include\spdlog\details\registry.h" />
-    <ClInclude Include="spdlog\include\spdlog\details\synchronous_factory.h" />
     <ClInclude Include="spdlog\include\spdlog\details\tcp_client_unix.h" />
     <ClInclude Include="spdlog\include\spdlog\details\tcp_client_windows.h" />
-    <ClInclude Include="spdlog\include\spdlog\details\thread_pool.h" />
     <ClInclude Include="spdlog\include\spdlog\details\udp_client_unix.h" />
     <ClInclude Include="spdlog\include\spdlog\details\udp_client_windows.h" />
     <ClInclude Include="spdlog\include\spdlog\details\windows_include.h" />
-    <ClInclude Include="spdlog\include\spdlog\fmt\bin_to_hex.h" />
-    <ClInclude Include="spdlog\include\spdlog\fmt\fmt.h" />
+    <ClInclude Include="spdlog\include\spdlog\filename_t.h" />
+    <ClInclude Include="spdlog\include\spdlog\file_event_handlers.h" />
     <ClInclude Include="spdlog\include\spdlog\formatter.h" />
     <ClInclude Include="spdlog\include\spdlog\fwd.h" />
     <ClInclude Include="spdlog\include\spdlog\logger.h" />
-    <ClInclude Include="spdlog\include\spdlog\mdc.h" />
+    <ClInclude Include="spdlog\include\spdlog\namespace.h" />
     <ClInclude Include="spdlog\include\spdlog\pattern_formatter.h" />
     <ClInclude Include="spdlog\include\spdlog\sinks\android_sink.h" />
     <ClInclude Include="spdlog\include\spdlog\sinks\ansicolor_sink.h" />
+    <ClInclude Include="spdlog\include\spdlog\sinks\async_sink.h" />
     <ClInclude Include="spdlog\include\spdlog\sinks\base_sink.h" />
     <ClInclude Include="spdlog\include\spdlog\sinks\basic_file_sink.h" />
     <ClInclude Include="spdlog\include\spdlog\sinks\callback_sink.h" />

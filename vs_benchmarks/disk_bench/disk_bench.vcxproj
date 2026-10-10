@@ -54,6 +54,7 @@
     <Import Project="$(spdlogPath)spdlog.import.props" />
     <Import Project="$(NanoLogPath)NanoLog.import.props" />
     <Import Project="$(g3logPath)g3log.import.props" />
+	<Import Project="$(fmtlibPath)fmtlib.import.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>

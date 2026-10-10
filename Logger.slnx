@@ -1,0 +1,53 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="SSH_Debug" />
+    <BuildType Name="SSH_Release" />
+    <BuildType Name="WSL_Debug" />
+    <BuildType Name="WSL_Release" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/submodules/">
+    <Project Path="submodules/benchmark/benchmark/benchmark.vcxproj" Id="2b8a8daf-b3e6-401b-89f7-3f7c3fd4b76f">
+      <BuildType Solution="SSH_Debug|*" Project="Debug" />
+      <BuildType Solution="SSH_Release|*" Project="Release" />
+      <Deploy Solution="WSL_Debug|*" />
+      <Deploy Solution="WSL_Release|*" />
+    </Project>
+    <Project Path="submodules/googletest/googlemock/googlemock.vcxproj" Id="d093761a-08df-4a74-a0e3-f34db77a2118">
+      <BuildType Solution="SSH_Debug|*" Project="Debug" />
+      <BuildType Solution="SSH_Release|*" Project="Release" />
+      <Deploy Solution="WSL_Debug|*" />
+      <Deploy Solution="WSL_Release|*" />
+    </Project>
+    <Project Path="submodules/googletest/googletest/googletest.vcxproj" Id="0db6a04f-669b-47b3-9689-7b1a7f4c0943">
+      <BuildType Solution="SSH_Debug|*" Project="Debug" />
+      <BuildType Solution="SSH_Release|*" Project="Release" />
+      <Deploy Solution="WSL_Debug|*" />
+      <Deploy Solution="WSL_Release|*" />
+    </Project>
+    <Project Path="submodules/utilities/CoreLib/CoreLib.vcxproj" Id="ea04e8e6-b05b-416e-b0a3-218406672173">
+      <Deploy Solution="SSH_Debug|*" />
+      <Deploy Solution="SSH_Release|*" />
+      <Deploy Solution="WSL_Debug|*" />
+      <Deploy Solution="WSL_Release|*" />
+    </Project>
+  </Folder>
+  <Project Path="Logger/Logger.vcxproj" Id="c70b3386-504d-4540-a1be-7d00c2347ae9">
+    <BuildType Solution="SSH_Debug|*" Project="Debug" />
+    <BuildType Solution="SSH_Release|*" Project="Release" />
+  </Project>
+  <Project Path="Logger/test/LoggerTest.vcxproj" Id="eaa22b22-9d2f-454b-abb1-d6ec77f1e385">
+    <BuildType Solution="SSH_Debug|*" Project="Debug" />
+    <BuildType Solution="SSH_Release|*" Project="Release" />
+    <Deploy Solution="WSL_Debug|*" />
+    <Deploy Solution="WSL_Release|*" />
+  </Project>
+  <Project Path="LogLib/LogLib.vcxproj" Id="8a84cfaf-d0d5-427a-b70e-84dd047d8575">
+    <BuildType Solution="SSH_Debug|*" Project="Debug" />
+    <BuildType Solution="SSH_Release|*" Project="Release" />
+    <Deploy Solution="WSL_Debug|*" />
+    <Deploy Solution="WSL_Release|*" />
+  </Project>
+</Solution>

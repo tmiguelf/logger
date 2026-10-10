@@ -105,7 +105,7 @@ NO_INLINE void log_debugger_sink::output(log_data const& p_logData)
 		uintptr_t const level_estimate		= core::ANSI_to_UCS2_size(p_logData.sv_level);
 		uintptr_t const message_estimate	= core::UTF8_to_UTF16_faulty_size(p_logData.message, '?');
 
-		//File(Line,Col): [Date] Level: Message\n\0
+		//File(Line,Col): [Date|thread] Level: Message\n\0
 		uintptr_t const count = p_logData.file.size()
 			+ line_estimate
 			+ (p_logData.column ? col_estimate + 1 : 0) //,

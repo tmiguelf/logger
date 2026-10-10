@@ -26,40 +26,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="g3log\src\crashhandler_windows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\filesink.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\g3log.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\logcapture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\loglevels.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\logmessage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\logworker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\stacktrace_windows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\time.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g3log\src\crashhandler_unix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="g3log\src\filesinkhelper.ipp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g3log\src\g2log.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g3log\src\g3log\active.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g3log\src\g3log\atomicbool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g3log\src\g3log\crashhandler.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g3log\src\g3log\filesink.hpp">
       <Filter>Header Files</Filter>
@@ -106,14 +86,37 @@
     <ClInclude Include="g3log\src\g3log\time.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="g3log\src\g3log\active.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="g3log\src\g3log\atomicbool.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="g3log\src\g3log\crashhandler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="g3log\src\crashhandler_unix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\crashhandler_windows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\filesink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\g3log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\logcapture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\loglevels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\logmessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\logworker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\stacktrace_windows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g3log\src\time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

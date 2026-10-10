@@ -60,28 +60,8 @@
     <None Include="g3log.include.props" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="g3log\src\crashhandler_unix.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="g3log\src\crashhandler_windows.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="g3log\src\filesink.cpp" />
-    <ClCompile Include="g3log\src\g3log.cpp" />
-    <ClCompile Include="g3log\src\logcapture.cpp" />
-    <ClCompile Include="g3log\src\loglevels.cpp" />
-    <ClCompile Include="g3log\src\logmessage.cpp" />
-    <ClCompile Include="g3log\src\logworker.cpp" />
-    <ClCompile Include="g3log\src\stacktrace_windows.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='WSL_Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="g3log\src\time.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="g3log\src\filesinkhelper.ipp" />
+    <ClInclude Include="g3log\src\g2log.hpp" />
     <ClInclude Include="g3log\src\g3log\active.hpp" />
     <ClInclude Include="g3log\src\g3log\atomicbool.hpp" />
     <ClInclude Include="g3log\src\g3log\crashhandler.hpp" />
@@ -100,6 +80,18 @@
     <ClInclude Include="g3log\src\g3log\stacktrace_windows.hpp" />
     <ClInclude Include="g3log\src\g3log\stlpatch_future.hpp" />
     <ClInclude Include="g3log\src\g3log\time.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="g3log\src\crashhandler_unix.cpp" Condition="'$(TargetOS)'=='Linux'" />
+    <ClCompile Include="g3log\src\crashhandler_windows.cpp" Condition="'$(TargetOS)'=='Windows'" />
+    <ClCompile Include="g3log\src\filesink.cpp" />
+    <ClCompile Include="g3log\src\g3log.cpp" />
+    <ClCompile Include="g3log\src\logcapture.cpp" />
+    <ClCompile Include="g3log\src\loglevels.cpp" />
+    <ClCompile Include="g3log\src\logmessage.cpp" />
+    <ClCompile Include="g3log\src\logworker.cpp" />
+    <ClCompile Include="g3log\src\stacktrace_windows.cpp" Condition="'$(TargetOS)'=='Windows'" />
+    <ClCompile Include="g3log\src\time.cpp" />
   </ItemGroup>
   <Import Project="$(quickMSBuildPath)default.cpp.targets" />
 </Project>

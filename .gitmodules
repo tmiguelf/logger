@@ -1,28 +1,40 @@
 [submodule "submodules/quickMSBuild"]
 	path = submodules/quickMSBuild
 	url = ../quickMSBuild.git
+	fetchRecurseSubmodules = false
 	ignore = dirty
 [submodule "submodules/googletest"]
 	path = submodules/googletest
 	url = ../googletest.git
+	fetchRecurseSubmodules = false
 	ignore = dirty
 [submodule "submodules/utilities"]
 	path = submodules/utilities
 	url = ../utilities.git
+	fetchRecurseSubmodules = false
 	ignore = dirty
 [submodule "submodules/benchmark"]
 	path = submodules/benchmark
 	url = ../benchmark.git
+	fetchRecurseSubmodules = false
 	ignore = dirty
 [submodule "vs_benchmarks/spdlog/spdlog"]
 	path = vs_benchmarks/spdlog/spdlog
 	url = https://github.com/gabime/spdlog.git
+	fetchRecurseSubmodules = false
 	ignore = dirty
 [submodule "vs_benchmarks/NanoLog/NanoLog"]
 	path = vs_benchmarks/NanoLog/NanoLog
 	url = https://github.com/Iyengar111/NanoLog.git
+	fetchRecurseSubmodules = false
 	ignore = dirty
 [submodule "vs_benchmarks/g3log/g3log"]
 	path = vs_benchmarks/g3log/g3log
 	url = https://github.com/KjellKod/g3log.git
+	fetchRecurseSubmodules = false
+	ignore = dirty
+[submodule "vs_benchmarks/fmtlib/fmtlib"]
+	path = vs_benchmarks/fmtlib/fmtlib
+	url = https://github.com/fmtlib/fmt.git
+	fetchRecurseSubmodules = false
 	ignore = dirty

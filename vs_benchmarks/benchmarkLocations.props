@@ -5,5 +5,6 @@
 		 <spdlogPath>$(MSBuildThisFileDirectory)spdlog/</spdlogPath>
 		<NanoLogPath>$(MSBuildThisFileDirectory)NanoLog/</NanoLogPath>
 		  <g3logPath>$(MSBuildThisFileDirectory)g3log/</g3logPath>
+		 <fmtlibPath>$(MSBuildThisFileDirectory)fmtlib/</fmtlibPath>
 	</PropertyGroup>
 </Project>
