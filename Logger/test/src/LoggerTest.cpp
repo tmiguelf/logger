@@ -30,7 +30,6 @@
 #include <array>
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
 #include <CoreLib/core_thread.hpp>
 #include <CoreLib/core_type.hpp>

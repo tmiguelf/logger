@@ -29,7 +29,7 @@
 #pragma once
 
 #include "log_level.hpp"
-#include "Logger_struct.hpp"
+#include "logger_struct.hpp"
 
 namespace logger
 {
