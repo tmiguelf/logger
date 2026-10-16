@@ -14,7 +14,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Logger")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/LogLib")
 
 #Tests
-set(BENCHMARK_ENABLE_EXCEPTIONS False)
 set(INSTALL_GTEST OFF)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/submodules/googletest/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Logger/test")

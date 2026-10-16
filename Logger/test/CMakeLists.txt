@@ -13,4 +13,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE gtest gtest_main)
 
 quick_default_post_config()
 
-
